@@ -1,0 +1,19 @@
+{
+  "name": "@laofu/browser",
+  "version": "0.1.0-dev.1",
+  "type": "module",
+  "description": "TypeScript client for laofu-browser",
+  "exports": {
+    ".": {
+      "types": "./dist/client.d.ts",
+      "import": "./dist/client.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "UNLICENSED"
+}

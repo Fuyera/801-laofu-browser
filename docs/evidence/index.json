@@ -1,0 +1,72 @@
+{
+  "collectedAt": "2026-09-14T13:49:43.464Z",
+  "scope": "curated test reports only; no credentials, browser profiles or real account databases",
+  "reports": [
+    {
+      "name": "tools",
+      "file": "tools.json",
+      "source": "workspace/tools-G1Tqxa/report.json",
+      "sha256": "e8aef85d9508778eac64f9a816e1daf58bf958e7622886a58a2a9a1d5d4ae9a2"
+    },
+    {
+      "name": "parity",
+      "file": "parity.json",
+      "source": "workspace/parity-MJtMuv/report.json",
+      "sha256": "7eded7aba209c856984c14b287fbbb747dc25994d4ac0cff05a039fad116eac4"
+    },
+    {
+      "name": "article-console",
+      "file": "article-console.json",
+      "source": "workspace/article-console-DG14fm/report.json",
+      "sha256": "25f2a5951cd894868eec206d2c7fae954c3b06f7478879d6dad02b14269df9dd"
+    },
+    {
+      "name": "faults",
+      "file": "faults.json",
+      "source": "workspace/faults-igwZLL/report.json",
+      "sha256": "5cedba7ae23042589568b89cb15372d11f76db6b8ac31f44788382ecc5605f6e"
+    },
+    {
+      "name": "sdk",
+      "file": "sdk.json",
+      "source": "workspace/sdk-9Xn2Pv/report.json",
+      "sha256": "8f7f92b528b0e18b7987fdb67443a6826fd33e4d1c5cc22050e27d616cd94908"
+    },
+    {
+      "name": "handoff",
+      "file": "handoff.json",
+      "source": "workspace/handoff-aSxBiv/report.json",
+      "sha256": "5e2288965070fea91badb5ae85e4982ecc88a506f470470e889b3e610c60a933"
+    },
+    {
+      "name": "attach",
+      "file": "attach.json",
+      "source": "workspace/attach-hvfgvv/report.json",
+      "sha256": "15f0afa94f25b74bf54ba537b1aa6ad4368e12fa5bf6dace64b9ee2593099cea"
+    },
+    {
+      "name": "install",
+      "file": "install.json",
+      "source": "workspace/install-n58Eho/report.json",
+      "sha256": "0e59d08dee3028416e94573486a0ea6ee629220a0c85f9f5da0abafaf695047e"
+    },
+    {
+      "name": "isolation",
+      "file": "isolation.json",
+      "source": "workspace/local-state/isolated/wrk_49ac4305ff314ef397417ae51854c2cd-verification.json",
+      "sha256": "74bd4b35ec7c37a8f15795e0a91deb69c6cadbb729a92478d731cab9f6f9f3ff"
+    },
+    {
+      "name": "performance",
+      "file": "performance.json",
+      "source": "workspace/performance-YgIJbl/report.json",
+      "sha256": "33f5faa60d8eba1311830dfe705eb3616fd1d15f2f1bdec1c7ac4521dbe6476e"
+    },
+    {
+      "name": "downloads",
+      "file": "downloads.json",
+      "source": "workspace/download-KVb1q4/report.json",
+      "sha256": "4fab349c8f768df277484f5c63c176bd54b92ae20ae737b0e1d7a5864ac48ccb"
+    }
+  ]
+}

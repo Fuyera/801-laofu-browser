@@ -1,0 +1,61 @@
+{
+  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/performance-YgIJbl",
+  "environment": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "node": "v22.23.2"
+  },
+  "scope": "同一Mac专用浏览器180段本地固定页面，连续3次；200ms采样本任务服务/执行端进程树RSS总和，含共享页内存重复计数；不等于物理独占内存或公网采集SLO",
+  "samples": [
+    {
+      "jobId": "tsk_d17f16832a6f47388d15497659019070",
+      "totalMs": 1024,
+      "metrics": {
+        "elapsedMs": 459,
+        "activeMs": 459,
+        "humanMs": 0,
+        "steps": 8,
+        "rssBytes": 178061312,
+        "modelCalls": 0
+      },
+      "peakProcessTreeRssBytes": 1747566592,
+      "artifactBytes": 146435
+    },
+    {
+      "jobId": "tsk_9d8260cb210547f1b1616c4c1384bbb6",
+      "totalMs": 1026,
+      "metrics": {
+        "elapsedMs": 406,
+        "activeMs": 406,
+        "humanMs": 0,
+        "steps": 8,
+        "rssBytes": 185630720,
+        "modelCalls": 0
+      },
+      "peakProcessTreeRssBytes": 1922793472,
+      "artifactBytes": 146435
+    },
+    {
+      "jobId": "tsk_a313f6c566c345c0afeb7bd1ff12c7b3",
+      "totalMs": 1025,
+      "metrics": {
+        "elapsedMs": 406,
+        "activeMs": 406,
+        "humanMs": 0,
+        "steps": 8,
+        "rssBytes": 189743104,
+        "modelCalls": 0
+      },
+      "peakProcessTreeRssBytes": 2093858816,
+      "artifactBytes": 146435
+    }
+  ],
+  "totalMs": {
+    "min": 1024,
+    "max": 1026
+  },
+  "peakProcessTreeRssBytes": {
+    "min": 1747566592,
+    "max": 2093858816
+  }
+}

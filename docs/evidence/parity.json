@@ -1,0 +1,168 @@
+{
+  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/parity-MJtMuv",
+  "environment": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "node": "v22.23.2",
+    "playwright": "1.63.0"
+  },
+  "upstream": "1.2.0",
+  "baselineChanges": [
+    "private state path",
+    "bridge port",
+    "extension discovery port"
+  ],
+  "scope": "23工具代表性同输入双实现对照、错误和重连；不代表107参数所有组合已实测",
+  "results": [
+    {
+      "id": "B10",
+      "tool": "tabs",
+      "status": "passed",
+      "difference": null
+    },
+    {
+      "id": "B02",
+      "tool": "navigate",
+      "status": "passed",
+      "difference": null
+    },
+    {
+      "id": "B01",
+      "tool": "snapshot",
+      "status": "passed",
+      "difference": null
+    },
+    {
+      "id": "B03",
+      "tool": "click",
+      "status": "passed",
+      "difference": null
+    },
+    {
+      "id": "B04",
+      "tool": "type",
+      "status": "passed",
+      "difference": null
+    },
+    {
+      "id": "B05",
+      "tool": "select",
+      "status": "passed",
+      "difference": null
+    },
+    {
+      "id": "B06",
+      "tool": "fill",
+      "status": "passed",
+      "difference": "使用各自实际 snapshotId/ref，同一字段与值"
+    },
+    {
+      "id": "B07",
+      "tool": "key",
+      "status": "passed",
+      "difference": null
+    },
+    {
+      "id": "B08",
+      "tool": "read_text",
+      "status": "passed",
+      "difference": null
+    },
+    {
+      "id": "B09",
+      "tool": "screenshot",
+      "status": "passed",
+      "difference": null
+    },
+    {
+      "id": "B11",
+      "tool": "wait",
+      "status": "passed",
+      "difference": null
+    },
+    {
+      "id": "B12",
+      "tool": "network",
+      "status": "passed",
+      "difference": null
+    },
+    {
+      "id": "B13",
+      "tool": "fetch",
+      "status": "passed",
+      "difference": null
+    },
+    {
+      "id": "B14",
+      "tool": "scroll",
+      "status": "passed",
+      "difference": null
+    },
+    {
+      "id": "B15",
+      "tool": "download",
+      "status": "passed",
+      "difference": "MCP本机文件对应HTTP受控artifact，不暴露服务器路径"
+    },
+    {
+      "id": "B16",
+      "tool": "upload",
+      "status": "passed",
+      "difference": "调用端路径上传为artifact后在执行端解析"
+    },
+    {
+      "id": "B17",
+      "tool": "query",
+      "status": "passed",
+      "difference": null
+    },
+    {
+      "id": "B18",
+      "tool": "act",
+      "status": "passed",
+      "difference": null
+    },
+    {
+      "id": "B19",
+      "tool": "ask",
+      "status": "passed",
+      "difference": null
+    },
+    {
+      "id": "B20",
+      "tool": "status",
+      "status": "passed",
+      "difference": null
+    },
+    {
+      "id": "B21",
+      "tool": "eval",
+      "status": "passed",
+      "difference": null
+    },
+    {
+      "id": "B22",
+      "tool": "learnings",
+      "status": "passed",
+      "difference": "laofu另保留版本、CAS与本产品权限"
+    },
+    {
+      "id": "ERR",
+      "tool": "wait",
+      "status": "passed",
+      "difference": null
+    },
+    {
+      "id": "B23",
+      "tool": "reload",
+      "status": "passed",
+      "difference": null
+    },
+    {
+      "id": "RECONNECT",
+      "tool": "status",
+      "status": "passed",
+      "difference": null
+    }
+  ]
+}

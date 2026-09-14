@@ -1,0 +1,14 @@
+{
+  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/attach-hvfgvv",
+  "environment": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "node": "v22.23.2"
+  },
+  "scope": "独立外部浏览器复现日常Chrome的接管生命周期；没有读取真实日常Chrome账号或验证其人工安装",
+  "checks": [
+    "扩展尚未加载时worker持续等待，未误报就绪",
+    "外部启动的独立Chrome加载配对扩展后，原始命令成功",
+    "停止worker保留外部浏览器及页面，不关闭用户浏览器"
+  ]
+}

@@ -1,0 +1,16 @@
+  async download(p) {
+    const filename=p.filename || `laofu-browser/${Date.now()}-${(p.url.split('/').pop()||'file').split('?')[0].slice(0,60)}`;
+    const budget=Math.min(Number(p.__lb?.maxBytes)||536870912,1073741824);
+    const dlId=await chrome.downloads.download({url:p.url,filename,conflictAction:'uniquify',saveAs:false});
+    const key='lbDownload:'+dlId;await chrome.storage.local.set({[key]:{jobId:p.__lb?.jobId,id:dlId}});
+    return new Promise((resolve,reject)=>{
+      let settled=false,checking=false;
+      const finish=async(error,item)=>{if(settled)return;settled=true;clearTimeout(timer);clearInterval(watch);chrome.downloads.onChanged.removeListener(onChanged);await chrome.storage.local.remove(key);if(error)reject(error);else resolve({text:`已下载 ${Math.round((item?.fileSize||0)/1024)}KB → ${item?.filename}`,path:item?.filename,bytes:item?.fileSize});};
+      const cancel=async(code,message)=>{await chrome.downloads.cancel(dlId).catch(()=>{});const [item]=await chrome.downloads.search({id:dlId});if(item?.state==='in_progress')return finish(err('EFFECT_UNKNOWN','下载停止尚未确认'),item);return finish(err(code,message),item);};
+      const inspect=async()=>{if(settled||checking)return;checking=true;try{const [item]=await chrome.downloads.search({id:dlId});if(!item)return finish(err('INTERNAL','下载记录不存在'));if(item.bytesReceived>budget||item.totalBytes>budget||item.fileSize>budget)return await cancel('LIMIT_EXCEEDED','下载超过本次文件预算，已停止');const {lbControl:c}=await chrome.storage.session.get('lbControl');if(!c||c.cancelled||c.jobId!==p.__lb?.jobId||c.fence!==p.__lb?.fence)return await cancel('CANCELLED','下载控制权已撤销');if(item.state==='complete')return finish(null,item);if(item.state==='interrupted')return finish(err('DOWNLOAD_INTERRUPTED','下载中断：'+(item.error||'未知原因')),item);}catch(e){void finish(err('EFFECT_UNKNOWN',String(e.message||e)));}finally{checking=false;}};
+      const onChanged=d=>{if(d.id===dlId)void inspect();};
+      const timer=setTimeout(()=>void cancel('TIMEOUT','下载超过时间预算，已停止'),Math.min(Number(p.timeout)||120000,3600000));
+      const watch=setInterval(()=>void inspect(),250);chrome.downloads.onChanged.addListener(onChanged);void inspect();
+    });
+  },
+

@@ -1,0 +1,9 @@
+.git
+node_modules
+.runtime
+runtime
+workspace
+dist
+releases
+*.sqlite*
+.env*

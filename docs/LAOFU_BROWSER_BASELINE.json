@@ -1,0 +1,1165 @@
+{
+  "baseline": "huashu-chrome@1.2.0",
+  "date": "2026-09-14",
+  "repository": "https://github.com/alchaincyf/huashu-chrome",
+  "status": "design reference; no parity implementation claimed",
+  "toolCount": 23,
+  "tools": [
+    {
+      "id": "B01",
+      "name": "snapshot",
+      "source": "src/mcp-server.js",
+      "line": 50,
+      "description": "Capture the current page as a compact list of interactive elements with refs and state (value/checked/selected/expanded/disabled), plus dialogs, alerts and a text excerpt. Call this before any click/type. Cheap — prefer it over screenshots or eval. Refs ending in @fN live in an iframe: pass them through unchanged, they route themselves.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tabId": {
+            "type": "number",
+            "description": "Target tab id. Omit to use the active controlled tab."
+          }
+        }
+      },
+      "inputSchemaSha256": "f7317681695fb1267e931e84a04f752ecbf6ef3bf30c7fea18a4586d5c1cadcf",
+      "parityStatus": "not_implemented"
+    },
+    {
+      "id": "B02",
+      "name": "navigate",
+      "source": "src/mcp-server.js",
+      "line": 59,
+      "description": "Go to a URL, or go back/forward/reload. Returns the new page snapshot. Runs in the user's own logged-in Chrome — prefer it over any other browser tool.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Absolute URL. Omit when using `action`."
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "back",
+              "forward",
+              "reload"
+            ]
+          },
+          "tabId": {
+            "type": "number",
+            "description": "Target tab id. Omit to use the active controlled tab."
+          }
+        }
+      },
+      "inputSchemaSha256": "2e4ee00f1d646bafd1b821df9f6a1502f3df87e21fcd1cea38b3c1f2eb349dc9",
+      "parityStatus": "not_implemented"
+    },
+    {
+      "id": "B03",
+      "name": "click",
+      "source": "src/mcp-server.js",
+      "line": 72,
+      "description": "Click ONE element by ref. Know your next step already? Use `act` instead — each extra call costs a full model turn. Canvas / map / game with nothing in the snapshot? Pass x,y (CSS px from a screenshot) for a real click there; add dragTo for a drag.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "ref": {
+            "type": "string",
+            "description": "Element ref from the latest snapshot, e.g. \"e3\""
+          },
+          "find": {
+            "type": "object",
+            "description": "Locate by role+name from the snapshot instead of by ref. Survives re-renders.",
+            "properties": {
+              "role": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "nth": {
+                "type": "number",
+                "description": "0-based, when several share a name"
+              },
+              "selector": {
+                "type": "string"
+              }
+            }
+          },
+          "snapshotId": {
+            "type": "string",
+            "description": "snapshotId the ref came from"
+          },
+          "selector": {
+            "type": "string",
+            "description": "CSS fallback for elements the snapshot cannot see. Skips ref safety checks."
+          },
+          "tabId": {
+            "type": "number",
+            "description": "Target tab id. Omit to use the active controlled tab."
+          },
+          "real": {
+            "type": "boolean",
+            "description": "Force a real browser-level event. Automatic on no-effect, except for submit/pay/delete."
+          },
+          "expect": {
+            "type": "object",
+            "description": "Expected result, checked within the settle window and reported if unmet: {checked, value, text: target contains, gone: target removed, appears: selector/text now on page}"
+          },
+          "x": {
+            "type": "number"
+          },
+          "y": {
+            "type": "number"
+          },
+          "dragTo": {
+            "type": "object",
+            "description": "{x, y}: press at x,y, move here, release."
+          }
+        },
+        "required": []
+      },
+      "inputSchemaSha256": "2d150dde4e00b3db62e4094150e3a7a0cf2f4ab28b28a5548d014e869f669c83",
+      "parityStatus": "not_implemented"
+    },
+    {
+      "id": "B04",
+      "name": "type",
+      "source": "src/mcp-server.js",
+      "line": 88,
+      "description": "Type text into ONE input/textarea/contenteditable by ref. Set submit:true to press Enter after. More fields coming? Use `fill` or `act`.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "ref": {
+            "type": "string",
+            "description": "Element ref from the latest snapshot, e.g. \"e3\""
+          },
+          "find": {
+            "type": "object",
+            "description": "Locate by role+name from the snapshot instead of by ref. Survives re-renders.",
+            "properties": {
+              "role": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "nth": {
+                "type": "number",
+                "description": "0-based, when several share a name"
+              },
+              "selector": {
+                "type": "string"
+              }
+            }
+          },
+          "snapshotId": {
+            "type": "string",
+            "description": "snapshotId the ref came from"
+          },
+          "selector": {
+            "type": "string",
+            "description": "CSS fallback for elements the snapshot cannot see. Skips ref safety checks."
+          },
+          "tabId": {
+            "type": "number",
+            "description": "Target tab id. Omit to use the active controlled tab."
+          },
+          "real": {
+            "type": "boolean",
+            "description": "Force a real browser-level event. Automatic on no-effect, except for submit/pay/delete."
+          },
+          "expect": {
+            "type": "object",
+            "description": "Expected result, checked within the settle window and reported if unmet: {checked, value, text: target contains, gone: target removed, appears: selector/text now on page}"
+          },
+          "text": {
+            "type": "string"
+          },
+          "clear": {
+            "type": "boolean",
+            "description": "Clear existing value first. Default true."
+          },
+          "submit": {
+            "type": "boolean",
+            "description": "Press Enter after typing."
+          }
+        },
+        "required": [
+          "text"
+        ]
+      },
+      "inputSchemaSha256": "71be3ac76ad84a7c1de70a943f0beae9d8d61d0d64f30f23bd18ad9e7b500d17",
+      "parityStatus": "not_implemented"
+    },
+    {
+      "id": "B05",
+      "name": "select",
+      "source": "src/mcp-server.js",
+      "line": 102,
+      "description": "Choose an option in a <select> by ref. `value` matches the option value or its visible label. Custom dropdowns (react-select, MUI, Element UI) are NOT <select>: click to expand, read the options from the snapshot, click one.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "ref": {
+            "type": "string",
+            "description": "Element ref from the latest snapshot, e.g. \"e3\""
+          },
+          "find": {
+            "type": "object",
+            "description": "Locate by role+name from the snapshot instead of by ref. Survives re-renders.",
+            "properties": {
+              "role": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "nth": {
+                "type": "number",
+                "description": "0-based, when several share a name"
+              },
+              "selector": {
+                "type": "string"
+              }
+            }
+          },
+          "snapshotId": {
+            "type": "string",
+            "description": "snapshotId the ref came from"
+          },
+          "tabId": {
+            "type": "number",
+            "description": "Target tab id. Omit to use the active controlled tab."
+          },
+          "value": {
+            "type": "string"
+          },
+          "expect": {
+            "type": "object",
+            "description": "Expected result, checked within the settle window and reported if unmet: {checked, value, text: target contains, gone: target removed, appears: selector/text now on page}"
+          }
+        },
+        "required": [
+          "value"
+        ]
+      },
+      "inputSchemaSha256": "094ca8461521431b762ac3c466baf5337613b0de98e940398dc8b9d97b26d143",
+      "parityStatus": "not_implemented"
+    },
+    {
+      "id": "B06",
+      "name": "fill",
+      "source": "src/mcp-server.js",
+      "line": 113,
+      "description": "Fill a whole form in ONE call, all refs from the same snapshot. Field: {ref, text} for inputs, {ref, value} for <select>, {ref, check} for checkbox/radio. submit:true submits after (skipped if any field failed).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "ref": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "check": {
+                  "type": "boolean"
+                },
+                "clear": {
+                  "type": "boolean",
+                  "description": "Default true — replaces existing content."
+                }
+              }
+            }
+          },
+          "submit": {
+            "type": "boolean"
+          },
+          "submitRef": {
+            "type": "string",
+            "description": "Which button to click for submit. Defaults to the form submit button."
+          },
+          "snapshotId": {
+            "type": "string",
+            "description": "snapshotId the ref came from"
+          },
+          "tabId": {
+            "type": "number",
+            "description": "Target tab id. Omit to use the active controlled tab."
+          }
+        },
+        "required": [
+          "fields",
+          "snapshotId"
+        ]
+      },
+      "inputSchemaSha256": "a1e635e9aca9fecbf82b3545b5ceff6fd4d74855df49e91bf349c30cab1fddb8",
+      "parityStatus": "not_implemented"
+    },
+    {
+      "id": "B07",
+      "name": "key",
+      "source": "src/mcp-server.js",
+      "line": 143,
+      "description": "Press a key: Escape, Enter, Tab, arrows (custom dropdowns), Backspace/Delete, or a combo. Without ref it goes to whatever is focused. For entering text use type.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "description": "KeyboardEvent key (\"Escape\", \"Enter\", \"Tab\", \"ArrowDown\"), or with modifiers (\"ctrl+a\", \"shift+Tab\"). Pass an array to send a sequence in one call: [\"Tab\",\"Tab\",\"Enter\"].",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          },
+          "ref": {
+            "type": "string",
+            "description": "Optional: focus this element first. Omit to send to the focused element."
+          },
+          "snapshotId": {
+            "type": "string",
+            "description": "snapshotId the ref came from"
+          },
+          "tabId": {
+            "type": "number",
+            "description": "Target tab id. Omit to use the active controlled tab."
+          },
+          "real": {
+            "type": "boolean",
+            "description": "Force a real browser-level event. Automatic on no-effect, except for submit/pay/delete."
+          },
+          "repeat": {
+            "type": "number",
+            "description": "Press N times (e.g. ArrowDown ×3). Max 50."
+          }
+        },
+        "required": [
+          "key"
+        ]
+      },
+      "inputSchemaSha256": "f162d779b5c2667057bace3f722f9bf82b35e7c8ca9d65c76f3ddca8e778e87f",
+      "parityStatus": "not_implemented"
+    },
+    {
+      "id": "B08",
+      "name": "read_text",
+      "source": "src/mcp-server.js",
+      "line": 164,
+      "description": "Extract the main readable content of the page as markdown, with boilerplate stripped. Use for reading articles/docs; use snapshot when you need to interact.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tabId": {
+            "type": "number",
+            "description": "Target tab id. Omit to use the active controlled tab."
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "markdown",
+              "text"
+            ]
+          }
+        }
+      },
+      "inputSchemaSha256": "641348df4960f453d7fe399c164e80d103b061fdc28797ba77edeb347676375b",
+      "parityStatus": "not_implemented"
+    },
+    {
+      "id": "B09",
+      "name": "screenshot",
+      "source": "src/mcp-server.js",
+      "line": 174,
+      "description": "Screenshot the controlled tab, background tabs included. Prefer snapshot / read_text — they cost far less. Returned at 60% scale as JPEG by default; full:true for 1:1 PNG (e.g. to read small text or measure pixels).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tabId": {
+            "type": "number",
+            "description": "Target tab id. Omit to use the active controlled tab."
+          },
+          "ref": {
+            "type": "string",
+            "description": "Element ref from the latest snapshot, e.g. \"e3\""
+          },
+          "snapshotId": {
+            "type": "string",
+            "description": "snapshotId the ref came from"
+          },
+          "focus": {
+            "type": "boolean",
+            "description": "Bring the tab forward first. Interrupts the user — ask before using."
+          },
+          "savePath": {
+            "type": "string",
+            "description": "Absolute path to write the image instead of returning it inline."
+          },
+          "full": {
+            "type": "boolean",
+            "description": "Full-resolution PNG instead of the scaled JPEG."
+          }
+        }
+      },
+      "inputSchemaSha256": "59a045a6671ae8155195ed0fea596806a1c6984e86dcaf9fc110022a7155b5e4",
+      "parityStatus": "not_implemented"
+    },
+    {
+      "id": "B10",
+      "name": "tabs",
+      "source": "src/mcp-server.js",
+      "line": 189,
+      "description": "List / open / switch / close tabs. New tabs open in the BACKGROUND and become the controlled tab — the user keeps looking at whatever they were on. Everything except screenshot works fine on a background tab. Each agent session has its OWN controlled tab; omitting tabId uses this session's. Selecting a tab another session operates warns, not blocks. With 2+ work-lines (a subagent, two accounts) pass tabId explicitly on EVERY call — the implicit slot is shared with subagents and a sibling can move it. Label each tab; recover the mapping via action:\"list\".",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "list",
+              "new",
+              "select",
+              "close"
+            ]
+          },
+          "url": {
+            "type": "string"
+          },
+          "tabId": {
+            "type": "number",
+            "description": "Target tab id. Omit to use the active controlled tab."
+          },
+          "label": {
+            "type": "string",
+            "description": "With new/select: what this tab is for (\"CRM import — batch 2\"). Shown in list, page panel, and to the user."
+          },
+          "focus": {
+            "type": "boolean",
+            "description": "Also bring the tab to the foreground. Interrupts the user — off by default."
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "inputSchemaSha256": "4cc2d81715fd5f825acdef09d6d2eae63e57df0de8a49d31b33774f566d8755f",
+      "parityStatus": "not_implemented"
+    },
+    {
+      "id": "B11",
+      "name": "wait",
+      "source": "src/mcp-server.js",
+      "line": 210,
+      "description": "Wait until a selector appears, text shows up, or the network goes idle. Use after actions that load content.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "for": {
+            "type": "string",
+            "enum": [
+              "selector",
+              "text",
+              "idle"
+            ]
+          },
+          "value": {
+            "type": "string",
+            "description": "CSS selector or text to wait for. Omit for idle."
+          },
+          "timeout": {
+            "type": "number",
+            "description": "Milliseconds, default 10000."
+          },
+          "tabId": {
+            "type": "number",
+            "description": "Target tab id. Omit to use the active controlled tab."
+          }
+        },
+        "required": [
+          "for"
+        ]
+      },
+      "inputSchemaSha256": "f830d849f5b176f336d2b5dacf1ac0dd68182b115a731bd359856a57c21068fc",
+      "parityStatus": "not_implemented"
+    },
+    {
+      "id": "B12",
+      "name": "network",
+      "source": "src/mcp-server.js",
+      "line": 224,
+      "description": "START HERE when you need DATA rather than an action. Lists the XHR/fetch calls the page made, then returns one response body via `body:\"<url fragment>\"`. Real field names, real numbers, paging as a parameter. Add reload:true if nothing was captured yet. Never guess an endpoint name from memory — list first, pick by response size. One page's API messy? Another page on the same site often exposes the same data cleanly.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "match": {
+            "type": "string",
+            "description": "Only list requests whose URL contains this."
+          },
+          "body": {
+            "type": "string",
+            "description": "Return the full response body of the latest request matching this URL fragment."
+          },
+          "index": {
+            "type": "number",
+            "description": "With `body`: which match, counting back from the newest. 0 = latest (default), 1 = one before it. Paged endpoints differ only by a cursor, so walk this to collect every batch."
+          },
+          "reload": {
+            "type": "boolean",
+            "description": "Reload the page first to capture requests made during load."
+          },
+          "maxBody": {
+            "type": "number",
+            "description": "Truncate the body at this many chars. Default 120000."
+          },
+          "tabId": {
+            "type": "number",
+            "description": "Target tab id. Omit to use the active controlled tab."
+          }
+        }
+      },
+      "inputSchemaSha256": "31ed2cf675c9f93f0bc78907e3cdf452dfa39ebf9e9dc2de30bbffc43616c4a6",
+      "parityStatus": "not_implemented"
+    },
+    {
+      "id": "B13",
+      "name": "fetch",
+      "source": "src/mcp-server.js",
+      "line": 243,
+      "description": "Call a URL from inside the page, carrying the user's cookies. Use after `network` reveals an API. Paged endpoint? Pass `pages`: it walks every page in ONE call — never loop fetch by hand, each loop turn costs a model round. ALWAYS check the paging object in the response, servers silently cap page size. 403/406 means the site signs its requests: do NOT forge them; drive the site's own pagination UI and read via `network`. Same-origin rules apply.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "init": {
+            "type": "object",
+            "description": "fetch() init: method, headers, body. credentials are already included."
+          },
+          "pages": {
+            "type": "object",
+            "description": "Auto-paginate: {param:\"page\", from?, step?, max?} or {cursorParam:\"cursor\", cursorPath:\"data.next_cursor\", max?}. Stops on non-2xx, empty/identical body, empty cursor, or max (default 10, cap 50). With savePath: one JSON line per page + summary; else bodies inline up to maxBody."
+          },
+          "binary": {
+            "type": "boolean",
+            "description": "Fetch bytes (images, files) instead of text. Requires savePath. Runs from the extension so cross-origin image hosts work; add via:\"page\" if a host checks Referer."
+          },
+          "via": {
+            "type": "string",
+            "enum": [
+              "page",
+              "extension"
+            ],
+            "description": "Where the request originates. Binary defaults to extension (no CORS limits); text always uses the page (carries session)."
+          },
+          "savePath": {
+            "type": "string",
+            "description": "Absolute path to write to. Required with binary."
+          },
+          "maxBody": {
+            "type": "number"
+          },
+          "tabId": {
+            "type": "number",
+            "description": "Target tab id. Omit to use the active controlled tab."
+          }
+        },
+        "required": [
+          "url"
+        ]
+      },
+      "inputSchemaSha256": "96d3fb657f0dd61ead6d6f85ae6bda0c9471f2990580c04a6270516e80176832",
+      "parityStatus": "not_implemented"
+    },
+    {
+      "id": "B14",
+      "name": "scroll",
+      "source": "src/mcp-server.js",
+      "line": 271,
+      "description": "Scroll to load more of a lazy list. Auto-detects inner scroll containers, stops early once height stops growing. Prefer network/fetch for bulk data. Background tabs render no frames, so an IntersectionObserver-driven list may refuse to grow — the tool says so when it happens.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": "string",
+            "enum": [
+              "bottom",
+              "top"
+            ]
+          },
+          "times": {
+            "type": "number",
+            "description": "Repeat count, max 50. Default 1."
+          },
+          "wait": {
+            "type": "number",
+            "description": "ms between scrolls, default 700."
+          },
+          "ref": {
+            "type": "string",
+            "description": "Element ref from the latest snapshot, e.g. \"e3\""
+          },
+          "snapshotId": {
+            "type": "string",
+            "description": "snapshotId the ref came from"
+          },
+          "tabId": {
+            "type": "number",
+            "description": "Target tab id. Omit to use the active controlled tab."
+          }
+        }
+      },
+      "inputSchemaSha256": "8986fba6943bde4f92bf73c8877982e2700d694f426715d58bf76d40c743a4ff",
+      "parityStatus": "not_implemented"
+    },
+    {
+      "id": "B15",
+      "name": "download",
+      "source": "src/mcp-server.js",
+      "line": 287,
+      "description": "Download a URL via the browser itself. For anything large (video, archives) where fetch+binary would blow up at its 12MB cap. Straight to disk, never opens the OS save dialog.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "savePath": {
+            "type": "string",
+            "description": "Absolute destination path. The file is moved there after the browser finishes."
+          },
+          "timeout": {
+            "type": "number",
+            "description": "ms, default 120000."
+          }
+        },
+        "required": [
+          "url"
+        ]
+      },
+      "inputSchemaSha256": "67d131d07e6789c5efe9d150501758688b43431f5912d875c7ef158aa6fea075",
+      "parityStatus": "not_implemented"
+    },
+    {
+      "id": "B16",
+      "name": "upload",
+      "source": "src/mcp-server.js",
+      "line": 302,
+      "description": "Attach a local file to the page (no extension can touch the OS file picker). Open the upload UI first. Auto-picks a matching file input; for editors that only accept drag-and-drop (X Article, Notion) pass dropSelector instead. Any size via a file input (browser reads the path); drag-drop caps at 48MB.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Absolute path of the local file."
+          },
+          "selector": {
+            "type": "string",
+            "description": "CSS selector of the file input. Omit to auto-detect by accept type."
+          },
+          "dropSelector": {
+            "type": "string",
+            "description": "Drop the file onto this element instead. Use when the page has no file input."
+          },
+          "tabId": {
+            "type": "number",
+            "description": "Target tab id. Omit to use the active controlled tab."
+          }
+        },
+        "required": [
+          "path"
+        ]
+      },
+      "inputSchemaSha256": "62bddc6664e6d5a5bf5fde6039906292a2a37bf7f5f92dce66e37eca161c6f03",
+      "parityStatus": "not_implemented"
+    },
+    {
+      "id": "B17",
+      "name": "query",
+      "source": "src/mcp-server.js",
+      "line": 319,
+      "description": "Extract structured data by CSS selector (lists, tables), or FIND BY TEXT with `contains`: every visible element whose text includes it, with a selector path and the ref it sits in — use it instead of eval to check \"is X on the page\", read a status label, or find a dropdown option. For lists pass `html:true` first to inspect markup, then `extract`: field → sub-selector, \"@attr\" for attributes, e.g. {title:\".name\", link:\"a@href\"}.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "contains": {
+            "type": "string",
+            "description": "Text to find (case-insensitive); selector then only scopes the search."
+          },
+          "selector": {
+            "type": "string",
+            "description": "CSS selector for the repeating row/card element."
+          },
+          "extract": {
+            "type": "object",
+            "description": "field → sub-selector (optionally \"sel@attr\"). Omit to get plain text per match."
+          },
+          "html": {
+            "type": [
+              "boolean",
+              "number"
+            ],
+            "description": "Return outerHTML of matches instead, to inspect structure. true = 1200 chars each."
+          },
+          "limit": {
+            "type": "number",
+            "description": "Max matches, default 100."
+          },
+          "tabId": {
+            "type": "number",
+            "description": "Target tab id. Omit to use the active controlled tab."
+          }
+        }
+      },
+      "inputSchemaSha256": "4ab3065502c090343a11246949ec695875b7ed6e0c4bc379e27994437ea87de8",
+      "parityStatus": "not_implemented"
+    },
+    {
+      "id": "B18",
+      "name": "act",
+      "source": "src/mcp-server.js",
+      "line": 339,
+      "description": "Your DEFAULT way to act — batch every step you can predict (on form wizards, nearly all). Each step is effect-checked, ONE snapshot returns at the end; every call you merge saves a full model turn. Stops early on no-effect / failure / submit-pay-delete controls. `read` {ref|find|selector, attr?} or {contains} brings an observation back mid-batch. Blocks (one level): `repeat` {steps,until,max} for pagination/load-more; `if` {cond,then,else} for optional banners; `assert` {cond} stops unless the page matches. cond = {urlContains|selectorExists|textContains, not} (OR-ed), or {ref|selector, checked|value|text} for one element. Inside repeat use find/selector, never ref. Elsewhere: ref until the page re-renders, find after.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "steps": {
+            "type": "array",
+            "description": "Up to 20 steps, executed in order.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "do": {
+                  "type": "string",
+                  "enum": [
+                    "click",
+                    "type",
+                    "select",
+                    "fill",
+                    "key",
+                    "wait",
+                    "scroll",
+                    "navigate",
+                    "read",
+                    "repeat",
+                    "if",
+                    "assert"
+                  ]
+                },
+                "ref": {
+                  "type": "string",
+                  "description": "Element ref from the latest snapshot, e.g. \"e3\""
+                },
+                "find": {
+                  "type": "object",
+                  "description": "Locate by role+name from the snapshot instead of by ref. Survives re-renders.",
+                  "properties": {
+                    "role": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "nth": {
+                      "type": "number",
+                      "description": "0-based, when several share a name"
+                    },
+                    "selector": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "selector": {
+                  "type": "string",
+                  "description": "CSS fallback for elements the snapshot cannot see. Skips ref safety checks."
+                },
+                "text": {
+                  "type": "string",
+                  "description": "for type"
+                },
+                "contains": {
+                  "type": "string",
+                  "description": "for read: find visible text"
+                },
+                "attr": {
+                  "type": "string",
+                  "description": "for read: also report this attribute (value, checked, href…)"
+                },
+                "expect": {
+                  "type": "object",
+                  "description": "for click/type/select: same as the expect param; unmet = stop"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "for select"
+                },
+                "key": {
+                  "description": "for key",
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  ]
+                },
+                "fields": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "for fill"
+                },
+                "url": {
+                  "type": "string",
+                  "description": "for navigate"
+                },
+                "for": {
+                  "type": "string",
+                  "enum": [
+                    "selector",
+                    "text",
+                    "idle"
+                  ],
+                  "description": "for wait"
+                },
+                "timeout": {
+                  "type": "number"
+                },
+                "times": {
+                  "type": "number",
+                  "description": "for scroll"
+                },
+                "to": {
+                  "type": "string",
+                  "enum": [
+                    "bottom",
+                    "top"
+                  ],
+                  "description": "for scroll"
+                },
+                "steps": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "for repeat: sub-steps, no ref/no nesting"
+                },
+                "until": {
+                  "type": "object",
+                  "description": "for repeat: stop condition, checked after each pass"
+                },
+                "max": {
+                  "type": "number",
+                  "description": "for repeat: pass cap, default 10 max 25"
+                },
+                "cond": {
+                  "type": "object",
+                  "description": "for if/assert"
+                },
+                "then": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "for if"
+                },
+                "else": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "for if, optional"
+                }
+              },
+              "required": [
+                "do"
+              ]
+            }
+          },
+          "snapshotId": {
+            "type": "string",
+            "description": "snapshotId the ref came from"
+          },
+          "allowSensitive": {
+            "type": "boolean",
+            "description": "Let the batch run through a submit/pay/delete control instead of stopping at it. Off by default on purpose — say so explicitly and it gets recorded in the audit log."
+          },
+          "tabId": {
+            "type": "number",
+            "description": "Target tab id. Omit to use the active controlled tab."
+          }
+        },
+        "required": [
+          "steps"
+        ]
+      },
+      "inputSchemaSha256": "6cccd10d3039659bbdc3c5b77f4fc57d010f8583b50da256e4d41f19f261638d",
+      "parityStatus": "not_implemented"
+    },
+    {
+      "id": "B19",
+      "name": "ask",
+      "source": "src/mcp-server.js",
+      "line": 394,
+      "description": "Hand control back to the user for one step, then continue. For captcha, QR login, SMS/OTP, or any confirmation that should be a human decision. Brings the tab forward, shows a panel, highlights your targets, sends a desktop notification, and blocks until the user acts. Use it instead of retrying a step that needs a human. A \"cancelled\" result means the user said no: stop that task, do not look for another way to do the same thing.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "description": "What the user should do, in their language. Be specific about how you will know it is done."
+          },
+          "title": {
+            "type": "string",
+            "description": "Short panel title. Optional."
+          },
+          "targets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Refs (\"e7\") or CSS selectors to scroll to and flash-highlight. Strongly recommended whenever your prompt mentions a concrete control — it saves the user from hunting for it."
+          },
+          "timeout": {
+            "type": "number",
+            "description": "ms to wait, default 300000 (5 min), max 600000."
+          },
+          "until": {
+            "type": "object",
+            "description": "Auto-finish when the page proves it is done, so the user need not click anything. e.g. {\"urlContains\":\"/dashboard\"} or {\"selectorExists\":\"[data-testid=avatar]\"}.",
+            "properties": {
+              "urlContains": {
+                "type": "string"
+              },
+              "selectorExists": {
+                "type": "string"
+              },
+              "textContains": {
+                "type": "string"
+              }
+            }
+          },
+          "focus": {
+            "type": "boolean",
+            "description": "Bring the tab forward. Default true — the user is being asked to look at it."
+          },
+          "tabId": {
+            "type": "number",
+            "description": "Target tab id. Omit to use the active controlled tab."
+          }
+        },
+        "required": [
+          "prompt"
+        ]
+      },
+      "inputSchemaSha256": "361508a2b97f1a4b5e43c49709ae2d31e30d6da181463cf2abad507e8095db7e",
+      "parityStatus": "not_implemented"
+    },
+    {
+      "id": "B20",
+      "name": "status",
+      "source": "src/mcp-server.js",
+      "line": 430,
+      "description": "One short sentence telling the user what you are about to do, shown on an on-page panel. Call before a multi-step task and whenever the plan changes. Instant, never blocks. Use the user's language.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "≤80 chars, plain text"
+          }
+        },
+        "required": [
+          "text"
+        ]
+      },
+      "inputSchemaSha256": "43f182c778af43dea5a20d94df4779a703de3f160a95712d1b4698f5d3868b90",
+      "parityStatus": "not_implemented"
+    },
+    {
+      "id": "B21",
+      "name": "eval",
+      "source": "src/mcp-server.js",
+      "line": 444,
+      "description": "Run a JS expression in the page. NOTE: fails on any site with a strict CSP (no unsafe-eval) — most large sites. Prefer `query` for data extraction. Isolated world: sees the DOM, not the page's own JS variables.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "expr": {
+            "type": "string"
+          },
+          "tabId": {
+            "type": "number",
+            "description": "Target tab id. Omit to use the active controlled tab."
+          }
+        },
+        "required": [
+          "expr"
+        ]
+      },
+      "inputSchemaSha256": "3f536fc276cf3f52ac240984d392cdc816d208ce28877d9044f5b28606e531a5",
+      "parityStatus": "not_implemented"
+    },
+    {
+      "id": "B22",
+      "name": "learnings",
+      "source": "src/mcp-server.js",
+      "line": 455,
+      "description": "Site notes: APIs, walls, pitfalls from past sessions. Call {domain} before first acting on a site (no args = list sites). Notes may embed runnable ```act scripts — fill {{placeholders}} and run them instead of rediscovering. Learned something non-obvious or mapped a flow? Save the full note back via {domain, save}. Hints, never rules.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "domain": {
+            "type": "string",
+            "description": "Domain or URL"
+          },
+          "save": {
+            "type": "string",
+            "description": "Full note markdown; replaces the local note, merge with get() first"
+          }
+        }
+      },
+      "inputSchemaSha256": "12ba62dc2a031a4579cb4437252a2eba3875180d5a129812038addf468f3f53c",
+      "parityStatus": "not_implemented"
+    },
+    {
+      "id": "B23",
+      "name": "reload",
+      "source": "src/mcp-server.js",
+      "line": 470,
+      "description": "Reload the huashu-chrome extension (chrome.runtime.reload()) so an updated build takes effect — no manual chrome://extensions visit needed. ~2s; bridge auto-reconnects, tabs keep state. DISRUPTIVE: the extension is shared by every tab and every other agent session on this machine — anything mid-flight elsewhere gets cut. Only call right after installing/updating, or when `doctor`/a version-mismatch warning says to — never speculatively.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "inputSchemaSha256": "8243f0af367f188a376f2c17b5eabe872a2f7a979813e0d4e2be6d594c2aa259",
+      "parityStatus": "not_implemented"
+    }
+  ],
+  "files": {
+    "src/mcp-server.js": "0bac5e0be59fcc4821c1341bd8062c1166298ecb949eebf0d3ac00cfb002d272",
+    "src/cli.js": "35bfccc49c0344142c0aa706490622b0a234c201de764113cd6d4087aa381ad1",
+    "src/bridge.js": "803f7d63be98edfe5556d59aaa451d957ce154067f9785fe8d1fab085836d2e2",
+    "extension/manifest.json": "98758c9198f3bb1b450a9d7ef1dec2ed587a78a3ef24bcb609a1e8dd7f7ed893",
+    "LICENSE": "eb13193ce28f85e82685676675ecf3454d4f19a7730c0940c47205c69a8a3cd1",
+    "src/agents.json": "bef971bd15a9a8246b815d425fc8f8a9e99a652022ac96e6298d6cb7bc7ea8a7",
+    "src/guide.html": "874aa212588c2e0b3efeb57c042e896cf47d26463dceb1ab072e5f5864324e0a",
+    "src/install.js": "11e59ae21d4ace838e8cc1093ed21a6f7fac5f81576208fe3bf72dc73bc57adf",
+    "src/lib/host.js": "6a9a3ccc06dfe09651df91beb7f64b37ef81db2625b8da75126429fae16a0cc9",
+    "src/lib/learnings.js": "c2f55eea807d6ebb2459d7f9cf419e3889e9601f38bee9f6197c9eb066fb75b1",
+    "src/lib/paths.js": "0b38700d585ccd456c05c2256b72710e7f9914dd678947cfe99e93558aa5b15c",
+    "src/lib/rpc.js": "8c10a403d0c9c3ae6a01e846b4aa980c6b2b4fe8cafd4087b326328299d5f6c4",
+    "src/lib/version.js": "80201fa68a648dfafcf8826eb0fbd905b33f270995a49b6ab08a870c45bb7fea",
+    "extension/background.js": "a13434109533170733479a9c5600e22ca954ee898e522b42d8001564fe07b3b5",
+    "extension/cdp.js": "16065b2027c0f906adf6bbba634ad0d14d6fd840b36aa3d6cd3979e84d3d6680",
+    "extension/content.js": "0a8bbf0d52793bc7a36e2a6ba9f3a55e0351b338e8edb2ed37d73b55ee64b4f3",
+    "extension/icons/icon128.png": "ca69c2c5ba81c1d1150a982164ec59cab5ebf045d757f29799210dc589914e7d",
+    "extension/icons/icon16.png": "652a3457f2a5a9d7e16c936b94fe5a8cfb48aab4ce946d72db1c3b754c4b374f",
+    "extension/icons/icon48.png": "61cfb7fe81314fb85f7e8567cc547db490bbcf98b6785b0607278dc9c1e8fbcf",
+    "extension/identity.js": "1a19df172dcbbbeb6b7278e0276b88d6dc91c9733297ecb5d72d8352cef2abb9",
+    "extension/mark.js": "a7f29e4b28f5d594a1ea32cc16292da73928d2f554c8caa9495a16135654fe8c",
+    "extension/net-hook.js": "f524b0f55b5120323a247c165fcf663e0a20543c3c7d8a255d40daadd5560702",
+    "extension/offscreen.html": "a0c63ceff492f2bec11ac141b99049afdf02003f4202312d2977562be3adcf0b",
+    "extension/offscreen.js": "5954f0e3827b1a97f8481aa1b0aff63698c98db549eeebd9880f43cd2dfe8141",
+    "extension/popup.html": "a77a3bba06427821d180420bd1b5554bda6e9bb0564c97b60e8370d243765675",
+    "extension/popup.js": "8bb2a69ce991961c64d5e8d3e795d93a9f0b9f2a507b66a66515aa82f620040c",
+    "extension/redact.js": "7bd9ecaa2ee3565679fb530ae28cedfda8b575609a162530f70ea44bb49e4a69",
+    "extension/risk.js": "573410118e5391d855ef19195d40fb7d4004bf83a2e82a6a75a0bbb9b3c64369",
+    "extension/script.js": "047b11cb952d7bd08868c384e1ed5aa8b836957b6ba80cba955cd583f6ba99a3",
+    "docs/协议.md": "cabe69cfae5fb7267a93b51d1cf10d423be5b191fc5ecadab010ce7faca1fb25",
+    "docs/双脑.md": "914339b9cc9b720ee75b9fcd2798d150bb7977a099ae83f1c53822f4581e455a",
+    "docs/对比.md": "fdd3c7f4bb76581c8770ecf7c3ccdc4316f233218f3d9552304a4c852477f55e",
+    "docs/快照格式.md": "9be5d6c7e86101d0087e19b926b95bb6408bb0e9b225e5dfc494bd23ca1d9e9b",
+    "docs/经验/12306.cn.md": "73f9a44abbf3fffb42b3d77b7aeff8173781bfd1e367a2a128d3efaa088be5aa",
+    "docs/经验/appstoreconnect.apple.com.md": "96fc6855b2040471a48646a2bc4cb06cec354972645e4bdeaa6801b50d959bcd",
+    "docs/经验/bilibili.com.md": "c9830058c67b856b69711ea8e235f476a84eda782d7bec5745f9b1d835e1db31",
+    "docs/经验/chrome.google.com.md": "51f8a7b4777e36734ed6f6aa46bba847a73e903b407600cea443493fa57a6274",
+    "docs/经验/damai.cn.md": "56854b2223e0eecfc63255d64880a5057ec05abf8a5d3328782fc4d79641ebe9",
+    "docs/经验/docs.qq.com.md": "ef3749f772dab0819ac2fc82155870a6f1e28db4985e38f33198ade1cc4279c6",
+    "docs/经验/douban.com.md": "ab5762a1a477b3390fa0308632e15751fc010f7f015e49562261cfadabc03fc8",
+    "docs/经验/feishu.cn.md": "124f387c845dfd8269621851c8c69d790d3f01af68402980399a26c3f1817e64",
+    "docs/经验/flappybird.io.md": "999638bd9437dd5538470ca81f63af9590bdb2f89b90707030f92736f11dc144",
+    "docs/经验/icloud.developer.apple.com.md": "81bb7feaed4f3eb70f4f36fac6a03fc5380d6c5926944630404509df9f71a8cd",
+    "docs/经验/jd.com.md": "9c8c7c62c2eaa645ae42304719394b4c6d9791e9434c2254f15024a7278815b0",
+    "docs/经验/maimai.cn.md": "3b4a0f97ffb0a416cdf3cf7989a52019913498d49fac8784c58f3b91d1f16209",
+    "docs/经验/okjike.com.md": "74ac6cb1777364cf3747cc306bf3d198490758018ca174a9171b19179db543c1",
+    "docs/经验/ollama.com.md": "c4381ba248c5a039f177b3e352037c4c6536e9f9edb95412019f2f22f6ca7bd5",
+    "docs/经验/scholar.google.com.md": "d227c24061986c1c32bf2549d3aa4d2defd53d28761769c5b8ab8432d1408831",
+    "docs/经验/sudoku.com.md": "cc86fd213488247a78de45b859d156c96273a3cbbc75dc2a870f97af1a924596",
+    "docs/经验/taobao.com.md": "9e5b716a3849dacdd4547a8863fef92057b4aedb09281add06909d250958bf85",
+    "docs/经验/weibo.cn.md": "4d7e47e61bd3cf57e18b9b486c34ccbc63658f50623ecc130e518e26081f97c2",
+    "docs/经验/weixin.qq.com.md": "63f766cf28718c7e0902e23a82215d1f7826cc0c781eeeeb8854ed6b64a704e8",
+    "docs/经验/weixin.sogou.com.md": "74c36c663563c4fdeab7a577e929d7e34f61ad28b7a13908613b277e8ab5b1e8",
+    "docs/经验/x.com.md": "482437ebb4d307cfd2fc6333fa5a31a4c28470c9cafe0a894fdbf9076d1deb0a",
+    "docs/经验/xiaohongshu.com.md": "3c69f45fb329435f7df77938d6a367f0ce42c4f2196a6f865b1a370bc065327a",
+    "docs/经验/zhihu.com.md": "3781882dd9ae6657ce17357b57d838a9b946e4a2d60e2ff0b6ae693c9ebb5f70",
+    "docs/能力模型.md": "8e4a481a91d165b608a550ef3d46fbe90d620cdd200540c449cfb49f0c83c96c",
+    "package.json": "f0f9659326252de48164002a92531df7c28a6c7efe5729deb0f1160b32655aef"
+  },
+  "siteNotes": [
+    "12306.cn.md",
+    "appstoreconnect.apple.com.md",
+    "bilibili.com.md",
+    "chrome.google.com.md",
+    "damai.cn.md",
+    "docs.qq.com.md",
+    "douban.com.md",
+    "feishu.cn.md",
+    "flappybird.io.md",
+    "icloud.developer.apple.com.md",
+    "jd.com.md",
+    "maimai.cn.md",
+    "okjike.com.md",
+    "ollama.com.md",
+    "scholar.google.com.md",
+    "sudoku.com.md",
+    "taobao.com.md",
+    "weibo.cn.md",
+    "weixin.qq.com.md",
+    "weixin.sogou.com.md",
+    "x.com.md",
+    "xiaohongshu.com.md",
+    "zhihu.com.md"
+  ],
+  "manifestVersion": 2,
+  "package": {
+    "name": "huashu-chrome",
+    "version": "1.2.0",
+    "license": "MIT",
+    "engines": {
+      "node": ">=20"
+    },
+    "resolved": "https://registry.npmjs.org/huashu-chrome/-/huashu-chrome-1.2.0.tgz",
+    "integrity": "sha512-C3MyxjDKwpwfDoM1FH0xHX2Ega173UkTWEw5Vv1i0NSHiSVPzYzoeqF7RXoQr72Z5vsOr5zG4gBx0p7kuCc1DA==",
+    "provenance": "resolved/integrity from the existing npm installation lock; archive integrity not revalidated in this review",
+    "gitCommit": null
+  },
+  "schemaSnapshot": {
+    "source": "src/mcp-server.js",
+    "method": "Evaluated only the static REF..TOOLS declarations without module imports or server startup; JSON.stringify(inputSchema), SHA-256",
+    "exactToolDefinitions": true,
+    "includesImplementationOnlyParameters": false,
+    "defaultsInDescriptionsRequireRuntimeVerification": true,
+    "outputSchemaDeclared": false,
+    "notes": "This freezes source declarations, not behavior parity. MCP-side pagination, file transfer, response MIME/isError, bridge budgets, and extension behavior require separate acceptance evidence."
+  }
+}

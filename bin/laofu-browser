@@ -1,0 +1,12 @@
+#!/bin/sh
+set -eu
+LAOFU_ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+if [ -x "$LAOFU_ROOT/node/bin/node" ]; then
+  LAOFU_NODE="$LAOFU_ROOT/node/bin/node"
+elif [ -x "$LAOFU_ROOT/.runtime/node-v22.23.2-darwin-arm64/bin/node" ]; then
+  LAOFU_NODE="$LAOFU_ROOT/.runtime/node-v22.23.2-darwin-arm64/bin/node"
+else
+  LAOFU_NODE=$(command -v node)
+fi
+if [ -d "$LAOFU_ROOT/browsers" ]; then export PLAYWRIGHT_BROWSERS_PATH="$LAOFU_ROOT/browsers"; fi
+exec "$LAOFU_NODE" "$LAOFU_ROOT/dist/cli.js" "$@"

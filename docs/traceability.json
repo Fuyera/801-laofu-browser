@@ -1,0 +1,803 @@
+{
+  "version": "0.1.0-dev.1",
+  "updatedAt": "2026-09-14T13:49:43.465Z",
+  "overallGate": "P4 not passed; P5 not completed",
+  "requirements": [
+    {
+      "requirementId": "B01",
+      "name": "snapshot",
+      "schema": "docs/LAOFU_BROWSER_BASELINE.json#/tools/0/inputSchema",
+      "parameterCount": 1,
+      "implementation": [
+        "src/worker.ts",
+        "src/browser.ts",
+        "scripts/build-engine.mjs",
+        "vendor/huashu-chrome-1.2.0/src/mcp-server.js",
+        "vendor/huashu-chrome-1.2.0/extension/background.js"
+      ],
+      "tests": [
+        "scripts/tool-regression.mjs",
+        "scripts/upstream-parity.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/tools.json",
+        "docs/evidence/parity.json"
+      ],
+      "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
+      "status": "verified",
+      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+    },
+    {
+      "requirementId": "B02",
+      "name": "navigate",
+      "schema": "docs/LAOFU_BROWSER_BASELINE.json#/tools/1/inputSchema",
+      "parameterCount": 3,
+      "implementation": [
+        "src/worker.ts",
+        "src/browser.ts",
+        "scripts/build-engine.mjs",
+        "vendor/huashu-chrome-1.2.0/src/mcp-server.js",
+        "vendor/huashu-chrome-1.2.0/extension/background.js"
+      ],
+      "tests": [
+        "scripts/tool-regression.mjs",
+        "scripts/upstream-parity.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/tools.json",
+        "docs/evidence/parity.json"
+      ],
+      "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
+      "status": "verified",
+      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+    },
+    {
+      "requirementId": "B03",
+      "name": "click",
+      "schema": "docs/LAOFU_BROWSER_BASELINE.json#/tools/2/inputSchema",
+      "parameterCount": 10,
+      "implementation": [
+        "src/worker.ts",
+        "src/browser.ts",
+        "scripts/build-engine.mjs",
+        "vendor/huashu-chrome-1.2.0/src/mcp-server.js",
+        "vendor/huashu-chrome-1.2.0/extension/background.js"
+      ],
+      "tests": [
+        "scripts/tool-regression.mjs",
+        "scripts/upstream-parity.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/tools.json",
+        "docs/evidence/parity.json"
+      ],
+      "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
+      "status": "verified",
+      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+    },
+    {
+      "requirementId": "B04",
+      "name": "type",
+      "schema": "docs/LAOFU_BROWSER_BASELINE.json#/tools/3/inputSchema",
+      "parameterCount": 10,
+      "implementation": [
+        "src/worker.ts",
+        "src/browser.ts",
+        "scripts/build-engine.mjs",
+        "vendor/huashu-chrome-1.2.0/src/mcp-server.js",
+        "vendor/huashu-chrome-1.2.0/extension/background.js"
+      ],
+      "tests": [
+        "scripts/tool-regression.mjs",
+        "scripts/upstream-parity.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/tools.json",
+        "docs/evidence/parity.json"
+      ],
+      "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
+      "status": "verified",
+      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+    },
+    {
+      "requirementId": "B05",
+      "name": "select",
+      "schema": "docs/LAOFU_BROWSER_BASELINE.json#/tools/4/inputSchema",
+      "parameterCount": 6,
+      "implementation": [
+        "src/worker.ts",
+        "src/browser.ts",
+        "scripts/build-engine.mjs",
+        "vendor/huashu-chrome-1.2.0/src/mcp-server.js",
+        "vendor/huashu-chrome-1.2.0/extension/background.js"
+      ],
+      "tests": [
+        "scripts/tool-regression.mjs",
+        "scripts/upstream-parity.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/tools.json",
+        "docs/evidence/parity.json"
+      ],
+      "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
+      "status": "verified",
+      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+    },
+    {
+      "requirementId": "B06",
+      "name": "fill",
+      "schema": "docs/LAOFU_BROWSER_BASELINE.json#/tools/5/inputSchema",
+      "parameterCount": 5,
+      "implementation": [
+        "src/worker.ts",
+        "src/browser.ts",
+        "scripts/build-engine.mjs",
+        "vendor/huashu-chrome-1.2.0/src/mcp-server.js",
+        "vendor/huashu-chrome-1.2.0/extension/background.js"
+      ],
+      "tests": [
+        "scripts/tool-regression.mjs",
+        "scripts/upstream-parity.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/tools.json",
+        "docs/evidence/parity.json"
+      ],
+      "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
+      "status": "verified",
+      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+    },
+    {
+      "requirementId": "B07",
+      "name": "key",
+      "schema": "docs/LAOFU_BROWSER_BASELINE.json#/tools/6/inputSchema",
+      "parameterCount": 6,
+      "implementation": [
+        "src/worker.ts",
+        "src/browser.ts",
+        "scripts/build-engine.mjs",
+        "vendor/huashu-chrome-1.2.0/src/mcp-server.js",
+        "vendor/huashu-chrome-1.2.0/extension/background.js"
+      ],
+      "tests": [
+        "scripts/tool-regression.mjs",
+        "scripts/upstream-parity.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/tools.json",
+        "docs/evidence/parity.json"
+      ],
+      "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
+      "status": "verified",
+      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+    },
+    {
+      "requirementId": "B08",
+      "name": "read_text",
+      "schema": "docs/LAOFU_BROWSER_BASELINE.json#/tools/7/inputSchema",
+      "parameterCount": 2,
+      "implementation": [
+        "src/worker.ts",
+        "src/browser.ts",
+        "scripts/build-engine.mjs",
+        "vendor/huashu-chrome-1.2.0/src/mcp-server.js",
+        "vendor/huashu-chrome-1.2.0/extension/background.js"
+      ],
+      "tests": [
+        "scripts/tool-regression.mjs",
+        "scripts/upstream-parity.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/tools.json",
+        "docs/evidence/parity.json"
+      ],
+      "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
+      "status": "verified",
+      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+    },
+    {
+      "requirementId": "B09",
+      "name": "screenshot",
+      "schema": "docs/LAOFU_BROWSER_BASELINE.json#/tools/8/inputSchema",
+      "parameterCount": 6,
+      "implementation": [
+        "src/worker.ts",
+        "src/browser.ts",
+        "scripts/build-engine.mjs",
+        "vendor/huashu-chrome-1.2.0/src/mcp-server.js",
+        "vendor/huashu-chrome-1.2.0/extension/background.js"
+      ],
+      "tests": [
+        "scripts/tool-regression.mjs",
+        "scripts/upstream-parity.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/tools.json",
+        "docs/evidence/parity.json"
+      ],
+      "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
+      "status": "verified",
+      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+    },
+    {
+      "requirementId": "B10",
+      "name": "tabs",
+      "schema": "docs/LAOFU_BROWSER_BASELINE.json#/tools/9/inputSchema",
+      "parameterCount": 5,
+      "implementation": [
+        "src/worker.ts",
+        "src/browser.ts",
+        "scripts/build-engine.mjs",
+        "vendor/huashu-chrome-1.2.0/src/mcp-server.js",
+        "vendor/huashu-chrome-1.2.0/extension/background.js"
+      ],
+      "tests": [
+        "scripts/tool-regression.mjs",
+        "scripts/upstream-parity.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/tools.json",
+        "docs/evidence/parity.json"
+      ],
+      "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
+      "status": "verified",
+      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+    },
+    {
+      "requirementId": "B11",
+      "name": "wait",
+      "schema": "docs/LAOFU_BROWSER_BASELINE.json#/tools/10/inputSchema",
+      "parameterCount": 4,
+      "implementation": [
+        "src/worker.ts",
+        "src/browser.ts",
+        "scripts/build-engine.mjs",
+        "vendor/huashu-chrome-1.2.0/src/mcp-server.js",
+        "vendor/huashu-chrome-1.2.0/extension/background.js"
+      ],
+      "tests": [
+        "scripts/tool-regression.mjs",
+        "scripts/upstream-parity.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/tools.json",
+        "docs/evidence/parity.json"
+      ],
+      "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
+      "status": "verified",
+      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+    },
+    {
+      "requirementId": "B12",
+      "name": "network",
+      "schema": "docs/LAOFU_BROWSER_BASELINE.json#/tools/11/inputSchema",
+      "parameterCount": 6,
+      "implementation": [
+        "src/worker.ts",
+        "src/browser.ts",
+        "scripts/build-engine.mjs",
+        "vendor/huashu-chrome-1.2.0/src/mcp-server.js",
+        "vendor/huashu-chrome-1.2.0/extension/background.js"
+      ],
+      "tests": [
+        "scripts/tool-regression.mjs",
+        "scripts/upstream-parity.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/tools.json",
+        "docs/evidence/parity.json"
+      ],
+      "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
+      "status": "verified",
+      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+    },
+    {
+      "requirementId": "B13",
+      "name": "fetch",
+      "schema": "docs/LAOFU_BROWSER_BASELINE.json#/tools/12/inputSchema",
+      "parameterCount": 8,
+      "implementation": [
+        "src/worker.ts",
+        "src/browser.ts",
+        "scripts/build-engine.mjs",
+        "vendor/huashu-chrome-1.2.0/src/mcp-server.js",
+        "vendor/huashu-chrome-1.2.0/extension/background.js"
+      ],
+      "tests": [
+        "scripts/tool-regression.mjs",
+        "scripts/upstream-parity.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/tools.json",
+        "docs/evidence/parity.json"
+      ],
+      "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
+      "status": "verified",
+      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+    },
+    {
+      "requirementId": "B14",
+      "name": "scroll",
+      "schema": "docs/LAOFU_BROWSER_BASELINE.json#/tools/13/inputSchema",
+      "parameterCount": 6,
+      "implementation": [
+        "src/worker.ts",
+        "src/browser.ts",
+        "scripts/build-engine.mjs",
+        "vendor/huashu-chrome-1.2.0/src/mcp-server.js",
+        "vendor/huashu-chrome-1.2.0/extension/background.js"
+      ],
+      "tests": [
+        "scripts/tool-regression.mjs",
+        "scripts/upstream-parity.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/tools.json",
+        "docs/evidence/parity.json"
+      ],
+      "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
+      "status": "verified",
+      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+    },
+    {
+      "requirementId": "B15",
+      "name": "download",
+      "schema": "docs/LAOFU_BROWSER_BASELINE.json#/tools/14/inputSchema",
+      "parameterCount": 3,
+      "implementation": [
+        "src/worker.ts",
+        "src/browser.ts",
+        "scripts/build-engine.mjs",
+        "vendor/huashu-chrome-1.2.0/src/mcp-server.js",
+        "vendor/huashu-chrome-1.2.0/extension/background.js"
+      ],
+      "tests": [
+        "scripts/tool-regression.mjs",
+        "scripts/upstream-parity.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/tools.json",
+        "docs/evidence/parity.json"
+      ],
+      "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
+      "status": "verified",
+      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+    },
+    {
+      "requirementId": "B16",
+      "name": "upload",
+      "schema": "docs/LAOFU_BROWSER_BASELINE.json#/tools/15/inputSchema",
+      "parameterCount": 4,
+      "implementation": [
+        "src/worker.ts",
+        "src/browser.ts",
+        "scripts/build-engine.mjs",
+        "vendor/huashu-chrome-1.2.0/src/mcp-server.js",
+        "vendor/huashu-chrome-1.2.0/extension/background.js"
+      ],
+      "tests": [
+        "scripts/tool-regression.mjs",
+        "scripts/upstream-parity.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/tools.json",
+        "docs/evidence/parity.json"
+      ],
+      "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
+      "status": "verified",
+      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+    },
+    {
+      "requirementId": "B17",
+      "name": "query",
+      "schema": "docs/LAOFU_BROWSER_BASELINE.json#/tools/16/inputSchema",
+      "parameterCount": 6,
+      "implementation": [
+        "src/worker.ts",
+        "src/browser.ts",
+        "scripts/build-engine.mjs",
+        "vendor/huashu-chrome-1.2.0/src/mcp-server.js",
+        "vendor/huashu-chrome-1.2.0/extension/background.js"
+      ],
+      "tests": [
+        "scripts/tool-regression.mjs",
+        "scripts/upstream-parity.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/tools.json",
+        "docs/evidence/parity.json"
+      ],
+      "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
+      "status": "verified",
+      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+    },
+    {
+      "requirementId": "B18",
+      "name": "act",
+      "schema": "docs/LAOFU_BROWSER_BASELINE.json#/tools/17/inputSchema",
+      "parameterCount": 4,
+      "implementation": [
+        "src/worker.ts",
+        "src/browser.ts",
+        "scripts/build-engine.mjs",
+        "vendor/huashu-chrome-1.2.0/src/mcp-server.js",
+        "vendor/huashu-chrome-1.2.0/extension/background.js"
+      ],
+      "tests": [
+        "scripts/tool-regression.mjs",
+        "scripts/upstream-parity.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/tools.json",
+        "docs/evidence/parity.json"
+      ],
+      "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
+      "status": "verified",
+      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+    },
+    {
+      "requirementId": "B19",
+      "name": "ask",
+      "schema": "docs/LAOFU_BROWSER_BASELINE.json#/tools/18/inputSchema",
+      "parameterCount": 7,
+      "implementation": [
+        "src/worker.ts",
+        "src/browser.ts",
+        "scripts/build-engine.mjs",
+        "vendor/huashu-chrome-1.2.0/src/mcp-server.js",
+        "vendor/huashu-chrome-1.2.0/extension/background.js"
+      ],
+      "tests": [
+        "scripts/tool-regression.mjs",
+        "scripts/upstream-parity.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/tools.json",
+        "docs/evidence/parity.json"
+      ],
+      "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
+      "status": "verified",
+      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+    },
+    {
+      "requirementId": "B20",
+      "name": "status",
+      "schema": "docs/LAOFU_BROWSER_BASELINE.json#/tools/19/inputSchema",
+      "parameterCount": 1,
+      "implementation": [
+        "src/worker.ts",
+        "src/browser.ts",
+        "scripts/build-engine.mjs",
+        "vendor/huashu-chrome-1.2.0/src/mcp-server.js",
+        "vendor/huashu-chrome-1.2.0/extension/background.js"
+      ],
+      "tests": [
+        "scripts/tool-regression.mjs",
+        "scripts/upstream-parity.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/tools.json",
+        "docs/evidence/parity.json"
+      ],
+      "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
+      "status": "verified",
+      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+    },
+    {
+      "requirementId": "B21",
+      "name": "eval",
+      "schema": "docs/LAOFU_BROWSER_BASELINE.json#/tools/20/inputSchema",
+      "parameterCount": 2,
+      "implementation": [
+        "src/worker.ts",
+        "src/browser.ts",
+        "scripts/build-engine.mjs",
+        "vendor/huashu-chrome-1.2.0/src/mcp-server.js",
+        "vendor/huashu-chrome-1.2.0/extension/background.js"
+      ],
+      "tests": [
+        "scripts/tool-regression.mjs",
+        "scripts/upstream-parity.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/tools.json",
+        "docs/evidence/parity.json"
+      ],
+      "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
+      "status": "verified",
+      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+    },
+    {
+      "requirementId": "B22",
+      "name": "learnings",
+      "schema": "docs/LAOFU_BROWSER_BASELINE.json#/tools/21/inputSchema",
+      "parameterCount": 2,
+      "implementation": [
+        "src/worker.ts",
+        "src/browser.ts",
+        "scripts/build-engine.mjs",
+        "vendor/huashu-chrome-1.2.0/src/mcp-server.js",
+        "vendor/huashu-chrome-1.2.0/extension/background.js"
+      ],
+      "tests": [
+        "scripts/tool-regression.mjs",
+        "scripts/upstream-parity.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/tools.json",
+        "docs/evidence/parity.json"
+      ],
+      "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
+      "status": "verified",
+      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+    },
+    {
+      "requirementId": "B23",
+      "name": "reload",
+      "schema": "docs/LAOFU_BROWSER_BASELINE.json#/tools/22/inputSchema",
+      "parameterCount": 0,
+      "implementation": [
+        "src/worker.ts",
+        "src/browser.ts",
+        "scripts/build-engine.mjs",
+        "vendor/huashu-chrome-1.2.0/src/mcp-server.js",
+        "vendor/huashu-chrome-1.2.0/extension/background.js"
+      ],
+      "tests": [
+        "scripts/tool-regression.mjs",
+        "scripts/upstream-parity.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/tools.json",
+        "docs/evidence/parity.json"
+      ],
+      "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
+      "status": "verified",
+      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+    },
+    {
+      "requirementId": "L01",
+      "status": "verified",
+      "implementation": [
+        "src/article.ts"
+      ],
+      "tests": [
+        "scripts/article-console-regression.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/article-console.json"
+      ],
+      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+    },
+    {
+      "requirementId": "L02",
+      "status": "partial",
+      "implementation": [
+        "src/server.ts",
+        "src/client.ts",
+        "sdk/python/laofu_browser/__init__.py",
+        "src/mcp.ts"
+      ],
+      "tests": [
+        "scripts/sdk-smoke.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/sdk.json"
+      ],
+      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+    },
+    {
+      "requirementId": "L03",
+      "status": "partial",
+      "implementation": [
+        "src/worker.ts",
+        "src/relay.ts"
+      ],
+      "tests": [
+        "scripts/handoff-regression.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/handoff.json"
+      ],
+      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+    },
+    {
+      "requirementId": "L04",
+      "status": "verified",
+      "implementation": [
+        "src/broker.ts",
+        "src/worker.ts"
+      ],
+      "tests": [
+        "scripts/handoff-regression.mjs",
+        "scripts/attach-regression.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/handoff.json",
+        "docs/evidence/attach.json"
+      ],
+      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+    },
+    {
+      "requirementId": "L05",
+      "status": "verified",
+      "implementation": [
+        "src/article.ts"
+      ],
+      "tests": [
+        "test/article.test.ts",
+        "scripts/article-console-regression.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/article-console.json"
+      ],
+      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+    },
+    {
+      "requirementId": "L06",
+      "status": "verified",
+      "implementation": [
+        "src/store.ts",
+        "src/broker.ts",
+        "src/worker.ts"
+      ],
+      "tests": [
+        "scripts/fault-regression.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/faults.json"
+      ],
+      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+    },
+    {
+      "requirementId": "L07",
+      "status": "verified",
+      "implementation": [
+        "src/store.ts",
+        "src/server.ts"
+      ],
+      "tests": [
+        "test/store.test.ts",
+        "scripts/performance-probe.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/performance.json"
+      ],
+      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+    },
+    {
+      "requirementId": "R01",
+      "status": "blocked",
+      "implementation": [
+        "src/network.ts",
+        "src/relay.ts",
+        "deploy/isolated.mjs"
+      ],
+      "tests": [
+        "test/policy.test.ts",
+        "scripts/network-probe.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/isolation.json"
+      ],
+      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+    },
+    {
+      "requirementId": "R02",
+      "status": "verified",
+      "implementation": [
+        "src/store.ts",
+        "src/broker.ts",
+        "src/worker.ts"
+      ],
+      "tests": [
+        "scripts/fault-regression.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/faults.json"
+      ],
+      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+    },
+    {
+      "requirementId": "R03",
+      "status": "verified",
+      "implementation": [
+        "scripts/download-handler.txt",
+        "src/worker.ts",
+        "src/broker.ts"
+      ],
+      "tests": [
+        "scripts/download-regression.mjs",
+        "scripts/handoff-regression.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/downloads.json",
+        "docs/evidence/handoff.json"
+      ],
+      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+    },
+    {
+      "requirementId": "R04",
+      "status": "partial",
+      "implementation": [
+        "src/catalog.ts",
+        "src/contracts.ts",
+        "src/hosts.ts",
+        "scripts/build-engine.mjs"
+      ],
+      "tests": [
+        "scripts/upstream-parity.mjs",
+        "scripts/export-contract.mjs",
+        "test/hosts.test.ts"
+      ],
+      "evidence": [
+        "docs/evidence/parity.json",
+        "docs/evidence/tools.json"
+      ],
+      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+    },
+    {
+      "requirementId": "R05",
+      "status": "verified",
+      "implementation": [
+        "src/worker.ts",
+        "src/broker.ts",
+        "web/main.tsx"
+      ],
+      "tests": [
+        "scripts/handoff-regression.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/handoff.json"
+      ],
+      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+    },
+    {
+      "requirementId": "R06",
+      "status": "partial",
+      "implementation": [
+        "src/artifacts.ts",
+        "src/network.ts",
+        "src/server.ts"
+      ],
+      "tests": [
+        "test/boundaries.test.ts",
+        "test/policy.test.ts"
+      ],
+      "evidence": [
+        "docs/evidence/article-console.json",
+        "docs/evidence/isolation.json"
+      ],
+      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+    },
+    {
+      "requirementId": "R07",
+      "status": "verified",
+      "implementation": [
+        "src/article.ts"
+      ],
+      "tests": [
+        "scripts/article-console-regression.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/article-console.json"
+      ],
+      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+    },
+    {
+      "requirementId": "R08",
+      "status": "partial",
+      "implementation": [
+        "src/server.ts",
+        "sdk"
+      ],
+      "tests": [
+        "scripts/sdk-smoke.mjs"
+      ],
+      "evidence": [
+        "docs/evidence/sdk.json"
+      ],
+      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+    }
+  ]
+}

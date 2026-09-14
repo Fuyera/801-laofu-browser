@@ -1,0 +1,103 @@
+{
+  "environment": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "node": "v22.23.2",
+    "upstream": "1.2.0",
+    "playwright": "1.63.0"
+  },
+  "results": [
+    {
+      "label": "B10 tabs/new",
+      "status": "passed"
+    },
+    {
+      "label": "B02 navigate",
+      "status": "passed"
+    },
+    {
+      "label": "B01 snapshot + DOM/iframe",
+      "status": "passed"
+    },
+    {
+      "label": "B04 type + clear + expect",
+      "status": "passed"
+    },
+    {
+      "label": "B05 select",
+      "status": "passed"
+    },
+    {
+      "label": "B03 click + real + expect",
+      "status": "passed"
+    },
+    {
+      "label": "B06 fill stateful refs",
+      "status": "passed"
+    },
+    {
+      "label": "B07 key sequence",
+      "status": "passed"
+    },
+    {
+      "label": "B08 read_text formats",
+      "status": "passed"
+    },
+    {
+      "label": "B09 screenshot JPEG/PNG + artifact",
+      "status": "passed"
+    },
+    {
+      "label": "B11 wait selector/text/idle",
+      "status": "passed"
+    },
+    {
+      "label": "B12 network capture + response",
+      "status": "passed"
+    },
+    {
+      "label": "B13 fetch pagination + binary",
+      "status": "passed"
+    },
+    {
+      "label": "B14 scroll",
+      "status": "passed"
+    },
+    {
+      "label": "B15 download 5 MiB artifact",
+      "status": "passed"
+    },
+    {
+      "label": "B16 upload file input and drop",
+      "status": "passed"
+    },
+    {
+      "label": "B17 query extracted table",
+      "status": "passed"
+    },
+    {
+      "label": "B18 act repeat/if/assert",
+      "status": "passed"
+    },
+    {
+      "label": "B19 ask completion predicate",
+      "status": "passed"
+    },
+    {
+      "label": "B20 status",
+      "status": "passed"
+    },
+    {
+      "label": "B21 eval async",
+      "status": "passed"
+    },
+    {
+      "label": "B22 learnings versioned save/read",
+      "status": "passed"
+    },
+    {
+      "label": "B23 reload extension reconnect",
+      "status": "passed"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/faults-igwZLL",
+  "results": [
+    {
+      "case": "service killed after external effect before acknowledgment; original id replay does not resend",
+      "passed": true,
+      "effects": 1,
+      "jobId": "cmd_4163b7c4251c4d9cb794b04af9247b4b"
+    },
+    {
+      "case": "old worker reconnect and explicit recovery do not replay the write",
+      "passed": true
+    },
+    {
+      "case": "cancel while act is executing stops subsequent atomic steps",
+      "passed": true,
+      "jobId": "cmd_433c3f89c0d746aa9fc898d42f6e2633"
+    },
+    {
+      "case": "bridge killed after effect before reply, identity replay does not resend; profile quarantined",
+      "passed": true,
+      "jobId": "cmd_0e38653811074c7da8ff116af8053cd2"
+    }
+  ],
+  "effects": [
+    1789392966741,
+    1789392982565,
+    1789392985261
+  ]
+}
