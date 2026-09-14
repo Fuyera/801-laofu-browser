@@ -2,9 +2,11 @@
 
 当前内部开发版先交付macOS arm64。Ubuntu24.04 x86_64、Windows11 x86_64尚未实际验收，不能把Mac Docker内的Linux arm64结果算成这些目标系统通过。
 
+日常登录、采集和人工接手见 [用户指南](USER_GUIDE.md)，源码与测试环境见 [研发指南](DEVELOPMENT.md)。2026-09-14 本机完整回归见 [测试报告](TEST_REPORT.md)：安装回退10项通过，隔离网络仍为7/8。
+
 ## 固定Mac制品
 
-`releases/laofu-browser-0.1.0-dev.1-macos-arm64.tar.gz` 包含源码、锁文件、生成扩展、服务、控制台、Node22.23.2、Chromium及依赖。旁边的sha256校验包完整性；它不等于第三方签名。RELEASE.json保存逐文件哈希及平台/数据库范围。包不包含本机账号、浏览器profile或测试运行凭据。
+`releases/laofu-browser-0.1.0-dev.1-macos-arm64.tar.gz` 包含源码、锁文件、生成扩展、服务、控制台、Node22.23.2、Chromium及依赖。旁边的sha256校验包完整性；它不等于第三方签名。RELEASE.json保存来源提交、工作区是否有未提交改动、逐文件哈希及平台/数据库范围。包外DELIVERY.json记录各压缩包的构建提交、哈希、Docker镜像身份及验证结果；同一开发版本重打包时按这些字段区分。包不包含本机账号、浏览器profile或测试运行凭据。
 
 解压后可直接运行`bin/laofu-browser`；不需要全局安装npm包。版本管理器用固定Node运行：
 

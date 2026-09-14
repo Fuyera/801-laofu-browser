@@ -75,6 +75,9 @@ try {
   }
 } finally {
   fixture.close();
+  // The dedicated browser may retain a speculative/keep-alive connection.
+  // Close only this test server's sockets so a completed probe can exit.
+  fixture.closeAllConnections();
 }
 const range = (key) => ({
   min: Math.min(...samples.map((x) => x[key])),

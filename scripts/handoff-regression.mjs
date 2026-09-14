@@ -8,7 +8,8 @@ import { createServer } from "../dist/server.js";
 import { BrowserClient } from "../dist/client.js";
 const root = path.resolve("."),
   home = fs.mkdtempSync(path.join(root, "workspace/handoff-")),
-  name = "lb-handoff-" + Date.now();
+  name = "lb-handoff-" + Date.now(),
+  image = process.env.LAOFU_TEST_IMAGE || "laofu-browser:0.1.0-dev.1";
 let clicks = 0;
 const fixture = http.createServer((req, res) => {
   res.setHeader("content-type", "text/html; charset=utf-8");
@@ -82,7 +83,7 @@ try {
     `type=bind,src=${file},dst=/data/worker.json`,
     "--entrypoint",
     "node",
-    "laofu-browser:0.1.0-dev.1",
+    image,
     "scripts/container-entry.mjs",
   ]);
   await wait(async () =>

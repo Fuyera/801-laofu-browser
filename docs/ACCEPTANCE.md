@@ -4,6 +4,8 @@
 
 本报告中的 verified 只适用于对应场景和环境，不表示一个工具所有参数组合、所有站点或所有宿主均已经实测。静态基线中的 not_implemented 是设计冻结时的历史字段，当前映射以本报告和 [traceability.json](traceability.json) 为准。
 
+2026-09-14 完整本机复测：**17 组检查，16 组通过、1 组隔离网络检查未通过**。19 项行为/HTTP、23 工具、25 项原版对照及安装回退等已重新执行。详细命令、修正和缺项见 [本轮测试报告](TEST_REPORT.md) 与 [机器可读结果](evidence/full-test.json)。
+
 ## 当前交付及环境
 
 - 独立801工程、不可变58文件上游快照、精确依赖和锁文件、补丁生成器、扩展、HTTP服务、执行端、五区React控制台、OpenAPI/Schema。
@@ -20,7 +22,7 @@
 
 ## 证据索引
 
-固定交付包内的 [evidence/index.json](evidence/index.json) 保存本轮报告副本及SHA-256；原始详细现场保留在801的workspace下，不把凭据、真实Cookie、浏览器profile或故障现场数据库加入发行包。
+当前仓库的 [evidence/index.json](evidence/index.json) 保存本轮报告、截图来源及SHA-256；原始详细现场保留在801的workspace下，不把凭据、真实Cookie、浏览器profile或故障现场数据库加入证据包。压缩包中的证据对应其构建时快照，具体提交与哈希见包外 `releases/DELIVERY.json`。
 
 |报告|实测结论|边界|
 |---|---|---|
@@ -34,7 +36,9 @@
 |[install.json](evidence/install.json)|固定包独立安装、真实采集、文件保留、篡改/额外文件拒绝、兼容升级、回退、启动失败恢复、备份、plist语法|同一程序的合成版本切换和故意失败版本；未启用系统自启动|
 |[downloads.json](evidence/downloads.json)|32MiB慢速流超时和取消后传输停止、无完整产物、原键不重放|状态保守地保留unknown；超时后profile可能需核验恢复|
 |[isolation.json](evidence/isolation.json)|8项中7项通过；nonRoot、实际browserSandbox、internalNetwork、directEgressDenied、controlRoutesDenied、privateNetworkDenied、noSharedDesktop|publicEgressAllowed=false，未提交通过证明，产品调用仍拒绝|
-|[performance.json](evidence/performance.json)|同一180段本地页面连续3次约1024–1026ms；每次8个工具步骤，0模型调用|含SDK500ms轮询；不是公网SLO。200ms进程树RSS采样约1.75–2.09GB，含共享内存重复计数，不是独占内存|
+|[performance.json](evidence/performance.json)|同一180段本地页面连续3次510–1029ms；每次8个工具步骤，0模型调用；修正连接清理后正常退出|含SDK500ms轮询；不是公网SLO。200ms进程树RSS采样约2.61–2.95GB，含共享内存重复计数与既有浏览器状态，不是独占内存|
+|[capture-verification.json](evidence/capture-verification.json)|既有新公众号现场任务成功；本轮离线复核30张图片哈希/引用和Markdown哈希通过|原现场为2026-09-14 14:05 UTC，约19秒；当前可见正文范围，另有1项未下载嵌入媒体；本轮未重新请求公众号|
+|[source-verification.json](evidence/source-verification.json)|离线构建新回归镜像；23个运行源码/锁文件/生成器哈希一致，SDK包与源码相等|新镜像用于本轮测试，未覆盖旧发布镜像或部署日本环境|
 
 构建、TypeScript检查和19项本地行为/HTTP测试通过。测试覆盖幂等冲突、终态、控制权、凭据吊销、旧授权、两个身份的任务/文件越权拒绝、原始eval拒绝、路径穿越、哈希/流式配额、脚本预览和经验版本恢复。磁盘不足目前采用ENOSPC故障注入，没有填满用户真实磁盘。
 
@@ -78,7 +82,7 @@
 |L02跨产品API / R08接入验收|server/contracts/client/MCP/SDK；独立安装两客户端，技术双身份拒绝测试|partial：服务/接入包通过；受限产品正向链路待网络边界通过|
 |L03桌面/服务器协同|worker协议独立SQLite，execution.mode，远程显示代理；Linux准备入口|partial：Mac容器已测；日本/Windows未测|
 |L04人工接手 / R05控制权|broker/worker、持久ask、独立noVNC、撤销自动控制和viewer|verified 所有者容器接手；受限产品端到端仍blocked|
-|L05受阻与停止|article.accessState，429/403、登录/验证页分类，限时人工等待|verified 固定场景；真实公众号新现场未通过|
+|L05受阻与停止|article.accessState，429/403、登录/验证页分类，限时人工等待|verified 固定场景；已有单篇公众号新现场图文成功，媒体缺项与范围单独记录|
 |L06可靠任务 / R02重复执行|SQLiteWAL+FULL，前置journal、幂等、fence、终态及迟到证据；faults|verified 故障场景；未知写入仍必须人工核验|
 |L07经验及成本|notes CAS/history/restore、doctor、任务耗时/步骤/RSS/人工时长/0模型调用|verified 核心行为；无模型账单系统|
 |R01执行隔离|owner不可转授、一个隔离profile绑定一个产品、OS/卷/控制面隔离|blocked 公网正向探针；入口保持关闭|
@@ -92,7 +96,7 @@
 |---|---|---|
 |P0|blocked|Docker系统DNS将公网域名解析为198.18/15保留地址，禁止放松公共IP检查；需解决授权的DNS/网络环境|
 |P1|partial|23工具及故障路径已实现通过；补充完整边界对照，与实际隔离报告合并验收|
-|P2|partial|普通网页完整图文和历史公众号离线包通过；新的公众号现场单独记录，不反复触发验证|
+|P2|partial|普通网页、历史公众号离线包及单篇新现场图文通过；折叠/跨页和未支持媒体仍保留范围限制|
 |P3|partial|控制台/真实接手/两SDK/CLI/MCP已通过；受限产品正向链路未开放|
 |P4|partial|Mac安装包与回退实现/实测完成；P0安全边界与残余兼容场景关闭前不宣布候选验收通过|
 |P5|blocked|P4出口后再在日本独立部署；Windows实际测试机待提供，Linux/Windows准备脚本不等于验证|

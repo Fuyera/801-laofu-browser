@@ -36,7 +36,7 @@ Content-Type: application/json
 
 HTTP任务和原始命令立即返回202及持久ID。MCP原始命令最多等待30秒，随后返回可查询的任务状态；SDK的wait可等待更久，遇到人工等待、挂起或终态立即交还调用程序。关闭连接不代表取消。
 
-原始命令形状：`{"tool":"click","args":{"tabId":123,"selector":"#button"},"inputArtifacts":{},"requestId":"caller-id"}`。幂等键放在请求头，预算与requestId在工具参数之外。相同身份/类型/键/请求返回同一ID；同键不同请求返回409。SDK不会替调用方生成新键重试未知写操作。CLI自动生成的键先写入本机cli-requests；多次CLI命令复用产品/profile对应的会话，也可指定`--session`。
+原始命令形状：`{"tool":"click","args":{"tabId":123,"selector":"#button"},"inputArtifacts":{},"requestId":"caller-id"}`。幂等键放在请求头，预算与requestId在工具参数之外。相同身份/类型/键/请求返回同一ID；同键不同请求返回409。SDK不会替调用方生成新键重试未知写操作。CLI `call` 的键先写入本机 `cli-requests`，多次 `call` 复用产品/profile对应的会话，也可指定 `--session`。CLI `capture` 未传 `--key` 时每次生成新键，且不写入上述恢复文件；需要避免重复采集时必须显式保存并传入 `--key`。
 
 |state|含义|
 |---|---|

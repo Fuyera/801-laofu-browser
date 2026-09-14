@@ -1,0 +1,83 @@
+{
+  "verifiedAt": "2026-09-14T16:02:45.706Z",
+  "runtimeSourceCommit": "fd4699795d647cebcf0d5302e49ca9607143faf7",
+  "dockerImage": "laofu-browser:0.1.0-dev.1-retest-fd46997",
+  "dockerIdentity": "sha256:543a46f66b1b00fb49e8c915005273e6d6e1fbab901447348c60f4af76aa83ac arm64",
+  "dockerBuildNetwork": "none; reused existing dependency and browser layers",
+  "dockerSourceFileHashes": {
+    "src/article.ts": "574736fc2c4c1b4c9dc25795fddfb0b87e987799ff12e6f1a8946d256803dd4b",
+    "src/artifacts.ts": "fd0a0c6773cd5ba5d0a73302cd8fca70a09a29a15ee0c254bd61a2f49bc22ad2",
+    "src/broker.ts": "f4d191b086beece1fecaab2e2b2445899c56fb71c45169090750eaea60209fa4",
+    "src/browser.ts": "121ab00f9062bfd30de70d50c19e5dfca3bfe73edf7b938287a975b94861c1bf",
+    "src/catalog.ts": "2bfee6b58baaeec3c77709d0fae030746619cc569333407d5ac0070667222ba5",
+    "src/cli.ts": "c70dafe81f784dd86d32e7dc13bd78a4eb6eb44e68d2e478181ba3db7f130427",
+    "src/client.ts": "dff8b9c3f1b6394b0ed87f2d019e50ce41e7f77549de0cee05c780bc58e65572",
+    "src/contracts.ts": "4cd96d0e3b937302d23957ab46a2b71db6a8a07f3a8f8800d9b4220b792daf89",
+    "src/errors.ts": "27f89c03bfede39b5d895df00b8c7f691522070aeaed06f286c48c0b0a7c8d8c",
+    "src/hosts.ts": "5b835795414aa69679aa137e6c094e424f317c64a1d6c451cb2536452d17034d",
+    "src/lock.ts": "819f392fbc5ec5d7bdf8273734db0d317990164ce3c5a3c176bdcab559385a71",
+    "src/logs.ts": "195bb7b3e3a09536952d4f4c9bcc36b1b36025505ea5d537d29751215264e6d9",
+    "src/mcp.ts": "7ec75c6d539ea0891e9aeb408d65b976b5a0e619c397d8c85702ba4bb9e8c10d",
+    "src/network.ts": "df8b65e9c75da27e4cd49c76b297c9d495e2da2e65f746111e3fe7c35aebdeb8",
+    "src/relay.ts": "6392affb2643ef7213bb9018dbaa0ce2fbcfaa8af54ce70ffb571a4a835f1c8a",
+    "src/server.ts": "552671032fc58d14b7b064a1b6088f1bc17b54d3e49086c446f764d1fee3516e",
+    "src/shims.d.ts": "d47bddb0607d7f363f9466f8bc5c9eeaf857df17748ffdd2df1e0ec315a0af51",
+    "src/store.ts": "392ef01fadafe109f1bfe03acb83073dce60cd07b25c920fab95314f8f5003ed",
+    "src/types.ts": "652b968ff0062da4a22ec13a70715849851081a7fdb742e8be9cd74201760f18",
+    "src/util.ts": "c6935879545afcd74aa4efbb0d10c0830bdca1b37db4a56d72047954067c06b4",
+    "src/worker.ts": "9433c3fbda4fff322495a0bd34e5f6bd0310c11a4fd4370de9a9d1982773c27a",
+    "package-lock.json": "70e385b8c05ab6aaf9627194229e51f5a56a37f538d62ebcba32289b08bbdca6",
+    "scripts/build-engine.mjs": "f76f61a4443474a3ae7cf335420e8209314cf65e08310c9e6391fa206d88bf38"
+  },
+  "dockerSourceFilesMatched": 23,
+  "sdkSource": [
+    {
+      "package": "python wheel",
+      "sourceMatches": true
+    },
+    {
+      "package": "typescript tgz",
+      "file": "client.js",
+      "sourceMatches": true
+    },
+    {
+      "package": "typescript tgz",
+      "file": "client.d.ts",
+      "sourceMatches": true
+    },
+    {
+      "package": "typescript tgz",
+      "file": "errors.js",
+      "sourceMatches": true
+    },
+    {
+      "package": "typescript tgz",
+      "file": "errors.d.ts",
+      "sourceMatches": true
+    },
+    {
+      "package": "typescript tgz",
+      "file": "util.js",
+      "sourceMatches": true
+    },
+    {
+      "package": "typescript tgz",
+      "file": "util.d.ts",
+      "sourceMatches": true
+    },
+    {
+      "package": "typescript tgz",
+      "file": "types.js",
+      "sourceMatches": true
+    },
+    {
+      "package": "typescript tgz",
+      "file": "types.d.ts",
+      "sourceMatches": true
+    }
+  ],
+  "sdkPackages": {
+    "laofu-browser-0.1.0-dev.1.tgz": "8779418730b4450a5231ed87801c01e73d0a303133303d9628573fbf6568a366",
+    "laofu_browser-0.1.0.dev1-py3-none-any.whl": "c22029049192dd89cfe3c784ffc1f1222b409dc2f2c077f944e0e8491d6e025f"
+  }
+}

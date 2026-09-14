@@ -1,6 +1,6 @@
 {
   "version": "0.1.0-dev.1",
-  "updatedAt": "2026-09-14T13:49:43.465Z",
+  "updatedAt": "2026-09-14T16:02:45.706Z",
   "overallGate": "P4 not passed; P5 not completed",
   "requirements": [
     {
@@ -565,7 +565,8 @@
         "scripts/article-console-regression.mjs"
       ],
       "evidence": [
-        "docs/evidence/article-console.json"
+        "docs/evidence/article-console.json",
+        "docs/evidence/capture-verification.json"
       ],
       "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
     },
@@ -629,7 +630,8 @@
         "scripts/article-console-regression.mjs"
       ],
       "evidence": [
-        "docs/evidence/article-console.json"
+        "docs/evidence/article-console.json",
+        "docs/evidence/capture-verification.json"
       ],
       "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
     },
@@ -780,7 +782,8 @@
         "scripts/article-console-regression.mjs"
       ],
       "evidence": [
-        "docs/evidence/article-console.json"
+        "docs/evidence/article-console.json",
+        "docs/evidence/capture-verification.json"
       ],
       "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
     },
@@ -799,5 +802,6 @@
       ],
       "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
     }
-  ]
+  ],
+  "latestRegression": "docs/evidence/full-test.json"
 }

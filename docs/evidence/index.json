@@ -1,72 +1,103 @@
 {
-  "collectedAt": "2026-09-14T13:49:43.464Z",
-  "scope": "curated test reports only; no credentials, browser profiles or real account databases",
+  "collectedAt": "2026-09-14T16:02:45.706Z",
+  "scope": "current local regression reports; no credentials, profiles or raw account databases",
+  "runtimeSourceCommit": "fd4699795d647cebcf0d5302e49ca9607143faf7",
   "reports": [
     {
       "name": "tools",
       "file": "tools.json",
-      "source": "workspace/tools-G1Tqxa/report.json",
+      "source": "workspace/tools-k110yK/report.json",
       "sha256": "e8aef85d9508778eac64f9a816e1daf58bf958e7622886a58a2a9a1d5d4ae9a2"
     },
     {
       "name": "parity",
       "file": "parity.json",
-      "source": "workspace/parity-MJtMuv/report.json",
-      "sha256": "7eded7aba209c856984c14b287fbbb747dc25994d4ac0cff05a039fad116eac4"
+      "source": "workspace/parity-JO1JIc/report.json",
+      "sha256": "3e4428b67ae97a00e0ab6481bdc797aaf7376e7fdf2700b3e4a525b59ac74e6f"
     },
     {
       "name": "article-console",
       "file": "article-console.json",
-      "source": "workspace/article-console-DG14fm/report.json",
-      "sha256": "25f2a5951cd894868eec206d2c7fae954c3b06f7478879d6dad02b14269df9dd"
+      "source": "workspace/article-console-RpPRuK/report.json",
+      "sha256": "8ba9bbab9fed99d2461603cbbe7bcd3296b32e6cc3dda71984463ea9e0e1e989"
     },
     {
       "name": "faults",
       "file": "faults.json",
-      "source": "workspace/faults-igwZLL/report.json",
-      "sha256": "5cedba7ae23042589568b89cb15372d11f76db6b8ac31f44788382ecc5605f6e"
+      "source": "workspace/faults-U7eEER/report.json",
+      "sha256": "6a467dc4118295403396e0fa8c38c2fc53f786b78655101ca0383bb8320d1167"
     },
     {
       "name": "sdk",
       "file": "sdk.json",
-      "source": "workspace/sdk-9Xn2Pv/report.json",
-      "sha256": "8f7f92b528b0e18b7987fdb67443a6826fd33e4d1c5cc22050e27d616cd94908"
-    },
-    {
-      "name": "handoff",
-      "file": "handoff.json",
-      "source": "workspace/handoff-aSxBiv/report.json",
-      "sha256": "5e2288965070fea91badb5ae85e4982ecc88a506f470470e889b3e610c60a933"
+      "source": "workspace/sdk-IN5qhg/report.json",
+      "sha256": "37fc40c3673823ea709437a3c28737168163da350f7749e0d9ddd25a09b1ee31"
     },
     {
       "name": "attach",
       "file": "attach.json",
-      "source": "workspace/attach-hvfgvv/report.json",
-      "sha256": "15f0afa94f25b74bf54ba537b1aa6ad4368e12fa5bf6dace64b9ee2593099cea"
-    },
-    {
-      "name": "install",
-      "file": "install.json",
-      "source": "workspace/install-n58Eho/report.json",
-      "sha256": "0e59d08dee3028416e94573486a0ea6ee629220a0c85f9f5da0abafaf695047e"
-    },
-    {
-      "name": "isolation",
-      "file": "isolation.json",
-      "source": "workspace/local-state/isolated/wrk_49ac4305ff314ef397417ae51854c2cd-verification.json",
-      "sha256": "74bd4b35ec7c37a8f15795e0a91deb69c6cadbb729a92478d731cab9f6f9f3ff"
-    },
-    {
-      "name": "performance",
-      "file": "performance.json",
-      "source": "workspace/performance-YgIJbl/report.json",
-      "sha256": "33f5faa60d8eba1311830dfe705eb3616fd1d15f2f1bdec1c7ac4521dbe6476e"
+      "source": "workspace/attach-HrCeqG/report.json",
+      "sha256": "513e2a2369f4a954eab3945dc7bb9a80300124078f536dd468a3f06843df2159"
     },
     {
       "name": "downloads",
       "file": "downloads.json",
-      "source": "workspace/download-KVb1q4/report.json",
-      "sha256": "4fab349c8f768df277484f5c63c176bd54b92ae20ae737b0e1d7a5864ac48ccb"
+      "source": "workspace/download-f0lYkp/report.json",
+      "sha256": "fe59976f32154cd03aa4b23b62ebc18ec9b9b78cc42acf399f2f350d6149289d"
+    },
+    {
+      "name": "install",
+      "file": "install.json",
+      "source": "workspace/install-EYtgz6/report.json",
+      "sha256": "66da42e3ce8c4678863fc0d0c40403d1a75ecc3945fd54ecc108d94cf6bfad24"
+    },
+    {
+      "name": "handoff",
+      "file": "handoff.json",
+      "source": "workspace/handoff-AgvdzG/report.json",
+      "sha256": "b092dee7a2f5f37bf6ef88839b6737a77a470e1550932db664a0022009bbf8f0"
+    },
+    {
+      "name": "isolation",
+      "file": "isolation.json",
+      "source": "workspace/isolation-full-TColAS/report.json",
+      "sha256": "c3cfb0cd53fd050ddf2ab68a098bd45aed7645d1c38ff7fa0bce949c0f52f6fb"
+    },
+    {
+      "name": "performance",
+      "file": "performance.json",
+      "source": "workspace/performance-H4sCDE/report.json",
+      "sha256": "81ce300177067ea7cdf5a4ae101784c4ea6586732a8b8643d553ac8bcf8276ce"
+    },
+    {
+      "name": "capture-verification",
+      "file": "capture-verification.json",
+      "source": "workspace/full-test-efFfYK/capture-verification.json",
+      "sha256": "6bc4699f2d6c20b57585fa644a9d98c360353fa4c410af98793c8dd93fe184c9"
+    },
+    {
+      "name": "source-verification",
+      "file": "source-verification.json",
+      "source": "workspace/full-test-efFfYK/source-verification.json",
+      "sha256": "4c60cca4814f3d469c09cdb010ae629d341c3d032f8d1db4bf445821ee46dd7f"
+    },
+    {
+      "name": "full-test",
+      "file": "full-test.json",
+      "source": "workspace/full-test-efFfYK/full-test.json",
+      "sha256": "6ca5baec518d3a0910e66372ac365553769ad9c1564a41fb7b7324f2480ac5ed"
+    }
+  ],
+  "assets": [
+    {
+      "file": "console-tasks.png",
+      "source": "workspace/article-console-RpPRuK/console-tasks.png",
+      "sha256": "19324a181a7a40d47766e061721aea2b1a45027b0cf4dd22eba67a23be49356b"
+    },
+    {
+      "file": "console-mobile.png",
+      "source": "workspace/article-console-RpPRuK/console-mobile.png",
+      "sha256": "f3005bbb5047a36c224fb0a806b91ba4015a4f6dff4f5ab33537b86a44256f15"
     }
   ]
 }

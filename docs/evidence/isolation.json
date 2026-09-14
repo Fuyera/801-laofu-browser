@@ -1,8 +1,8 @@
 {
-  "workerId": "wrk_49ac4305ff314ef397417ae51854c2cd",
-  "profileId": "prf_6e6ca981fe5b40e896c82a2bdc0757ee",
-  "bootId": "0004586a-5fc7-4c7d-915e-5ac1f8c37612",
-  "imageDigest": "sha256:9c90b6a807280438e121fecb628bd3c337a6d3ecf4a652edac91e2d45a14adac",
+  "workerId": "wrk_409bf25061b04d78bf8d53b9cdfbbccd",
+  "profileId": "prf_27dfde3f19114e93b48adc9a0e6d7421",
+  "bootId": "218828a9-b216-4dd7-a051-6c2ff8ce460a",
+  "imageDigest": "sha256:543a46f66b1b00fb49e8c915005273e6d6e1fbab901447348c60f4af76aa83ac",
   "checks": {
     "nonRoot": true,
     "directEgressDenied": true,
@@ -16,11 +16,19 @@
   "network": {
     "status": 1,
     "output": "{\"checks\":{\"nonRoot\":true,\"directEgressDenied\":true,\"controlRoutesDenied\":true,\"privateNetworkDenied\":true,\"publicEgressAllowed\":false},\"publicError\":\"page.goto: net::ERR_TUNNEL_CONNECTION_FAILED at https://example.com/\\nCall log:\\n  - navigating to \\\"https://example.com/\\\", waiting until \\\"load\\\"\\n\"}\n",
-    "error": "file:///app/scripts/network-probe.mjs:69\n    throw new Error(\"NETWORK_PROBE_FAILED\");\n          ^\n\nError: NETWORK_PROBE_FAILED\n    at file:///app/scripts/network-probe.mjs:69:11\n\nNode.js v22.23.2\n"
+    "error": "file:///app/scripts/network-probe.mjs:74\n    throw new Error(\"NETWORK_PROBE_FAILED\");\n          ^\n\nError: NETWORK_PROBE_FAILED\n    at file:///app/scripts/network-probe.mjs:74:11\n\nNode.js v22.23.2\n"
   },
   "sandbox": {
     "status": 0,
     "output": "{\"uid\":1000,\"node\":\"v22.23.2\",\"platform\":\"linux\",\"arch\":\"arm64\"}\n{\"sandbox\":\"Sandbox Status\\nLayer 1 Sandbox\\tNamespace\\nPID namespaces\\tYes\\nNetwork namespaces\\tYes\\nSeccomp-BPF sandbox\\tYes\\nSeccomp-BPF sandbox supports TSYNC\\tYes\\nPtrace Protection with Yama LSM (Broker)\\tNo\\nPtrace Protection with Yama LSM (Non-broker)\\tNo\\n\\nYou are adequately sandboxed.\"}\nSANDBOX_PROBE_PASSED\n",
     "error": ""
+  },
+  "verifiedAt": "2026-09-14T16:00:07.109Z",
+  "verifierExitCode": 1,
+  "isolationVerified": false,
+  "enabledForProducts": false,
+  "systemDns": {
+    "status": 0,
+    "output": "[{\"address\":\"198.18.1.151\",\"family\":4}]"
   }
 }

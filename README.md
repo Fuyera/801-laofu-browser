@@ -4,6 +4,19 @@
 
 提供 huashu-chrome 1.2.0 的23个原始工具，以及图文采集、持久任务、文件产物、独立凭据、人工接手。服务代码均在本工程；没有改造 Fuyera、祈道或000。
 
+私有仓库：[Fuyera/801-laofu-browser](https://github.com/Fuyera/801-laofu-browser)，主分支 `main`。
+
+## 文档入口
+
+- [用户指南](docs/USER_GUIDE.md)：登录、采集、下载、人工接手、状态判断与日常问题。
+- [研发指南](docs/DEVELOPMENT.md)：源码环境、架构、测试矩阵、样本准备与证据收口。
+- [接口文档](docs/API.md)：HTTP、TS/Python SDK、MCP 和 CLI 契约。
+- [运行手册](docs/OPERATIONS.md)：固定包安装、升级回退、隔离部署与故障恢复。
+- [验收报告](docs/ACCEPTANCE.md)：实际通过项、环境边界与 P0–P5 缺项。
+- [完整本机测试报告](docs/TEST_REPORT.md)：本轮 17 组检查的结果、修正和证据。
+
+干净克隆不含运行时、依赖、浏览器和发行包；首次使用源码请先按研发指南安装依赖并构建。
+
 ## 当前 Mac 源码运行
 
 在本工程运行，包装命令会使用固定 Node 22.23.2：

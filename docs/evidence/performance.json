@@ -1,5 +1,5 @@
 {
-  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/performance-YgIJbl",
+  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/performance-H4sCDE",
   "environment": {
     "platform": "darwin",
     "arch": "arm64",
@@ -8,54 +8,54 @@
   "scope": "同一Mac专用浏览器180段本地固定页面，连续3次；200ms采样本任务服务/执行端进程树RSS总和，含共享页内存重复计数；不等于物理独占内存或公网采集SLO",
   "samples": [
     {
-      "jobId": "tsk_d17f16832a6f47388d15497659019070",
-      "totalMs": 1024,
+      "jobId": "tsk_e7fb77a2fc9e410c88b0072d3c44f4b6",
+      "totalMs": 1029,
       "metrics": {
-        "elapsedMs": 459,
-        "activeMs": 459,
+        "elapsedMs": 423,
+        "activeMs": 423,
         "humanMs": 0,
         "steps": 8,
-        "rssBytes": 178061312,
+        "rssBytes": 172163072,
         "modelCalls": 0
       },
-      "peakProcessTreeRssBytes": 1747566592,
+      "peakProcessTreeRssBytes": 2613952512,
       "artifactBytes": 146435
     },
     {
-      "jobId": "tsk_9d8260cb210547f1b1616c4c1384bbb6",
-      "totalMs": 1026,
+      "jobId": "tsk_b608777af2ee476981de6b190be7c6c9",
+      "totalMs": 510,
       "metrics": {
-        "elapsedMs": 406,
-        "activeMs": 406,
+        "elapsedMs": 420,
+        "activeMs": 420,
         "humanMs": 0,
         "steps": 8,
-        "rssBytes": 185630720,
+        "rssBytes": 172769280,
         "modelCalls": 0
       },
-      "peakProcessTreeRssBytes": 1922793472,
+      "peakProcessTreeRssBytes": 2775859200,
       "artifactBytes": 146435
     },
     {
-      "jobId": "tsk_a313f6c566c345c0afeb7bd1ff12c7b3",
-      "totalMs": 1025,
+      "jobId": "tsk_112ce239fdf7459d9014007b6b2c8a0a",
+      "totalMs": 510,
       "metrics": {
-        "elapsedMs": 406,
-        "activeMs": 406,
+        "elapsedMs": 403,
+        "activeMs": 403,
         "humanMs": 0,
         "steps": 8,
-        "rssBytes": 189743104,
+        "rssBytes": 173326336,
         "modelCalls": 0
       },
-      "peakProcessTreeRssBytes": 2093858816,
+      "peakProcessTreeRssBytes": 2947825664,
       "artifactBytes": 146435
     }
   ],
   "totalMs": {
-    "min": 1024,
-    "max": 1026
+    "min": 510,
+    "max": 1029
   },
   "peakProcessTreeRssBytes": {
-    "min": 1747566592,
-    "max": 2093858816
+    "min": 2613952512,
+    "max": 2947825664
   }
 }

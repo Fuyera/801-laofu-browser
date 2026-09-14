@@ -1,11 +1,11 @@
 {
-  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/handoff-aSxBiv",
+  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/handoff-AgvdzG",
   "scope": "owner container handoff only; not a restricted product network attestation",
   "results": [
     {
       "case": "real noVNC keyboard input, disconnect/reconnect same headed browser, explicit resume, no duplicated fixture action",
       "passed": true,
-      "jobId": "tsk_312d23a83a3f455fb0e37ce136bbbcf8"
+      "jobId": "tsk_eded76c186a041ab9382c59d412ed0b2"
     },
     {
       "case": "raw ask durable wait, explicit continue, cancellation mapped to command outcome",

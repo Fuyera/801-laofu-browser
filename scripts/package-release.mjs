@@ -12,6 +12,18 @@ if (process.platform !== "darwin" || process.arch !== "arm64")
     "This local binary packager currently targets macOS arm64; other platforms must build natively.",
   );
 const staging = process.argv.includes("--staging");
+const revision = spawnSync("git", ["rev-parse", "HEAD"], {
+  cwd: root,
+  encoding: "utf8",
+});
+const changes = spawnSync("git", ["status", "--porcelain"], {
+  cwd: root,
+  encoding: "utf8",
+});
+const source = {
+  commit: revision.status === 0 ? revision.stdout.trim() : null,
+  dirty: changes.status === 0 ? changes.stdout.trim().length > 0 : null,
+};
 const dir = path.join(
   root,
   staging ? "workspace" : "releases",
@@ -101,6 +113,7 @@ const release = {
   upstream: "huashu-chrome@1.2.0",
   schema: { min: 1, max: 1 },
   stage: "development; P4/P5 gates remain in acceptance report",
+  source,
   entries,
 };
 fs.writeFileSync(

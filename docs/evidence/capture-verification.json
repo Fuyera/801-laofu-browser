@@ -1,0 +1,27 @@
+{
+  "verifiedAt": "2026-09-14T16:02:45.706Z",
+  "evidenceKind": "existing-live-capture-artifacts-rechecked-offline",
+  "source": "workspace/captures/yK65CvMwzhQqu5_E5EfVVQ",
+  "originalCapturedAt": "2026-09-14T14:05:53.061Z",
+  "taskId": "tsk_eca725a07e334358884a2c64346a0b12",
+  "state": "succeeded",
+  "title": "用GPT-6 Astra操控Blender玩3D，保姆级教程来了。",
+  "sourceUrl": "https://mp.weixin.qq.com/s/yK65CvMwzhQqu5_E5EfVVQ",
+  "scope": "当前已授权可见正文",
+  "textCoverage": "complete_for_scope",
+  "mediaCoverage": {
+    "discoveredImages": 30,
+    "downloadedImages": 30,
+    "failedImages": 0,
+    "unsupportedEmbeddedMedia": 1
+  },
+  "truncation": false,
+  "versionConsistent": true,
+  "elapsedMs": 19084,
+  "verifiedImageHashes": 30,
+  "verifiedImageReferences": 30,
+  "markdownHashVerified": true,
+  "warnings": [
+    "存在未下载的音视频或嵌入内容"
+  ]
+}

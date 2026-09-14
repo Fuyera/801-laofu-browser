@@ -1,21 +1,21 @@
 {
-  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/article-console-DG14fm",
+  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/article-console-RpPRuK",
   "results": [
     {
       "case": "historical WeChat offline replay, 5325 source characters, 11 original image hashes, ordered DOM lines",
       "passed": true,
-      "jobId": "tsk_598cd7849f4b4136bd055310ee0bb291",
+      "jobId": "tsk_58d740d28c9d4aa295574da13b8b47e5",
       "evidenceKind": "historical-offline-replay"
     },
     {
       "case": "web console submits long capture, all 180 paragraphs/code/table/link retained, downloads ZIP, safe image preview, five zones and mobile layout",
       "passed": true,
-      "jobId": "tsk_766dc436fd00422b9803a7b7162a2879"
+      "jobId": "tsk_7d2cb3c892484466b85425a459805d58"
     },
     {
       "case": "image larger than 12 MiB uses native bounded download and retains original hash",
       "passed": true,
-      "jobId": "tsk_d649a5f58fcb4ddeae94fe5291715d87"
+      "jobId": "tsk_0974be4a30ca4d9c9a5e14ca8fdcbe5a"
     },
     {
       "case": "corrupt image reports partial",

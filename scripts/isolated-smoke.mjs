@@ -5,7 +5,7 @@ import { createServer } from "../dist/server.js";
 import { BrowserClient } from "../dist/client.js";
 const root = path.resolve("."),
   home = fs.mkdtempSync(path.join(root, "workspace/isolated-"));
-const image = "laofu-browser:0.1.0-dev.1";
+const image = process.env.LAOFU_TEST_IMAGE || "laofu-browser:0.1.0-dev.1";
 const server = await createServer({ home, port: 17911 });
 const owner = server.store.createProduct("隔离探针所有者", "owner", ["*"]);
 await server.listen();

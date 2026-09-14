@@ -1,0 +1,267 @@
+{
+  "version": "0.1.0-dev.1",
+  "completedAt": "2026-09-14T16:02:45.706Z",
+  "runtimeSourceCommit": "fd4699795d647cebcf0d5302e49ca9607143faf7",
+  "scope": "all available local automated regression groups; macOS arm64 and Docker Linux arm64; not all compatibility combinations or cross-system acceptance",
+  "testHarnessChanges": [
+    "handoff/isolated smoke accept LAOFU_TEST_IMAGE",
+    "performance fixture closes its own remaining TCP connections"
+  ],
+  "environment": {
+    "node": "v22.23.2",
+    "platform": "darwin",
+    "arch": "arm64",
+    "macOS": "26.6.2",
+    "dockerImage": "laofu-browser:0.1.0-dev.1-retest-fd46997",
+    "dockerIdentity": "sha256:543a46f66b1b00fb49e8c915005273e6d6e1fbab901447348c60f4af76aa83ac arm64"
+  },
+  "counts": {
+    "groups": 17,
+    "passed": 16,
+    "failed": 1
+  },
+  "checks": [
+    {
+      "name": "build",
+      "status": "passed",
+      "exitCode": 0,
+      "command": "npm run build",
+      "log": "workspace/full-test-efFfYK/build.log"
+    },
+    {
+      "name": "typecheck",
+      "status": "passed",
+      "exitCode": 0,
+      "command": "tsc --noEmit",
+      "log": "workspace/full-test-efFfYK/typecheck.log"
+    },
+    {
+      "name": "unit-http",
+      "status": "passed",
+      "exitCode": 0,
+      "passed": 19,
+      "total": 19,
+      "command": "node --import tsx --test test/*.test.ts",
+      "log": "workspace/full-test-efFfYK/unit.log"
+    },
+    {
+      "name": "baseline",
+      "status": "passed",
+      "exitCode": 0,
+      "files": 58,
+      "tools": 23,
+      "log": "workspace/full-test-efFfYK/baseline.log"
+    },
+    {
+      "name": "contract",
+      "status": "passed",
+      "exitCode": 0,
+      "tools": 23,
+      "parameters": 107,
+      "log": "workspace/full-test-efFfYK/contract.log"
+    },
+    {
+      "name": "tools",
+      "status": "passed",
+      "exitCode": 0,
+      "passed": 23,
+      "total": 23,
+      "report": "workspace/tools-k110yK/report.json"
+    },
+    {
+      "name": "smoke",
+      "script": "scripts/smoke.mjs",
+      "startedAt": "2026-09-14T15:43:15.693Z",
+      "finishedAt": "2026-09-14T15:43:21.015Z",
+      "exitCode": 0,
+      "directories": [
+        "workspace/smoke-3wbH3c"
+      ],
+      "reports": [
+        "workspace/smoke-3wbH3c/result.json"
+      ],
+      "status": "passed"
+    },
+    {
+      "name": "parity",
+      "script": "scripts/upstream-parity.mjs",
+      "startedAt": "2026-09-14T15:43:21.015Z",
+      "finishedAt": "2026-09-14T15:43:59.244Z",
+      "exitCode": 0,
+      "directories": [
+        "workspace/parity-JO1JIc"
+      ],
+      "reports": [
+        "workspace/parity-JO1JIc/report.json"
+      ],
+      "status": "passed"
+    },
+    {
+      "name": "article-console",
+      "script": "scripts/article-console-regression.mjs",
+      "startedAt": "2026-09-14T15:43:59.244Z",
+      "finishedAt": "2026-09-14T15:44:22.647Z",
+      "exitCode": 0,
+      "directories": [
+        "workspace/article-console-RpPRuK"
+      ],
+      "reports": [
+        "workspace/article-console-RpPRuK/report.json"
+      ],
+      "status": "passed"
+    },
+    {
+      "name": "faults",
+      "script": "scripts/fault-regression.mjs",
+      "startedAt": "2026-09-14T15:44:22.648Z",
+      "finishedAt": "2026-09-14T15:45:59.008Z",
+      "exitCode": 0,
+      "directories": [
+        "workspace/faults-U7eEER"
+      ],
+      "reports": [
+        "workspace/faults-U7eEER/report.json"
+      ],
+      "status": "passed"
+    },
+    {
+      "name": "sdk",
+      "script": "scripts/sdk-smoke.mjs",
+      "startedAt": "2026-09-14T15:45:59.008Z",
+      "finishedAt": "2026-09-14T15:46:18.273Z",
+      "exitCode": 0,
+      "directories": [
+        "workspace/sdk-IN5qhg"
+      ],
+      "reports": [
+        "workspace/sdk-IN5qhg/report.json"
+      ],
+      "status": "passed"
+    },
+    {
+      "name": "attach",
+      "script": "scripts/attach-regression.mjs",
+      "startedAt": "2026-09-14T15:46:18.273Z",
+      "finishedAt": "2026-09-14T15:46:23.927Z",
+      "exitCode": 0,
+      "directories": [
+        "workspace/attach-HrCeqG"
+      ],
+      "reports": [
+        "workspace/attach-HrCeqG/report.json"
+      ],
+      "status": "passed"
+    },
+    {
+      "name": "downloads",
+      "script": "scripts/download-regression.mjs",
+      "startedAt": "2026-09-14T15:46:23.927Z",
+      "finishedAt": "2026-09-14T15:46:33.005Z",
+      "exitCode": 0,
+      "directories": [
+        "workspace/download-f0lYkp"
+      ],
+      "reports": [
+        "workspace/download-f0lYkp/report.json"
+      ],
+      "status": "passed"
+    },
+    {
+      "name": "install",
+      "script": "scripts/install-regression.mjs",
+      "startedAt": "2026-09-14T15:53:23.178Z",
+      "finishedAt": "2026-09-14T15:54:19.189Z",
+      "exitCode": 0,
+      "reports": [
+        "workspace/install-EYtgz6/report.json"
+      ],
+      "status": "passed"
+    },
+    {
+      "name": "handoff",
+      "script": "scripts/handoff-regression.mjs",
+      "startedAt": "2026-09-14T15:59:55.279Z",
+      "finishedAt": "2026-09-14T16:00:02.924Z",
+      "exitCode": 0,
+      "reports": [
+        "workspace/handoff-AgvdzG/report.json"
+      ],
+      "status": "passed"
+    },
+    {
+      "name": "isolation",
+      "script": "workspace/full-test-efFfYK/isolation.mjs",
+      "startedAt": "2026-09-14T16:00:02.924Z",
+      "finishedAt": "2026-09-14T16:00:07.622Z",
+      "exitCode": 1,
+      "reports": [
+        "workspace/isolation-full-TColAS/report.json"
+      ],
+      "status": "failed"
+    },
+    {
+      "name": "performance",
+      "script": "scripts/performance-probe.mjs",
+      "startedAt": "2026-09-14T16:00:07.622Z",
+      "finishedAt": "2026-09-14T16:00:09.781Z",
+      "exitCode": 0,
+      "reports": [
+        "workspace/performance-H4sCDE/report.json"
+      ],
+      "status": "passed"
+    }
+  ],
+  "issues": [
+    {
+      "status": "resolved",
+      "name": "performance test process did not exit after successful captures",
+      "evidence": "workspace/performance-ORJBWh/report.json",
+      "cause": "one fixture TCP connection remained established after server.close()",
+      "resolution": "closeAllConnections on only this fixture; rerun exited 0",
+      "finalEvidence": "workspace/performance-H4sCDE/report.json"
+    },
+    {
+      "status": "resolved",
+      "name": "old Docker image did not match source bytes",
+      "resolution": "built separate image offline from current source; 23 source/lock/generator hashes match",
+      "evidence": "workspace/full-test-efFfYK/source-verification.json"
+    },
+    {
+      "status": "open",
+      "name": "isolated public egress fails",
+      "evidence": "workspace/isolation-full-TColAS/report.json",
+      "impact": "restricted product entry remains disabled; P0/P4 not passed"
+    }
+  ],
+  "notExecuted": [
+    {
+      "name": "two restricted identities full positive end-to-end flow",
+      "reason": "public egress isolation gate failed"
+    },
+    {
+      "name": "daily Chrome real account manual installation",
+      "reason": "requires actual user browser setup; independent external test Chrome only"
+    },
+    {
+      "name": "Ubuntu24.04 x86_64 Japan deployment",
+      "reason": "P4 gate not passed; no target deployment in this run"
+    },
+    {
+      "name": "Windows11 x86_64 regression",
+      "reason": "no target test machine available"
+    },
+    {
+      "name": "all parameter/error boundary combinations and all 20 host applications",
+      "reason": "current automated suites cover representative cases and configuration behavior"
+    },
+    {
+      "name": "fresh WeChat network capture",
+      "reason": "existing 2026-09-14 live artifact reverified offline; historical fixture replay separately executed"
+    },
+    {
+      "name": "online npm vulnerability audit",
+      "reason": "not repeated; earlier external dependency-metadata audit was denied"
+    }
+  ],
+  "releaseNote": "new local install candidate and test Docker image only; existing releases/ archives were not replaced or published"
+}
