@@ -1,0 +1,9 @@
+{
+  "archive": "workspace/p4/laofu-browser-0.1.0-dev.2-p4-580a6cf-docker-image.tar.gz",
+  "imageId": "sha256:cdfd0dce6016cf6f30f26192ea71a197f176ff7e960cae2555f8851100393ef8",
+  "configDigest": "35794cb9960fdbee61e6f0f9dfd6f9768dcd0c856ae87cb6f7998c38fd2d4647",
+  "verifiedBlobs": 42,
+  "sourceCommit": "580a6cf35e614e697bd802f8cc780ece6675a142",
+  "status": "passed",
+  "scope": "OCI index, platform, source label, and every blob SHA-256; config digest is distinct from image index digest"
+}

@@ -1,6 +1,6 @@
 # 当前状态
 
-更新：2026-09-14（本地）。分支 `fuyera/p4-macos`，版本 **0.1.0-dev.2**，P4 代码和报告保存在本分支。私有仓库 [Fuyera/801-laofu-browser](https://github.com/Fuyera/801-laofu-browser)，main 已推送 `2b2fdad`。**完整矩阵 22/22 通过；P4 尚余日常 Chrome 人工入口与固定制品复验。P5/跨平台/日本部署/跨端自动选择暂停。旧 dev.1 仅归档，不要求历史包迁移。**
+更新：2026-09-14（本地）。分支 `fuyera/p4-macos`，版本 **0.1.0-dev.2**，P4 代码和报告保存在本分支。私有仓库 [Fuyera/801-laofu-browser](https://github.com/Fuyera/801-laofu-browser)，main 已推送 `2b2fdad`。**完整矩阵 22/22 通过；已提交来源的新包/镜像复验通过，P4 尚余日常 Chrome 人工入口及最终冻结。P5/跨平台/日本部署/跨端自动选择暂停。旧 dev.1 仅归档，不要求历史包迁移。**
 
 ## 实现与当前证据
 
@@ -15,10 +15,11 @@
 
 ## 剩余与交付
 
-Mac 已开盖解锁，历史合盖中断不再阻塞。日常 Chrome 临时加载 laofu-browser 扩展仍待权限答复；只读新建 example.com，随后停止 worker 验证浏览器保留并移除本次扩展。专用服务状态 `workspace/p4/daily-chrome-state`，17992/18992；不能以测试 Chromium 结果代替日常 Chrome。
+已完成源码提交 `580a6cf35e614e697bd802f8cc780ece6675a142`。干净来源候选 `workspace/p4/package-clean-580a6cf`；安装 `workspace/install-LBOn3J` 11/11，镜像 `workspace/p4-isolated-4a55Pp` 双身份 8/8。新镜像 `sha256:cdfd0dce6016cf6f30f26192ea71a197f176ff7e960cae2555f8851100393ef8`，Mac 包解压 19789 文件与镜像包 42 blob 哈希均过。压缩包、SDK、来源与哈希见 `workspace/p4/CANDIDATE.json`。后续报告提交只更新文档，不改动该候选的来源。
 
-代码文档提交后构建干净来源固定 Mac 包/镜像，核验清单和最终安装，再更新 DELIVERY。当前 dev.2 是候选，未冻结、推送或公开发布。旧包与 releases/DELIVERY.json 继续保留 dev.1；`workspace/p4/CANDIDATE.json` 是先前候选历史，不能当当前最终交付。
+日常 Chrome 临时扩展加载仍待权限答复；计划只读新建 example.com，停止 worker 后验证浏览器保留，再移除本次扩展。用户开盖后自动回归已完成；最后 UI 观察又报告 Mac 锁定，人工步骤需要解锁。未加载新扩展，专用测试服务已停止；配对配置留在 `workspace/p4/daily-chrome-state`，恢复时用 local.mjs start --home 指向该目录（17992/18992）。原有扩展不改动。
 
+人工步骤通过后才冻结最终 dev.2 并更新 releases/DELIVERY.json；旧 dev.1 档案和 DELIVERY 保留。本轮只做本地提交，未推送或公开发布。
 证据索引 docs/evidence/p4/index.json；范围和复现见 docs/ACCEPTANCE.md、TEST_REPORT.md、IMPLEMENTATION_PLAN.md。根 docs/evidence 为 dev.1 历史，不混成当前一次回归。
 
 ## 运行与历史图文

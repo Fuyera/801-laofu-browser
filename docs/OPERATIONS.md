@@ -2,7 +2,7 @@
 
 当前内部开发版先交付macOS arm64。Ubuntu24.04 x86_64、Windows11 x86_64尚未实际验收，不能把Mac Docker内的Linux arm64结果算成这些目标系统通过。
 
-日常登录、采集和人工接手见 [用户指南](USER_GUIDE.md)，源码与测试环境见 [研发指南](DEVELOPMENT.md)。当前 [测试报告](TEST_REPORT.md)记录完整矩阵 22/22、两隔离身份与实际 Codex 宿主通过；日常 Chrome 人工入口和固定交付仍待收口。
+日常登录、采集和人工接手见 [用户指南](USER_GUIDE.md)，源码与测试环境见 [研发指南](DEVELOPMENT.md)。当前 [测试报告](TEST_REPORT.md)记录完整矩阵 22/22、两隔离身份与实际 Codex 宿主通过；干净来源候选也已通过安装/隔离/压缩包校验；日常 Chrome 人工入口及最终冻结仍待收口。
 
 ## 固定Mac制品
 

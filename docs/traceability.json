@@ -1,7 +1,7 @@
 {
   "version": "0.1.0-dev.2",
-  "updatedAt": "2026-09-15T02:19:54.201799+00:00",
-  "overallGate": "P4 full matrix 22/22 and actual Codex host passed; daily Chrome permission and fixed artifacts pending; P5 paused by user",
+  "updatedAt": "2026-09-15T02:30:31.264371+00:00",
+  "overallGate": "P4 full matrix 22/22, actual Codex host and clean-commit package/image checks passed; daily Chrome permission/unlock and release freeze pending; P5 paused by user",
   "requirements": [
     {
       "requirementId": "B01",
@@ -592,7 +592,7 @@
         "docs/evidence/p4/runtime.json",
         "docs/evidence/p4/unit.json"
       ],
-      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，日常Chrome与固定制品待收口，P5暂停"
+      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，干净来源制品已验；日常Chrome与最终冻结待收口，P5暂停"
     },
     {
       "requirementId": "L02",
@@ -609,9 +609,10 @@
       "evidence": [
         "docs/evidence/p4/sdk.json",
         "docs/evidence/p4/isolated.json",
-        "docs/evidence/p4/codex-host.json"
+        "docs/evidence/p4/codex-host.json",
+        "docs/evidence/p4/clean-isolated.json"
       ],
-      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，日常Chrome与固定制品待收口，P5暂停"
+      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，干净来源制品已验；日常Chrome与最终冻结待收口，P5暂停"
     },
     {
       "requirementId": "L03",
@@ -625,9 +626,10 @@
       ],
       "evidence": [
         "docs/evidence/p4/handoff.json",
-        "docs/evidence/p4/isolated.json"
+        "docs/evidence/p4/isolated.json",
+        "docs/evidence/p4/clean-isolated.json"
       ],
-      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，日常Chrome与固定制品待收口，P5暂停"
+      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，干净来源制品已验；日常Chrome与最终冻结待收口，P5暂停"
     },
     {
       "requirementId": "L04",
@@ -643,9 +645,10 @@
       "evidence": [
         "docs/evidence/p4/attach.json",
         "docs/evidence/p4/handoff.json",
-        "docs/evidence/p4/isolated.json"
+        "docs/evidence/p4/isolated.json",
+        "docs/evidence/p4/clean-isolated.json"
       ],
-      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，日常Chrome与固定制品待收口，P5暂停"
+      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，干净来源制品已验；日常Chrome与最终冻结待收口，P5暂停"
     },
     {
       "requirementId": "L05",
@@ -662,7 +665,7 @@
         "docs/evidence/p4/unit.json",
         "docs/evidence/p4/article.json"
       ],
-      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，日常Chrome与固定制品待收口，P5暂停"
+      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，干净来源制品已验；日常Chrome与最终冻结待收口，P5暂停"
     },
     {
       "requirementId": "L06",
@@ -680,7 +683,7 @@
         "docs/evidence/p4/runtime.json",
         "docs/evidence/p4/unit.json"
       ],
-      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，日常Chrome与固定制品待收口，P5暂停"
+      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，干净来源制品已验；日常Chrome与最终冻结待收口，P5暂停"
     },
     {
       "requirementId": "L07",
@@ -698,7 +701,7 @@
         "docs/evidence/p4/runtime.json",
         "docs/evidence/p4/unit.json"
       ],
-      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，日常Chrome与固定制品待收口，P5暂停"
+      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，干净来源制品已验；日常Chrome与最终冻结待收口，P5暂停"
     },
     {
       "requirementId": "R01",
@@ -713,9 +716,10 @@
         "scripts/network-probe.mjs"
       ],
       "evidence": [
-        "docs/evidence/p4/isolated.json"
+        "docs/evidence/p4/isolated.json",
+        "docs/evidence/p4/clean-isolated.json"
       ],
-      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，日常Chrome与固定制品待收口，P5暂停"
+      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，干净来源制品已验；日常Chrome与最终冻结待收口，P5暂停"
     },
     {
       "requirementId": "R02",
@@ -731,7 +735,7 @@
       "evidence": [
         "docs/evidence/p4/faults.json"
       ],
-      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，日常Chrome与固定制品待收口，P5暂停"
+      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，干净来源制品已验；日常Chrome与最终冻结待收口，P5暂停"
     },
     {
       "requirementId": "R03",
@@ -749,7 +753,7 @@
         "docs/evidence/p4/downloads.json",
         "docs/evidence/p4/handoff.json"
       ],
-      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，日常Chrome与固定制品待收口，P5暂停"
+      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，干净来源制品已验；日常Chrome与最终冻结待收口，P5暂停"
     },
     {
       "requirementId": "R04",
@@ -786,9 +790,10 @@
       ],
       "evidence": [
         "docs/evidence/p4/handoff.json",
-        "docs/evidence/p4/isolated.json"
+        "docs/evidence/p4/isolated.json",
+        "docs/evidence/p4/clean-isolated.json"
       ],
-      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，日常Chrome与固定制品待收口，P5暂停"
+      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，干净来源制品已验；日常Chrome与最终冻结待收口，P5暂停"
     },
     {
       "requirementId": "R06",
@@ -806,9 +811,10 @@
         "docs/evidence/p4/isolated.json",
         "docs/evidence/p4/runtime.json",
         "docs/evidence/p4/unit.json",
-        "docs/evidence/p4/downloads.json"
+        "docs/evidence/p4/downloads.json",
+        "docs/evidence/p4/clean-isolated.json"
       ],
-      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，日常Chrome与固定制品待收口，P5暂停"
+      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，干净来源制品已验；日常Chrome与最终冻结待收口，P5暂停"
     },
     {
       "requirementId": "R07",
@@ -823,7 +829,7 @@
         "docs/evidence/p4/article.json",
         "docs/evidence/p4/runtime.json"
       ],
-      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，日常Chrome与固定制品待收口，P5暂停"
+      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，干净来源制品已验；日常Chrome与最终冻结待收口，P5暂停"
     },
     {
       "requirementId": "R08",
@@ -838,9 +844,10 @@
       "evidence": [
         "docs/evidence/p4/sdk.json",
         "docs/evidence/p4/isolated.json",
-        "docs/evidence/p4/codex-host.json"
+        "docs/evidence/p4/codex-host.json",
+        "docs/evidence/p4/clean-isolated.json"
       ],
-      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，日常Chrome与固定制品待收口，P5暂停"
+      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，干净来源制品已验；日常Chrome与最终冻结待收口，P5暂停"
     }
   ],
   "latestRegression": "docs/evidence/p4/full-interrupted.json",

@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-09-15T02:16:41.662Z",
+  "collectedAt": "2026-09-15T02:29:00.989Z",
   "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
   "reports": [
     {
@@ -137,6 +137,51 @@
       "status": "partial",
       "file": "full-interrupted.json",
       "sha256": "c95211286de3da34ea64944d0f9ad52816aaf1b0b36f360d8e8d8fed3ab3dbeb"
+    },
+    {
+      "name": "clean-install",
+      "source": "workspace/install-LBOn3J/report.json",
+      "scope": "11 installation groups on clean commit 580a6cf candidate",
+      "status": "passed",
+      "sourceCommit": "580a6cf35e614e697bd802f8cc780ece6675a142",
+      "file": "clean-install.json",
+      "sha256": "5d01eb1226103939798953dac393793c55f9d309c84f031d0b36df1071139c4f"
+    },
+    {
+      "name": "clean-isolated",
+      "source": "workspace/p4-isolated-4a55Pp/report.json",
+      "scope": "8 actual dual-identity groups on clean commit 580a6cf image",
+      "status": "passed",
+      "sourceCommit": "580a6cf35e614e697bd802f8cc780ece6675a142",
+      "file": "clean-isolated.json",
+      "sha256": "b85829b4047be2b5bf8880e51b2d45cb066fdcc444bbbb6ef5c05db5b0adb1c9"
+    },
+    {
+      "name": "mac-archive",
+      "source": "workspace/p4/verify-archive-clean-580a6cf.json",
+      "scope": "19789 manifest entries verified after extracting compressed clean candidate",
+      "status": "passed",
+      "sourceCommit": "580a6cf35e614e697bd802f8cc780ece6675a142",
+      "file": "mac-archive.json",
+      "sha256": "e7d1e81f067d0253af8523396e78bf04979b247e8b5c514a56a10d5413650146"
+    },
+    {
+      "name": "docker-archive",
+      "source": "workspace/p4/verify-docker-archive-clean-580a6cf.json",
+      "scope": "All 42 archive blobs hashed, OCI image identity and source label verified",
+      "status": "passed",
+      "sourceCommit": "580a6cf35e614e697bd802f8cc780ece6675a142",
+      "file": "docker-archive.json",
+      "sha256": "03262107376c40fb04e4cf2ca5cb576fae58462c178ce88001504e247790a02a"
+    },
+    {
+      "name": "image-version",
+      "source": "workspace/p4/image-version-clean-580a6cf.json",
+      "scope": "Software, SDK and source versions inspected in actual clean image",
+      "status": "passed",
+      "sourceCommit": "580a6cf35e614e697bd802f8cc780ece6675a142",
+      "file": "image-version.json",
+      "sha256": "957a02f3b5381c7806e81b344ddb9ddc5cc9c00480fbf8abb35de88599da209e"
     }
   ]
 }

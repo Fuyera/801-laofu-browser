@@ -1,6 +1,6 @@
 # P4 本轮测试报告
 
-日期：2026-09-14（本地；运行日志为 2026-09-15 UTC）。版本 `0.1.0-dev.2`，源码基线 `2b2fdad6df4a712cd33f594fd1c9399587199e14` 加 `fuyera/p4-macos` 本轮改动。**完整矩阵 22/22 通过；日常 Chrome 人工入口与最终固定制品复验仍待关闭。** P5/跨平台暂停。
+日期：2026-09-14（本地；运行日志为 2026-09-15 UTC）。版本 `0.1.0-dev.2`，源码基线 `2b2fdad6df4a712cd33f594fd1c9399587199e14` 加 `fuyera/p4-macos` 本轮改动。**完整矩阵 22/22 通过；日常 Chrome 人工入口仍待关闭，干净来源候选的包/镜像复验已通过。** P5/跨平台暂停。
 
 ## 当前结果
 
@@ -50,9 +50,18 @@ LAOFU_CODEX_BINARY=/Applications/ChatGPT.app/Contents/Resources/codex LAOFU_PUBL
 
 DNS 参数仅适用于当前已授权路径。未配置 `LAOFU_CODEX_BINARY` 时不执行实际宿主组，不能据此称 22 组通过。安装回归会修改专用副本，勿指向已冻结发行目录。完整矩阵包含现在的 43 项对照。
 
+## 已提交来源的交付复验
+
+源码提交 `580a6cf35e614e697bd802f8cc780ece6675a142`，打包时 Git 干净。新镜像 `sha256:cdfd0dce6016cf6f30f26192ea71a197f176ff7e960cae2555f8851100393ef8`，包目录 `workspace/p4/package-clean-580a6cf`。
+
+- [安装复验](evidence/p4/clean-install.json) 11/11；[双身份复验](evidence/p4/clean-isolated.json) 8/8。
+- [Mac 压缩包解压核验](evidence/p4/mac-archive.json)：19,789 文件；[Docker 压缩包核验](evidence/p4/docker-archive.json)：42 个 blob 哈希、OCI 索引、平台与源码标签一致。Docker OCI 索引 ID 与配置 blob digest 是不同字段，分别记录。
+- [镜像版本](evidence/p4/image-version.json)：软件、TS SDK、源码提交及 dirty=false 一致。离线构建也覆盖当前 deploy、SDK、测试和脚本源码，避免继承旧基础镜像的同名文件。
+- 压缩包及 SDK 的字节数/哈希在 `workspace/p4/CANDIDATE.json`。Mac 包 SHA-256 为 `6d4de8edd9ad38a7c825adb064b165e6a94735d42c9848d38265e5a9f56ed4da`。仍标候选，未替换旧 DELIVERY 或公开发布；后续文档提交不改变这些包的构建提交。
+
 ## 剩余与历史
 
-日常 Chrome 尚待允许临时加载扩展后，完成公开 `example.com` 读取、停止 worker 保留浏览器与移除本次扩展。随后核验已提交来源的最终包/镜像和安装结果，更新交付记录。
+日常 Chrome 尚待允许临时加载扩展后，完成公开 `example.com` 读取、停止 worker 保留浏览器与移除本次扩展。当前已完成候选来源与包/镜像复验；人工入口通过后冻结发行并更新交付记录。最后 UI 观察再次报告 Mac 已锁定，尚未加载新扩展；已停止专用测试服务并保留配对配置，待授权和解锁后恢复。
 
 此前 [合盖中断报告](evidence/p4/full-interrupted.json)保留为历史；它已由本轮 22/22 结果替代。开盖后的首次矩阵发现 GET 断线问题，修正后的当前矩阵全部通过。旧 dev.1 仅归档，不要求历史包迁移；新包安装回退使用同程序的合成发行标识，不声称历史 dev.1 降级兼容。
 
