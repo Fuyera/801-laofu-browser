@@ -6,7 +6,10 @@ import http from "node:http";
 import { spawnSync } from "node:child_process";
 import { BrowserClient } from "../dist/client.js";
 const root = path.resolve("."),
-  source = path.join(root, "workspace/package-candidate"),
+  source = path.resolve(
+    process.env.LAOFU_PACKAGE_CANDIDATE ||
+      path.join(root, "workspace/package-candidate"),
+  ),
   home = fs.mkdtempSync(path.join(root, "workspace/install-")),
   prefix = path.join(home, "installation"),
   state = path.join(prefix, "state"),
@@ -90,6 +93,34 @@ try {
   assert.notEqual(run(["install", "--source", source], false).status, 0);
   fs.unlinkSync(path.join(source, "unexpected.txt"));
   record("清单以外文件拒绝");
+  try {
+    fs.appendFileSync(
+      path.join(source, "README.md"),
+      "\nDIFFERENT VERIFIED CONTENT\n",
+    );
+    const changed = fs.readFileSync(path.join(source, "README.md"));
+    const conflicting = {
+      ...manifest(),
+      entries: {
+        ...manifest().entries,
+        "README.md": {
+          bytes: changed.length,
+          sha256: crypto.createHash("sha256").update(changed).digest("hex"),
+        },
+      },
+    };
+    fs.writeFileSync(
+      path.join(source, "RELEASE.json"),
+      JSON.stringify(conflicting),
+    );
+    const refused = run(["install", "--source", source], false);
+    assert.notEqual(refused.status, 0);
+    assert.match(refused.stderr + refused.stdout, /releaseId.*内容不同/);
+    record("相同发行标识即使清单合法也拒绝不同内容");
+  } finally {
+    fs.writeFileSync(path.join(source, "README.md"), originalReadme);
+    fs.writeFileSync(path.join(source, "RELEASE.json"), original);
+  }
   const modified = { ...manifest(), releaseId: baseId + "-upgrade-fixture" };
   fs.writeFileSync(path.join(source, "RELEASE.json"), JSON.stringify(modified));
   run(["install", "--source", source]);
@@ -102,6 +133,19 @@ try {
   record("兼容版本切换后任务和产物保留");
   run(["rollback", "--release", baseId]);
   assert.equal((await c.job(job.id)).state, "succeeded");
+  assert.equal(
+    (
+      await c.submitTask(
+        {
+          type: "article.capture@v1",
+          profileId: profile.id,
+          input: { url: "http://127.0.0.1:17968" },
+        },
+        "install-capture",
+      )
+    ).id,
+    job.id,
+  );
   record("程序回退保留当前幂等和效果记录");
   const cliFile = path.join(source, "dist/cli.js"),
     beforeCli = fs.readFileSync(cliFile);

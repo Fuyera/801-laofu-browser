@@ -8,6 +8,7 @@ import sharp from "sharp";
 import archiver from "archiver";
 import { Fault } from "./errors.js";
 import { hash, mkdir, redactUrl, safeUrl } from "./util.js";
+import type { AccountPolicy } from "./types.js";
 export interface ImageItem {
   index: number;
   source: string;
@@ -235,17 +236,37 @@ export async function captureArticle(
   directory: string,
   run: (name: string, args: any, raw?: boolean) => Promise<any>,
   waitForUser: (info: any) => Promise<void>,
+  accountPolicy: AccountPolicy = { mode: "anonymous", origins: [] },
 ) {
   mkdir(directory);
   mkdir(path.join(directory, "images"));
   const source = safeUrl(input.url).href;
-  const opened = await run(
-    "tabs",
-    { action: "new", url: source, label: "图文采集" },
-    true,
-  );
+  const checkOrigin = (url: string) => {
+    if (
+      accountPolicy.origins.length &&
+      !accountPolicy.origins.includes(new URL(url).origin)
+    )
+      throw new Fault(
+        "ACCOUNT_SCOPE_DENIED",
+        "页面站点不在该浏览器的账号授权范围",
+        403,
+      );
+  };
+  checkOrigin(source);
+  const tabs = await run("tabs", { action: "list" }, true);
+  const tabCount = Number(/^共 (\d+) 个标签页/.exec(tabs.text || "")?.[1]);
+  if (!Number.isFinite(tabCount))
+    throw new Fault("TAB_BUDGET_UNKNOWN", "无法确认标签页数量，未新建页面");
+  if (tabCount >= (input.limits?.maxTabs || 8))
+    throw new Fault(
+      "TAB_LIMIT",
+      "浏览器标签页已达到预算，请处理保留页面或调整预算",
+      429,
+    );
+  const opened = await run("tabs", { action: "new", label: "图文采集" }, true);
   const tabId = opened.tabId;
   if (!tabId) throw new Fault("NO_TAB", "无法建立采集标签页");
+  await run("navigate", { url: source, tabId }, true);
   const evaluate = async (expr: string) => {
     const r = await run("eval", { expr, tabId, maxLength: 16000 }, true);
     if (r.text?.includes("…（已截断）"))
@@ -261,12 +282,15 @@ export async function captureArticle(
       `(()=>{const r=${ROOT_EXPRESSION};return {url:location.href,title:document.querySelector('#activity-name')?.textContent?.trim()||document.title,author:document.querySelector('#js_name')?.textContent?.trim()||document.querySelector('[rel=author]')?.textContent?.trim()||'',publishedText:document.querySelector('#publish_time')?.textContent?.trim()||'',httpStatus:performance.getEntriesByType('navigation')[0]?.responseStatus||0,blockedMarker:document.querySelector('[data-paywall=true],.paywall-overlay,.paywall-gate')?'paywall':'',text:(r?.textContent||'').slice(0,1600),hasArticle:!!document.querySelector('#js_content,article'),hasNextPage:!!document.querySelector('a[rel=next]'),length:r?.innerHTML.length||0};})()`,
     );
   let meta = await describe();
+  checkOrigin(meta.url);
   let access = accessState(meta);
   if (access === "rate_limited")
     throw new Fault(
       "RATE_LIMITED",
       "页面提示操作频繁；已停止，本次不自动重试",
       429,
+      false,
+      { origin: new URL(meta.url).origin },
     );
   if (access === "network_error")
     throw new Fault("NETWORK_ERROR", "页面网络连接失败，未作为正文保存", 502);
@@ -282,14 +306,77 @@ export async function captureArticle(
       requiredAction: "请在浏览器完成验证或登录；完成后再继续",
     });
     meta = await describe();
+    checkOrigin(meta.url);
     access = accessState(meta);
     if (access !== "accessible")
       throw new Fault(
         access === "rate_limited" ? "RATE_LIMITED" : "ACCESS_BLOCKED",
         "人工接手后仍未取得可访问正文",
         409,
+        false,
+        { origin: new URL(meta.url).origin },
       );
   }
+  let account = { status: "anonymous" as string, method: "not_required" };
+  let verifyAccount: undefined | (() => Promise<string>);
+  if (accountPolicy.mode === "required") {
+    const verify = async () => {
+      if (!accountPolicy.selector || !accountPolicy.expectedHash)
+        return "unknown";
+      const value = await evaluate(
+        `(()=>{const el=document.querySelector(${JSON.stringify(accountPolicy.selector)});return el?${accountPolicy.attribute ? `el.getAttribute(${JSON.stringify(accountPolicy.attribute)})` : "el.textContent"}:null})()`,
+      );
+      if (typeof value !== "string" || !value.trim()) return "unknown";
+      return hash(value.trim()) === accountPolicy.expectedHash
+        ? "matched"
+        : "mismatched";
+    };
+    verifyAccount = verify;
+    let status = await verify();
+    if (status !== "matched") {
+      await run("tabs", { action: "select", tabId, focus: true }, true);
+      await waitForUser({
+        reason: "account_" + status,
+        tabId,
+        url: redactUrl(meta.url),
+        requiredAction:
+          "账号未核验或不匹配，请使用已授权账号后继续；修改核验规则会停止旧任务，需新建任务",
+      });
+      meta = await describe();
+      checkOrigin(meta.url);
+      status = await verify();
+      if (status !== "matched")
+        throw new Fault(
+          "ACCOUNT_NOT_VERIFIED",
+          "仍未核验到所要求账号，正文未交付",
+          403,
+          false,
+          { accountStatus: status },
+        );
+    }
+    account = { status, method: "configured_DOM_fingerprint" };
+  }
+  // Prepare only this newly created capture page. No clicks, pagination or account transitions.
+  const loading = await evaluate(
+    `(async()=>{const started=Date.now();let previous='',stable=0,scrolls=0;while(Date.now()-started<3000){const r=${ROOT_EXPRESSION};if(r&&scrolls<4&&scrollY+innerHeight<Math.min(document.documentElement.scrollHeight,12000)){scrollBy(0,innerHeight);scrolls++;}await new Promise(resolve=>setTimeout(resolve,250));const current=r?.innerHTML||'';stable=current===previous?stable+1:0;previous=current;if(document.readyState==='complete'&&stable>=3&&Date.now()-started>=750)return {stable:true,elapsedMs:Date.now()-started,scrolls};}return {stable:false,elapsedMs:Date.now()-started,scrolls};})()`,
+  );
+  meta = await describe();
+  checkOrigin(meta.url);
+  const preparedAccess = accessState(meta);
+  if (preparedAccess !== "accessible")
+    throw new Fault(
+      preparedAccess === "rate_limited" ? "RATE_LIMITED" : "ACCESS_BLOCKED",
+      "页面在加载期间变为不可访问，未交付正文",
+      preparedAccess === "rate_limited" ? 429 : 403,
+      false,
+      { origin: new URL(meta.url).origin },
+    );
+  if (verifyAccount && (await verifyAccount()) !== "matched")
+    throw new Fault(
+      "ACCOUNT_NOT_VERIFIED",
+      "加载期间账号核验失效，未交付正文",
+      403,
+    );
   if (!meta.length) throw new Fault("EMPTY_ARTICLE", "页面没有可用正文");
   if (meta.length > 8 * 1024 ** 2)
     throw new Fault("LIMIT_EXCEEDED", "正文 HTML 超过采集预算");
@@ -421,9 +508,8 @@ export async function captureArticle(
         : {}),
     }));
   const rendered = renderArticle(meta, prepared);
-  const textCoverage = meta.versionConsistent
-    ? "complete_for_scope"
-    : "unknown";
+  const textCoverage =
+    meta.versionConsistent && loading.stable ? "complete_for_scope" : "unknown";
   const success = prepared.images.filter((x) => x.path).length,
     failed = prepared.images.filter(
       (x) => x.error && x.error !== "NOT_REQUESTED",
@@ -462,6 +548,8 @@ export async function captureArticle(
     },
     truncation: false,
     accessState: access,
+    account,
+    loading,
     versionConsistent: meta.versionConsistent,
     images: prepared.images.map((i) => ({
       ...i,
@@ -470,6 +558,9 @@ export async function captureArticle(
         : redactUrl(i.source),
     })),
     warnings: [
+      ...(!loading.stable
+        ? ["正文未在加载预算内稳定，可能仍有未加载片段"]
+        : []),
       ...(!meta.versionConsistent ? ["提取期间页面变化，完整性未知"] : []),
       ...(prepared.media ? ["存在未下载的音视频或嵌入内容"] : []),
       ...(failed ? ["部分图片未取得"] : []),
@@ -501,8 +592,9 @@ export async function captureArticle(
     void archive.finalize();
   });
   return {
+    tabId,
     state:
-      failed || !meta.versionConsistent || meta.hasNextPage
+      failed || !meta.versionConsistent || meta.hasNextPage || !loading.stable
         ? "partial"
         : "succeeded",
     manifest,

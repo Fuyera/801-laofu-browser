@@ -17,6 +17,7 @@ import { problem, Fault } from "./errors.js";
 import { processLock } from "./lock.js";
 import { egressProxy } from "./network.js";
 import { gateway } from "./relay.js";
+import { VERSION, BUILD } from "./version.js";
 import { serveMcp } from "./mcp.js";
 const { values: v, positionals } = parseArgs({
   allowPositionals: true,
@@ -40,6 +41,7 @@ const { values: v, positionals } = parseArgs({
     discover: { type: "boolean" },
     session: { type: "string" },
     "bridge-port": { type: "string" },
+    site: { type: "string" },
   },
 });
 const command = positionals[0] || "help",
@@ -238,6 +240,41 @@ async function main() {
   }
   if (command === "doctor") {
     const c = client();
+    const capabilities = await c.capabilities();
+    let targetSiteAccess: any = { status: "not_checked" };
+    if (v.site) {
+      if (!v.profile)
+        throw new Fault(
+          "INVALID_ARGUMENT",
+          "doctor --site URL 需要 --profile，使用指定浏览器进行有界检查",
+        );
+      const task = await c.submitTask(
+        {
+          type: "article.capture@v1",
+          execution: { profileId: v.profile },
+          input: { url: v.site, downloadImages: false },
+          limits: {
+            activeTimeoutSeconds: 20,
+            wallTimeoutSeconds: 35,
+            humanWaitSeconds: 5,
+            maxBytes: 1024 ** 2,
+          },
+        },
+        "doctor-" + crypto.randomUUID(),
+      );
+      const result = await c.wait(task.id, { timeoutMs: 40000 });
+      targetSiteAccess = {
+        status: result.state,
+        taskId: task.id,
+        accessState:
+          result.result?.manifest?.accessState ||
+          result.result?.handoff?.reason ||
+          null,
+        account: result.result?.manifest?.account || null,
+        error: result.error,
+      };
+      if (result.state === "waiting_user") await c.cancel(task.id);
+    }
     print({
       packages: {
         version: JSON.parse(
@@ -247,14 +284,16 @@ async function main() {
           path.join(ROOT, "runtime/engine/extension/manifest.json"),
         ),
         baseline: "huashu-chrome@1.2.0",
+        build: BUILD,
+        matchesService: capabilities.version === VERSION,
       },
-      targetSiteAccess: "not_checked",
+      targetSiteAccess,
       node: process.version,
       platform: process.platform,
       arch: process.arch,
       home,
       service: await c.request("GET", "/v1/diagnostics"),
-      capabilities: await c.capabilities(),
+      capabilities,
     });
     return;
   }

@@ -47,11 +47,12 @@ const worker = spawn(
 );
 children.push(worker);
 const stop = () => {
-  for (const child of children) child.kill("SIGTERM");
+  // Keep the display alive until Chromium has closed and released its profile lock.
+  worker.kill("SIGTERM");
 };
 process.once("SIGINT", stop);
 process.once("SIGTERM", stop);
 worker.on("exit", (code) => {
-  stop();
+  for (const child of children) if (child !== worker) child.kill("SIGTERM");
   process.exitCode = code || 0;
 });

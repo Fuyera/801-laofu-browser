@@ -12,6 +12,11 @@ const integer = (minimum: number, maximum: number) => ({
   minimum,
   maximum,
 });
+const productLimits = object({
+  artifactBytes: integer(1024, 10 * 1024 ** 3),
+  maxQueued: integer(1, 1000),
+  maxResident: integer(1, 1000),
+});
 export const commandBody = {
   oneOf: tools.map((t) =>
     object(
@@ -69,6 +74,7 @@ export const taskBody = object(
       wallTimeoutSeconds: integer(5, 3600),
       maxSteps: integer(1, 2000),
       maxBytes: integer(1024, 1024 ** 3),
+      maxTabs: integer(1, 50),
     }),
     requestId: { type: "string", maxLength: 200 },
   },
@@ -79,6 +85,7 @@ export const bodySchemas: Record<string, any> = {
   "POST /v1/admin/products": object(
     {
       name: { type: "string", minLength: 1, maxLength: 100 },
+      limits: productLimits,
       scopes: {
         type: "array",
         uniqueItems: true,
@@ -93,6 +100,22 @@ export const bodySchemas: Record<string, any> = {
       },
     },
     ["name"],
+  ),
+  "PATCH /v1/admin/products/:id": object({ limits: productLimits }, ["limits"]),
+  "PUT /v1/admin/profiles/:id/account-policy": object(
+    {
+      mode: { enum: ["anonymous", "required"] },
+      origins: {
+        type: "array",
+        maxItems: 50,
+        uniqueItems: true,
+        items: { type: "string", format: "uri", pattern: "^https?://" },
+      },
+      selector: { type: "string", minLength: 1, maxLength: 500 },
+      attribute: { type: "string", pattern: "^[a-zA-Z][a-zA-Z0-9_-]{0,100}$" },
+      expectedHash: { type: "string", pattern: "^[a-f0-9]{64}$" },
+    },
+    ["mode", "origins"],
   ),
   "POST /v1/admin/workers": object({
     name: { type: "string", maxLength: 100 },
@@ -130,11 +153,15 @@ export const bodySchemas: Record<string, any> = {
 };
 export const errorResponse = object(
   {
-    error: object({ code: str, message: str, retryable: { type: "boolean" } }, [
-      "code",
-      "message",
-      "retryable",
-    ]),
+    error: object(
+      {
+        code: str,
+        message: str,
+        retryable: { type: "boolean" },
+        details: { type: "object", additionalProperties: true },
+      },
+      ["code", "message", "retryable"],
+    ),
   },
   ["error"],
 );

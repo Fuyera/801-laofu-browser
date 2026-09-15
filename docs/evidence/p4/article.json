@@ -1,0 +1,38 @@
+{
+  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/article-console-Vo4teX",
+  "results": [
+    {
+      "case": "synthetic-browser-fixture: 11 image hashes and ordered DOM lines",
+      "passed": true,
+      "jobId": "tsk_1b74fb250a314f32a62465f9f95af2c5",
+      "evidenceKind": "synthetic-browser-fixture"
+    },
+    {
+      "case": "web console submits long capture, all 180 paragraphs/code/table/link retained, downloads ZIP, safe image preview, five zones and mobile layout",
+      "passed": true,
+      "jobId": "tsk_138063952df44157b065ba214fc47bf5"
+    },
+    {
+      "case": "image larger than 12 MiB uses native bounded download and retains original hash",
+      "passed": true,
+      "jobId": "tsk_4efe4e3ed33e47c6949c65e744758956"
+    },
+    {
+      "case": "corrupt image reports partial",
+      "passed": true
+    },
+    {
+      "case": "DOM changes during transfer report unknown coverage",
+      "passed": true
+    },
+    {
+      "case": "/denied is never an article",
+      "passed": true
+    },
+    {
+      "case": "/limited is never an article",
+      "passed": true
+    }
+  ],
+  "imageRequests": 17
+}

@@ -1,6 +1,6 @@
 # 与huashu-chrome 1.2.0的兼容差异
 
-原版MIT署名和源码快照保留。23工具的公开参数保持原定义；HTTP的profile、requestId、幂等键、输入产物与原工具args分离。仅tools/params数量一致不能证明语义相同；本轮代表性双实现同输入对照25项通过，完整边界组合状态见ACCEPTANCE。
+原版MIT署名和源码快照保留。23工具的公开参数保持原定义；HTTP的profile、requestId、幂等键、输入产物与原工具args分离。仅tools/params数量一致不能证明语义相同；本轮代表性双实现同输入对照43项通过，另有6组实际兼容边界；范围见ACCEPTANCE。
 
 |差异|类别|实际行为与原因|
 |---|---|---|
@@ -21,3 +21,5 @@
 |bridge生命周期|accepted_difference|直接bridge子命令提示使用worker；桥由具备配对/命令协议的执行端管理，避免旁路|
 |登录态和环境|accepted_difference|Cookie/密码留在执行端；不复制到服务器。验证/限流停止，不切IP/profile规避|
 |Mac/其他系统|blocker|当前只验证Mac arm64及Mac容器Linux arm64；Ubuntu/Windows不能使用同一Mac二进制包冒充支持|
+
+P4 对照已包含异常分页、Shadow、富文本、画布拖动、弹窗、失效 ref 和 CSP。另实测两会话同连接的默认页与后台截图不串页。当前 Chromium 153 允许另一扩展并发 debugger，点击只发生一次且另一连接仍可用；显式禁用 L2 时，真实点击/CSP 执行返回 NEEDS_L2、没有效果或降级重放。恢复后须新请求，旧幂等键仍返回原失败。这些结果不推断所有 Chrome 版本、DevTools 状态或参数组合。当前完整矩阵 22/22，日常 Chrome 与固定交付状态见 [测试报告](TEST_REPORT.md)。

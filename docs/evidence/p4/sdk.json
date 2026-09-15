@@ -1,0 +1,24 @@
+{
+  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/sdk-RqhFVk",
+  "external": "/var/folders/y6/74v5c1qd4wbfr9yjmhxx_1rm0000gn/T/laofu-consumers-89lPxh",
+  "results": [
+    {
+      "sdk": "typescript",
+      "capture": "tsk_9645394a4c2a4ba99c2093c92ef2439a",
+      "resumed": "tsk_233e8cfba3634406a03050995a747735",
+      "cancelled": "tsk_5e6628d2f6774c96beba9e4c7edcaf48",
+      "upload": "art_393237e5c81d4f8f95c640cc6873cd0f",
+      "state": "succeeded"
+    },
+    {
+      "sdk": "python",
+      "capture": "tsk_ac3fb06213ba4333ae2965a1ff90d65e",
+      "resumed": "tsk_722efb9fba454ca1b66760c65c471c67",
+      "cancelled": "tsk_784661c2a3d84ba39338453cdab95e11",
+      "upload": "art_2b7929b4115044b19b087f1779351d13",
+      "state": "succeeded"
+    }
+  ],
+  "scope": "两个独立安装的 SDK 程序通过所有者入口访问真实服务；不作为受限产品隔离或业务产品接入证据",
+  "cliMcpSameTask": true
+}

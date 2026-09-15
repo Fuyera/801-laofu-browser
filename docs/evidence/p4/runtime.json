@@ -1,0 +1,38 @@
+{
+  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/p4-runtime-tsWHRT",
+  "evidenceKind": "synthetic fixtures through real Chromium, engine and HTTP",
+  "checks": [
+    {
+      "name": "doctor leaves site unchecked by default and performs an explicit bounded browser diagnosis",
+      "status": "passed"
+    },
+    {
+      "name": "30 captures return owned tab count to baseline and preserve pre-existing page",
+      "status": "passed",
+      "before": 2,
+      "after": 2
+    },
+    {
+      "name": "tab budget refuses new page without closing other pages",
+      "status": "passed"
+    },
+    {
+      "name": "required account matched, mismatch pauses without artifacts, explicit user action and resume reverify",
+      "status": "passed"
+    },
+    {
+      "name": "real SSE resumes after the saved cursor and ends an open stream when its credential is revoked",
+      "status": "passed"
+    },
+    {
+      "name": "deleting during actual HTTP download terminates response and task metadata retains deleted state",
+      "status": "passed"
+    },
+    {
+      "name": "actual HTTP Retry-After persists, prevents a second request and survives service restart without replay",
+      "status": "passed",
+      "rateHits": 1,
+      "cooldownId": "cool_d8d516549dd303d5d1c222fc052b8701"
+    }
+  ]
+}

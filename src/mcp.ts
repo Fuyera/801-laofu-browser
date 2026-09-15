@@ -1,3 +1,4 @@
+import { VERSION, BUILD, API_VERSION } from "./version.js";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import {
@@ -11,7 +12,7 @@ import { BrowserClient } from "./client.js";
 import { problem } from "./errors.js";
 export async function serveMcp(client: BrowserClient, profileId: string) {
   const server = new Server(
-    { name: "laofu-browser", version: "0.1.0" },
+    { name: "laofu-browser", version: VERSION },
     { capabilities: { tools: {} } },
   );
   let sessionId = "";

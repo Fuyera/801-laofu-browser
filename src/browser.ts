@@ -1,3 +1,4 @@
+import { VERSION, BUILD, API_VERSION } from "./version.js";
 import fs from "node:fs";
 import path from "node:path";
 import net from "node:net";
@@ -40,6 +41,14 @@ export class BrowserAdapter {
   readonly port: number;
   readonly pairing: string;
   browserVersion = "unknown";
+  private rateResponses = new Map<
+    string,
+    { origin: string; retryAfter: string | null; observedAt: number }
+  >();
+  rateLimit(url: string, since: number) {
+    const value = this.rateResponses.get(new URL(url).origin);
+    return value && value.observedAt >= since ? value : undefined;
+  }
   constructor(readonly config: BrowserConfig) {
     this.engine = path.join(mkdir(config.home), "engine");
     this.port = config.bridgePort || 18899;
@@ -122,6 +131,10 @@ export class BrowserAdapter {
           channel: "chromium",
           headless: this.config.headless ?? false,
           chromiumSandbox: true,
+          // The worker owns shutdown: let context.close() flush the persistent
+          // profile before container init terminates any remaining children.
+          handleSIGINT: false,
+          handleSIGTERM: false,
           acceptDownloads: true,
           downloadsPath: mkdir(path.join(this.config.home, "downloads")),
           env: this.env,
@@ -143,6 +156,19 @@ export class BrowserAdapter {
         this.context.browser()?.version() ||
         (await this.context.pages()[0]?.evaluate(() => navigator.userAgent)) ||
         "unknown";
+      this.context.on("response", (response) => {
+        if (
+          response.status() !== 429 ||
+          !response.request().isNavigationRequest()
+        )
+          return;
+        const origin = new URL(response.url()).origin;
+        this.rateResponses.set(origin, {
+          origin,
+          retryAfter: response.headers()["retry-after"] || null,
+          observedAt: Date.now(),
+        });
+      });
       const setup = await this.context.newPage();
       try {
         const downloadSession = await this.context.newCDPSession(setup);
@@ -198,7 +224,7 @@ export class BrowserAdapter {
     let client = this.clients.get(sessionId);
     if (!client) {
       client = new Client(
-        { name: "laofu-browser-worker", version: "0.1.0" },
+        { name: "laofu-browser-worker", version: VERSION },
         { capabilities: {} },
       );
       await client.connect(
@@ -280,10 +306,21 @@ export class BrowserAdapter {
     return result;
   }
   async raw(name: string, args: any, job: Job) {
-    return this.rpc.call(name, this.args(args, job), {
+    // Register the new page before the recipe navigates it, so initial response headers cannot race observation.
+    const page =
+      name === "tabs" &&
+      args.action === "new" &&
+      (!args.url || args.url === "about:blank") &&
+      this.context
+        ? this.context.waitForEvent("page", { timeout: 10000 })
+        : undefined;
+    void page?.catch(() => {});
+    const result = await this.rpc.call(name, this.args(args, job), {
       tabId: args.tabId,
       timeoutMs: Math.max(35000, Math.min(job.expiresAt - Date.now(), 650000)),
     });
+    if (page) await page;
+    return result;
   }
   async evaluate(expression: string, job: Job, tabId?: number) {
     const result = await this.raw(
@@ -301,6 +338,9 @@ export class BrowserAdapter {
         "浏览器返回了不可解析的提取结果",
       );
     }
+  }
+  diagnostic(event: string, data: Record<string, unknown>) {
+    this.logs?.write(event, data);
   }
   async stop() {
     this.stopping = true;

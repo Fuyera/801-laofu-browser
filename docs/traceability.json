@@ -1,7 +1,7 @@
 {
-  "version": "0.1.0-dev.1",
-  "updatedAt": "2026-09-14T16:02:45.706Z",
-  "overallGate": "P4 not passed; P5 not completed",
+  "version": "0.1.0-dev.2",
+  "updatedAt": "2026-09-15T02:19:54.201799+00:00",
+  "overallGate": "P4 full matrix 22/22 and actual Codex host passed; daily Chrome permission and fixed artifacts pending; P5 paused by user",
   "requirements": [
     {
       "requirementId": "B01",
@@ -20,12 +20,13 @@
         "scripts/upstream-parity.mjs"
       ],
       "evidence": [
-        "docs/evidence/tools.json",
-        "docs/evidence/parity.json"
+        "docs/evidence/p4/tools.json",
+        "docs/evidence/p4/parity.json",
+        "docs/evidence/p4/compatibility-edge.json"
       ],
       "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
       "status": "verified",
-      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+      "scope": "23工具、43项同输入对照、6组CSP/debugger/跨会话边界实测；不代表所有参数和浏览器版本"
     },
     {
       "requirementId": "B02",
@@ -44,12 +45,13 @@
         "scripts/upstream-parity.mjs"
       ],
       "evidence": [
-        "docs/evidence/tools.json",
-        "docs/evidence/parity.json"
+        "docs/evidence/p4/tools.json",
+        "docs/evidence/p4/parity.json",
+        "docs/evidence/p4/compatibility-edge.json"
       ],
       "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
       "status": "verified",
-      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+      "scope": "23工具、43项同输入对照、6组CSP/debugger/跨会话边界实测；不代表所有参数和浏览器版本"
     },
     {
       "requirementId": "B03",
@@ -68,12 +70,13 @@
         "scripts/upstream-parity.mjs"
       ],
       "evidence": [
-        "docs/evidence/tools.json",
-        "docs/evidence/parity.json"
+        "docs/evidence/p4/tools.json",
+        "docs/evidence/p4/parity.json",
+        "docs/evidence/p4/compatibility-edge.json"
       ],
       "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
       "status": "verified",
-      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+      "scope": "23工具、43项同输入对照、6组CSP/debugger/跨会话边界实测；不代表所有参数和浏览器版本"
     },
     {
       "requirementId": "B04",
@@ -92,12 +95,13 @@
         "scripts/upstream-parity.mjs"
       ],
       "evidence": [
-        "docs/evidence/tools.json",
-        "docs/evidence/parity.json"
+        "docs/evidence/p4/tools.json",
+        "docs/evidence/p4/parity.json",
+        "docs/evidence/p4/compatibility-edge.json"
       ],
       "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
       "status": "verified",
-      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+      "scope": "23工具、43项同输入对照、6组CSP/debugger/跨会话边界实测；不代表所有参数和浏览器版本"
     },
     {
       "requirementId": "B05",
@@ -116,12 +120,13 @@
         "scripts/upstream-parity.mjs"
       ],
       "evidence": [
-        "docs/evidence/tools.json",
-        "docs/evidence/parity.json"
+        "docs/evidence/p4/tools.json",
+        "docs/evidence/p4/parity.json",
+        "docs/evidence/p4/compatibility-edge.json"
       ],
       "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
       "status": "verified",
-      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+      "scope": "23工具、43项同输入对照、6组CSP/debugger/跨会话边界实测；不代表所有参数和浏览器版本"
     },
     {
       "requirementId": "B06",
@@ -140,12 +145,13 @@
         "scripts/upstream-parity.mjs"
       ],
       "evidence": [
-        "docs/evidence/tools.json",
-        "docs/evidence/parity.json"
+        "docs/evidence/p4/tools.json",
+        "docs/evidence/p4/parity.json",
+        "docs/evidence/p4/compatibility-edge.json"
       ],
       "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
       "status": "verified",
-      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+      "scope": "23工具、43项同输入对照、6组CSP/debugger/跨会话边界实测；不代表所有参数和浏览器版本"
     },
     {
       "requirementId": "B07",
@@ -164,12 +170,13 @@
         "scripts/upstream-parity.mjs"
       ],
       "evidence": [
-        "docs/evidence/tools.json",
-        "docs/evidence/parity.json"
+        "docs/evidence/p4/tools.json",
+        "docs/evidence/p4/parity.json",
+        "docs/evidence/p4/compatibility-edge.json"
       ],
       "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
       "status": "verified",
-      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+      "scope": "23工具、43项同输入对照、6组CSP/debugger/跨会话边界实测；不代表所有参数和浏览器版本"
     },
     {
       "requirementId": "B08",
@@ -188,12 +195,13 @@
         "scripts/upstream-parity.mjs"
       ],
       "evidence": [
-        "docs/evidence/tools.json",
-        "docs/evidence/parity.json"
+        "docs/evidence/p4/tools.json",
+        "docs/evidence/p4/parity.json",
+        "docs/evidence/p4/compatibility-edge.json"
       ],
       "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
       "status": "verified",
-      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+      "scope": "23工具、43项同输入对照、6组CSP/debugger/跨会话边界实测；不代表所有参数和浏览器版本"
     },
     {
       "requirementId": "B09",
@@ -212,12 +220,13 @@
         "scripts/upstream-parity.mjs"
       ],
       "evidence": [
-        "docs/evidence/tools.json",
-        "docs/evidence/parity.json"
+        "docs/evidence/p4/tools.json",
+        "docs/evidence/p4/parity.json",
+        "docs/evidence/p4/compatibility-edge.json"
       ],
       "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
       "status": "verified",
-      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+      "scope": "23工具、43项同输入对照、6组CSP/debugger/跨会话边界实测；不代表所有参数和浏览器版本"
     },
     {
       "requirementId": "B10",
@@ -236,12 +245,13 @@
         "scripts/upstream-parity.mjs"
       ],
       "evidence": [
-        "docs/evidence/tools.json",
-        "docs/evidence/parity.json"
+        "docs/evidence/p4/tools.json",
+        "docs/evidence/p4/parity.json",
+        "docs/evidence/p4/compatibility-edge.json"
       ],
       "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
       "status": "verified",
-      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+      "scope": "23工具、43项同输入对照、6组CSP/debugger/跨会话边界实测；不代表所有参数和浏览器版本"
     },
     {
       "requirementId": "B11",
@@ -260,12 +270,13 @@
         "scripts/upstream-parity.mjs"
       ],
       "evidence": [
-        "docs/evidence/tools.json",
-        "docs/evidence/parity.json"
+        "docs/evidence/p4/tools.json",
+        "docs/evidence/p4/parity.json",
+        "docs/evidence/p4/compatibility-edge.json"
       ],
       "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
       "status": "verified",
-      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+      "scope": "23工具、43项同输入对照、6组CSP/debugger/跨会话边界实测；不代表所有参数和浏览器版本"
     },
     {
       "requirementId": "B12",
@@ -284,12 +295,13 @@
         "scripts/upstream-parity.mjs"
       ],
       "evidence": [
-        "docs/evidence/tools.json",
-        "docs/evidence/parity.json"
+        "docs/evidence/p4/tools.json",
+        "docs/evidence/p4/parity.json",
+        "docs/evidence/p4/compatibility-edge.json"
       ],
       "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
       "status": "verified",
-      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+      "scope": "23工具、43项同输入对照、6组CSP/debugger/跨会话边界实测；不代表所有参数和浏览器版本"
     },
     {
       "requirementId": "B13",
@@ -308,12 +320,13 @@
         "scripts/upstream-parity.mjs"
       ],
       "evidence": [
-        "docs/evidence/tools.json",
-        "docs/evidence/parity.json"
+        "docs/evidence/p4/tools.json",
+        "docs/evidence/p4/parity.json",
+        "docs/evidence/p4/compatibility-edge.json"
       ],
       "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
       "status": "verified",
-      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+      "scope": "23工具、43项同输入对照、6组CSP/debugger/跨会话边界实测；不代表所有参数和浏览器版本"
     },
     {
       "requirementId": "B14",
@@ -332,12 +345,13 @@
         "scripts/upstream-parity.mjs"
       ],
       "evidence": [
-        "docs/evidence/tools.json",
-        "docs/evidence/parity.json"
+        "docs/evidence/p4/tools.json",
+        "docs/evidence/p4/parity.json",
+        "docs/evidence/p4/compatibility-edge.json"
       ],
       "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
       "status": "verified",
-      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+      "scope": "23工具、43项同输入对照、6组CSP/debugger/跨会话边界实测；不代表所有参数和浏览器版本"
     },
     {
       "requirementId": "B15",
@@ -356,12 +370,13 @@
         "scripts/upstream-parity.mjs"
       ],
       "evidence": [
-        "docs/evidence/tools.json",
-        "docs/evidence/parity.json"
+        "docs/evidence/p4/tools.json",
+        "docs/evidence/p4/parity.json",
+        "docs/evidence/p4/compatibility-edge.json"
       ],
       "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
       "status": "verified",
-      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+      "scope": "23工具、43项同输入对照、6组CSP/debugger/跨会话边界实测；不代表所有参数和浏览器版本"
     },
     {
       "requirementId": "B16",
@@ -380,12 +395,13 @@
         "scripts/upstream-parity.mjs"
       ],
       "evidence": [
-        "docs/evidence/tools.json",
-        "docs/evidence/parity.json"
+        "docs/evidence/p4/tools.json",
+        "docs/evidence/p4/parity.json",
+        "docs/evidence/p4/compatibility-edge.json"
       ],
       "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
       "status": "verified",
-      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+      "scope": "23工具、43项同输入对照、6组CSP/debugger/跨会话边界实测；不代表所有参数和浏览器版本"
     },
     {
       "requirementId": "B17",
@@ -404,12 +420,13 @@
         "scripts/upstream-parity.mjs"
       ],
       "evidence": [
-        "docs/evidence/tools.json",
-        "docs/evidence/parity.json"
+        "docs/evidence/p4/tools.json",
+        "docs/evidence/p4/parity.json",
+        "docs/evidence/p4/compatibility-edge.json"
       ],
       "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
       "status": "verified",
-      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+      "scope": "23工具、43项同输入对照、6组CSP/debugger/跨会话边界实测；不代表所有参数和浏览器版本"
     },
     {
       "requirementId": "B18",
@@ -428,12 +445,13 @@
         "scripts/upstream-parity.mjs"
       ],
       "evidence": [
-        "docs/evidence/tools.json",
-        "docs/evidence/parity.json"
+        "docs/evidence/p4/tools.json",
+        "docs/evidence/p4/parity.json",
+        "docs/evidence/p4/compatibility-edge.json"
       ],
       "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
       "status": "verified",
-      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+      "scope": "23工具、43项同输入对照、6组CSP/debugger/跨会话边界实测；不代表所有参数和浏览器版本"
     },
     {
       "requirementId": "B19",
@@ -452,12 +470,13 @@
         "scripts/upstream-parity.mjs"
       ],
       "evidence": [
-        "docs/evidence/tools.json",
-        "docs/evidence/parity.json"
+        "docs/evidence/p4/tools.json",
+        "docs/evidence/p4/parity.json",
+        "docs/evidence/p4/compatibility-edge.json"
       ],
       "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
       "status": "verified",
-      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+      "scope": "23工具、43项同输入对照、6组CSP/debugger/跨会话边界实测；不代表所有参数和浏览器版本"
     },
     {
       "requirementId": "B20",
@@ -476,12 +495,13 @@
         "scripts/upstream-parity.mjs"
       ],
       "evidence": [
-        "docs/evidence/tools.json",
-        "docs/evidence/parity.json"
+        "docs/evidence/p4/tools.json",
+        "docs/evidence/p4/parity.json",
+        "docs/evidence/p4/compatibility-edge.json"
       ],
       "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
       "status": "verified",
-      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+      "scope": "23工具、43项同输入对照、6组CSP/debugger/跨会话边界实测；不代表所有参数和浏览器版本"
     },
     {
       "requirementId": "B21",
@@ -500,12 +520,13 @@
         "scripts/upstream-parity.mjs"
       ],
       "evidence": [
-        "docs/evidence/tools.json",
-        "docs/evidence/parity.json"
+        "docs/evidence/p4/tools.json",
+        "docs/evidence/p4/parity.json",
+        "docs/evidence/p4/compatibility-edge.json"
       ],
       "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
       "status": "verified",
-      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+      "scope": "23工具、43项同输入对照、6组CSP/debugger/跨会话边界实测；不代表所有参数和浏览器版本"
     },
     {
       "requirementId": "B22",
@@ -524,12 +545,13 @@
         "scripts/upstream-parity.mjs"
       ],
       "evidence": [
-        "docs/evidence/tools.json",
-        "docs/evidence/parity.json"
+        "docs/evidence/p4/tools.json",
+        "docs/evidence/p4/parity.json",
+        "docs/evidence/p4/compatibility-edge.json"
       ],
       "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
       "status": "verified",
-      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+      "scope": "23工具、43项同输入对照、6组CSP/debugger/跨会话边界实测；不代表所有参数和浏览器版本"
     },
     {
       "requirementId": "B23",
@@ -548,12 +570,13 @@
         "scripts/upstream-parity.mjs"
       ],
       "evidence": [
-        "docs/evidence/tools.json",
-        "docs/evidence/parity.json"
+        "docs/evidence/p4/tools.json",
+        "docs/evidence/p4/parity.json",
+        "docs/evidence/p4/compatibility-edge.json"
       ],
       "environment": "macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0",
       "status": "verified",
-      "scope": "原参数契约和代表性真实场景；不是全参数组合或全部环境通过"
+      "scope": "23工具、43项同输入对照、6组CSP/debugger/跨会话边界实测；不代表所有参数和浏览器版本"
     },
     {
       "requirementId": "L01",
@@ -565,10 +588,11 @@
         "scripts/article-console-regression.mjs"
       ],
       "evidence": [
-        "docs/evidence/article-console.json",
-        "docs/evidence/capture-verification.json"
+        "docs/evidence/p4/article.json",
+        "docs/evidence/p4/runtime.json",
+        "docs/evidence/p4/unit.json"
       ],
-      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，日常Chrome与固定制品待收口，P5暂停"
     },
     {
       "requirementId": "L02",
@@ -583,9 +607,11 @@
         "scripts/sdk-smoke.mjs"
       ],
       "evidence": [
-        "docs/evidence/sdk.json"
+        "docs/evidence/p4/sdk.json",
+        "docs/evidence/p4/isolated.json",
+        "docs/evidence/p4/codex-host.json"
       ],
-      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，日常Chrome与固定制品待收口，P5暂停"
     },
     {
       "requirementId": "L03",
@@ -598,9 +624,10 @@
         "scripts/handoff-regression.mjs"
       ],
       "evidence": [
-        "docs/evidence/handoff.json"
+        "docs/evidence/p4/handoff.json",
+        "docs/evidence/p4/isolated.json"
       ],
-      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，日常Chrome与固定制品待收口，P5暂停"
     },
     {
       "requirementId": "L04",
@@ -614,10 +641,11 @@
         "scripts/attach-regression.mjs"
       ],
       "evidence": [
-        "docs/evidence/handoff.json",
-        "docs/evidence/attach.json"
+        "docs/evidence/p4/attach.json",
+        "docs/evidence/p4/handoff.json",
+        "docs/evidence/p4/isolated.json"
       ],
-      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，日常Chrome与固定制品待收口，P5暂停"
     },
     {
       "requirementId": "L05",
@@ -630,10 +658,11 @@
         "scripts/article-console-regression.mjs"
       ],
       "evidence": [
-        "docs/evidence/article-console.json",
-        "docs/evidence/capture-verification.json"
+        "docs/evidence/p4/runtime.json",
+        "docs/evidence/p4/unit.json",
+        "docs/evidence/p4/article.json"
       ],
-      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，日常Chrome与固定制品待收口，P5暂停"
     },
     {
       "requirementId": "L06",
@@ -647,9 +676,11 @@
         "scripts/fault-regression.mjs"
       ],
       "evidence": [
-        "docs/evidence/faults.json"
+        "docs/evidence/p4/faults.json",
+        "docs/evidence/p4/runtime.json",
+        "docs/evidence/p4/unit.json"
       ],
-      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，日常Chrome与固定制品待收口，P5暂停"
     },
     {
       "requirementId": "L07",
@@ -663,13 +694,15 @@
         "scripts/performance-probe.mjs"
       ],
       "evidence": [
-        "docs/evidence/performance.json"
+        "docs/evidence/p4/performance.json",
+        "docs/evidence/p4/runtime.json",
+        "docs/evidence/p4/unit.json"
       ],
-      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，日常Chrome与固定制品待收口，P5暂停"
     },
     {
       "requirementId": "R01",
-      "status": "blocked",
+      "status": "verified",
       "implementation": [
         "src/network.ts",
         "src/relay.ts",
@@ -680,9 +713,9 @@
         "scripts/network-probe.mjs"
       ],
       "evidence": [
-        "docs/evidence/isolation.json"
+        "docs/evidence/p4/isolated.json"
       ],
-      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，日常Chrome与固定制品待收口，P5暂停"
     },
     {
       "requirementId": "R02",
@@ -696,9 +729,9 @@
         "scripts/fault-regression.mjs"
       ],
       "evidence": [
-        "docs/evidence/faults.json"
+        "docs/evidence/p4/faults.json"
       ],
-      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，日常Chrome与固定制品待收口，P5暂停"
     },
     {
       "requirementId": "R03",
@@ -713,10 +746,10 @@
         "scripts/handoff-regression.mjs"
       ],
       "evidence": [
-        "docs/evidence/downloads.json",
-        "docs/evidence/handoff.json"
+        "docs/evidence/p4/downloads.json",
+        "docs/evidence/p4/handoff.json"
       ],
-      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，日常Chrome与固定制品待收口，P5暂停"
     },
     {
       "requirementId": "R04",
@@ -733,10 +766,12 @@
         "test/hosts.test.ts"
       ],
       "evidence": [
-        "docs/evidence/parity.json",
-        "docs/evidence/tools.json"
+        "docs/evidence/p4/parity.json",
+        "docs/evidence/p4/tools.json",
+        "docs/evidence/p4/compatibility-edge.json",
+        "docs/evidence/p4/codex-host.json"
       ],
-      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+      "scope": "43项对照、6组兼容边界、实际Codex宿主通过；其余19宿主及跨系统未逐一启动"
     },
     {
       "requirementId": "R05",
@@ -750,9 +785,10 @@
         "scripts/handoff-regression.mjs"
       ],
       "evidence": [
-        "docs/evidence/handoff.json"
+        "docs/evidence/p4/handoff.json",
+        "docs/evidence/p4/isolated.json"
       ],
-      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，日常Chrome与固定制品待收口，P5暂停"
     },
     {
       "requirementId": "R06",
@@ -767,10 +803,12 @@
         "test/policy.test.ts"
       ],
       "evidence": [
-        "docs/evidence/article-console.json",
-        "docs/evidence/isolation.json"
+        "docs/evidence/p4/isolated.json",
+        "docs/evidence/p4/runtime.json",
+        "docs/evidence/p4/unit.json",
+        "docs/evidence/p4/downloads.json"
       ],
-      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，日常Chrome与固定制品待收口，P5暂停"
     },
     {
       "requirementId": "R07",
@@ -782,10 +820,10 @@
         "scripts/article-console-regression.mjs"
       ],
       "evidence": [
-        "docs/evidence/article-console.json",
-        "docs/evidence/capture-verification.json"
+        "docs/evidence/p4/article.json",
+        "docs/evidence/p4/runtime.json"
       ],
-      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，日常Chrome与固定制品待收口，P5暂停"
     },
     {
       "requirementId": "R08",
@@ -798,10 +836,13 @@
         "scripts/sdk-smoke.mjs"
       ],
       "evidence": [
-        "docs/evidence/sdk.json"
+        "docs/evidence/p4/sdk.json",
+        "docs/evidence/p4/isolated.json",
+        "docs/evidence/p4/codex-host.json"
       ],
-      "scope": "详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过"
+      "scope": "当前Mac完整矩阵22/22；verified仅适用于所引报告，日常Chrome与固定制品待收口，P5暂停"
     }
   ],
-  "latestRegression": "docs/evidence/full-test.json"
+  "latestRegression": "docs/evidence/p4/full-interrupted.json",
+  "currentEvidenceIndex": "docs/evidence/p4/index.json"
 }

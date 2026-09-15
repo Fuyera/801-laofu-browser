@@ -1,3 +1,4 @@
+import { VERSION, BUILD, API_VERSION } from "./version.js";
 import Fastify from "fastify";
 import { operationalLog } from "./logs.js";
 import { applyContracts } from "./contracts.js";
@@ -13,8 +14,14 @@ import { Artifacts } from "./artifacts.js";
 import { Broker } from "./broker.js";
 import { Fault, problem } from "./errors.js";
 import { tools, ROOT, validateTool, readingTools } from "./catalog.js";
-import { bounded, filename, id, safeUrl, secret } from "./util.js";
-import { TERMINAL, type Product, type Profile, type Job } from "./types.js";
+import { bounded, filename, id, safeUrl, secret, canonical } from "./util.js";
+import {
+  TERMINAL,
+  PRODUCT_LIMITS,
+  type Product,
+  type Profile,
+  type Job,
+} from "./types.js";
 export interface ServerOptions {
   home: string;
   host?: string;
@@ -46,7 +53,7 @@ export async function createServer(options: ServerOptions) {
   await app.register(swagger, {
     openapi: {
       openapi: "3.1.0",
-      info: { title: "laofu-browser API", version: "0.1.0" },
+      info: { title: "laofu-browser API", version: VERSION },
       components: {
         securitySchemes: { bearerAuth: { type: "http", scheme: "bearer" } },
       },
@@ -145,8 +152,25 @@ export async function createServer(options: ServerOptions) {
   };
   function viewJob(job: Job) {
     const p = store.get<Profile>("profile", job.profileId);
+    const files = store.artifacts().filter((a) => a.jobId === job.id);
     return {
       ...job,
+      result: job.result && {
+        ...job.result,
+        ...(job.result.artifacts
+          ? {
+              artifacts: job.result.artifacts.map((a: any) => {
+                const current = store.artifact(a.id);
+                return {
+                  ...a,
+                  deleted: current?.deleted ?? true,
+                  unavailableReason:
+                    !current || current.deleted ? "deleted" : null,
+                };
+              }),
+            }
+          : {}),
+      },
       attemptId: job.id + ":" + job.attempt,
       requestId: job.input.requestId || job.id,
       checkpoint: {
@@ -162,18 +186,21 @@ export async function createServer(options: ServerOptions) {
           : job.state === "suspended"
             ? "verify_old_execution"
             : null,
-      capabilityVersion: "0.1.0",
+      capabilityVersion: VERSION,
       resumeAllowed:
         job.state === "waiting_user" && !job.cancelRequested && !p?.quarantined,
-      artifacts: store
-        .artifacts()
-        .filter((a) => a.jobId === job.id && !a.deleted),
+      artifacts: files,
     };
   }
   const schema = {
     body: { type: "object", additionalProperties: true },
   } as any;
-  app.get("/healthz", async () => ({ status: "alive", version: "0.1.0" }));
+  app.get("/healthz", async () => ({
+    status: "alive",
+    version: VERSION,
+    apiVersion: API_VERSION,
+    build: BUILD,
+  }));
   app.get("/readyz", async () => ({
     status: broker.workers.size ? "ready" : "waiting_worker",
     profiles: store
@@ -213,7 +240,9 @@ export async function createServer(options: ServerOptions) {
   app.get("/v1/capabilities", async (req) => {
     const p = product(req);
     return {
-      version: "0.1.0",
+      version: VERSION,
+      apiVersion: API_VERSION,
+      build: BUILD,
       upstream: "huashu-chrome@1.2.0",
       tools: tools.map((t) => ({
         ...t,
@@ -265,7 +294,22 @@ export async function createServer(options: ServerOptions) {
       : ["article.capture", "artifacts.write"];
     if (scopes.some((s: any) => !allowed.includes(s)))
       throw new Fault("INVALID_ARGUMENT", "权限范围无效");
-    return store.createProduct(name, "product", scopes);
+    const created = store.createProduct(name, "product", scopes);
+    if (req.body.limits)
+      created.product = store.put("product", created.product.id, {
+        ...created.product,
+        limits: req.body.limits,
+      });
+    return created;
+  });
+  app.patch("/v1/admin/products/:id", async (req: any) => {
+    owner(req);
+    const p = store.get<Product>("product", req.params.id);
+    if (!p || p.revoked) throw new Fault("FORBIDDEN", "身份不可用", 403);
+    return store.put("product", p.id, {
+      ...p,
+      limits: { ...p.limits, ...req.body.limits },
+    });
   });
   app.delete("/v1/admin/products/:id", async (req: any) => {
     owner(req);
@@ -274,6 +318,7 @@ export async function createServer(options: ServerOptions) {
       throw new Fault("FORBIDDEN", "无法撤销该身份", 403);
     store.put("product", p.id, { ...p, revoked: true });
     store.revokeCredentials("product", p.id);
+    artifacts.revokeProduct(p.id);
     for (const job of store.jobs(p)) broker.cancel(job);
     return { revoked: true };
   });
@@ -282,6 +327,7 @@ export async function createServer(options: ServerOptions) {
     const p = store.get<Product>("product", req.params.id);
     if (!p || p.revoked) throw new Fault("FORBIDDEN", "身份不可用", 403);
     store.revokeCredentials("product", p.id);
+    artifacts.revokeProduct(p.id);
     return { token: store.credential("product", p.id) };
   });
   app.get("/v1/admin/workers", async (req) => {
@@ -419,6 +465,46 @@ export async function createServer(options: ServerOptions) {
       version: profile.version + 1,
     });
   });
+  app.put("/v1/admin/profiles/:id/account-policy", async (req: any) => {
+    const profile = store.profile(owner(req), req.params.id),
+      policy = req.body;
+    if (
+      policy.origins.some(
+        (origin: string) => safeUrl(origin).origin !== origin,
+      ) ||
+      (policy.mode === "required" && !policy.origins.length)
+    )
+      throw new Fault(
+        "INVALID_ARGUMENT",
+        "请填写精确站点 origin；要求账号时至少指定一个站点",
+      );
+    const previous = store.get("account-policy", profile.id) || {
+      mode: "anonymous",
+      origins: [],
+    };
+    if (canonical(previous) !== canonical(policy))
+      for (const job of store
+        .jobs()
+        .filter((j) => j.profileId === profile.id && !TERMINAL.has(j.state)))
+        broker.cancel(job);
+    store.put("account-policy", profile.id, policy);
+    return {
+      profileId: profile.id,
+      mode: policy.mode,
+      origins: policy.origins,
+      verifierConfigured: !!(policy.selector && policy.expectedHash),
+    };
+  });
+  app.get("/v1/admin/profiles/:id/account-policy", async (req: any) => {
+    const profile = store.profile(owner(req), req.params.id);
+    return {
+      profileId: profile.id,
+      ...(store.get("account-policy", profile.id) || {
+        mode: "anonymous",
+        origins: [],
+      }),
+    };
+  });
   app.post("/v1/admin/profiles/:id/recover", { schema }, async (req: any) => {
     const p = owner(req),
       profile = store.profile(p, req.params.id);
@@ -510,6 +596,15 @@ export async function createServer(options: ServerOptions) {
       artifacts.owned(p, String(key));
     if ("__lb" in args)
       throw new Fault("INVALID_ARGUMENT", "调用参数包含保留字段");
+    if (
+      p.role !== "owner" &&
+      store.get<any>("account-policy", profile.id)?.mode === "required"
+    )
+      throw new Fault(
+        "ACCOUNT_VERIFICATION_REQUIRED",
+        "此浏览器要求账号核验，请使用受控采集任务",
+        403,
+      );
     const record = store.createJob(p, "command", idem(req), {
       sessionId: s.id,
       profileId: profile.id,
@@ -598,6 +693,7 @@ export async function createServer(options: ServerOptions) {
       ),
       maxSteps: bounded(body.limits?.maxSteps, 500, 1, 2000),
       maxBytes: bounded(body.limits?.maxBytes, 50 * 1024 ** 2, 1024, 1024 ** 3),
+      maxTabs: bounded(body.limits?.maxTabs, 8, 1, 50),
     };
     const record = store.createJob(p, "task", idem(req), {
       profileId: profile.id,
@@ -680,7 +776,12 @@ export async function createServer(options: ServerOptions) {
       decodeURIComponent(String(req.headers["x-filename"] || "upload.bin")),
       String(req.headers["x-mime-type"] || "application/octet-stream"),
       req.body,
-      { expectedHash: req.headers["x-sha256"] },
+      {
+        expectedHash: req.headers["x-sha256"],
+        authorize: () => {
+          product(req);
+        },
+      },
     );
     reply.code(201);
     return a;
@@ -692,7 +793,8 @@ export async function createServer(options: ServerOptions) {
     artifacts.owned(product(req), req.params.id),
   );
   app.get("/v1/artifacts/:id/content", async (req: any, reply) => {
-    const a = artifacts.owned(product(req), req.params.id);
+    const p = product(req),
+      a = artifacts.owned(p, req.params.id);
     reply
       .type(a.mime)
       .header(
@@ -702,7 +804,7 @@ export async function createServer(options: ServerOptions) {
       .header("Content-Length", a.bytes)
       .header("Cache-Control", "no-store")
       .header("Content-Security-Policy", "default-src 'none'; sandbox");
-    return reply.send(fs.createReadStream(artifacts.path(a.id)));
+    return reply.send(artifacts.download(p, a.id));
   });
   app.get("/v1/artifacts/:id/preview", async (req: any, reply) => {
     const p = product(req),
@@ -803,7 +905,7 @@ export async function createServer(options: ServerOptions) {
       jobs = store.jobs(p),
       arts = store.artifacts(p);
     return {
-      version: "0.1.0",
+      version: VERSION,
       upstream: "1.2.0",
       runtime: process.version,
       workers:
@@ -826,11 +928,30 @@ export async function createServer(options: ServerOptions) {
         logRetentionDays: 30,
         artifactRetention: "manual",
         quotaBytes: artifacts.quota,
+        productLimits: { ...PRODUCT_LIMITS, ...p.limits },
       },
+      cooldowns: store
+        .list<any>("cooldown")
+        .filter(
+          (c) =>
+            p.role === "owner" ||
+            store
+              .get<Profile>("profile", c.profileId)
+              ?.productIds.includes(p.id),
+        )
+        .map(({ accountScope, ...c }) => c),
       modelCalls: 0,
     };
   });
-  app.post("/v1/tasks/:id/handoffs", async (req: any) => {
+  app.get("/v1/admin/cooldowns", async (req: any) => {
+    owner(req);
+    return { items: store.list("cooldown") };
+  });
+  app.post("/v1/admin/cooldowns/:id/release", async (req: any) => {
+    owner(req);
+    return store.releaseCooldown(req.params.id);
+  });
+  app.post("/v1/tasks/:id/handoffs", async (req: any, reply) => {
     const p = product(req),
       job = store.ownedJob(p, req.params.id);
     if (job.state !== "waiting_user" || job.cancelRequested)
@@ -838,10 +959,13 @@ export async function createServer(options: ServerOptions) {
     const prior = store
       .list<any>("handoff")
       .find(
-        (h) => h.jobId === job.id && !h.revoked && h.expiresAt > Date.now(),
+        (h) =>
+          h.jobId === job.id &&
+          h.productId === p.id &&
+          !h.revoked &&
+          h.expiresAt > Date.now(),
       );
-    if (prior) return prior;
-    const h = {
+    const h = prior || {
       id: id("hnd"),
       jobId: job.id,
       profileId: job.profileId,
@@ -850,7 +974,25 @@ export async function createServer(options: ServerOptions) {
       expiresAt: Math.min(job.expiresAt, Date.now() + 600000),
       revoked: false,
     };
-    return store.put("handoff", h.id, h);
+    store.put("handoff", h.id, h);
+    store.revokeCredentials("handoff", h.id);
+    const ttl = Math.min(60000, h.expiresAt - Date.now());
+    const ticket = store.credential("handoff", h.id, ttl);
+    reply
+      .header("Cache-Control", "no-store")
+      .setCookie(`lb_handoff_${h.id}`, ticket, {
+        httpOnly: true,
+        sameSite: "strict",
+        secure: req.protocol === "https",
+        path: `/v1/handoffs/${h.id}/socket`,
+        maxAge: Math.floor(ttl / 1000),
+      });
+    return {
+      ...h,
+      ticket,
+      ticketExpiresAt: Date.now() + ttl,
+      connectionPolicy: "single_use",
+    };
   });
   app.delete("/v1/tasks/:id/handoffs/:handoff", async (req: any) => {
     store.ownedJob(product(req), req.params.id);
@@ -858,6 +1000,7 @@ export async function createServer(options: ServerOptions) {
     if (!h || h.jobId !== req.params.id)
       throw new Fault("FORBIDDEN", "无权访问此资源", 403);
     store.put("handoff", h.id, { ...h, revoked: true });
+    store.revokeCredentials("handoff", h.id);
     broker.closeViewers(h.jobId);
     return { revoked: true };
   });
@@ -868,18 +1011,20 @@ export async function createServer(options: ServerOptions) {
       try {
         const p = product(req),
           h = store.get<any>("handoff", req.params.id);
-        if (
-          !h ||
-          h.revoked ||
-          h.expiresAt < Date.now() ||
-          (p.role !== "owner" && h.productId !== p.id)
-        )
+        if (!h || h.revoked || h.expiresAt < Date.now() || h.productId !== p.id)
           throw new Error("forbidden");
         const job = store.ownedJob(p, h.jobId);
         if (job.state !== "waiting_user" || job.cancelRequested)
           throw new Error("unavailable");
         if ([...broker.viewers.values()].some((v) => v.jobId === job.id))
           throw new Error("already controlled");
+        const ticket = String(
+          req.headers["x-handoff-ticket"] ||
+            req.cookies[`lb_handoff_${h.id}`] ||
+            "",
+        );
+        if (!ticket || !store.consumeCredential(ticket, "handoff", h.id))
+          throw new Error("ticket invalid or used");
         const viewerId = id("view");
         broker.viewers.set(viewerId, {
           socket,
@@ -900,6 +1045,13 @@ export async function createServer(options: ServerOptions) {
           Math.max(1, h.expiresAt - Date.now()),
         );
         socket.on("message", (raw) => {
+          try {
+            product(req);
+            store.profile(p, job.profileId);
+          } catch {
+            socket.close(4003, "authorization expired");
+            return;
+          }
           const latest = store.get<any>("handoff", h.id),
             actor = store.get<Product>("product", p.id);
           if (
@@ -961,6 +1113,16 @@ export async function createServer(options: ServerOptions) {
         maxBytes:
           job.kind === "task" ? job.input.limits?.maxBytes : 512 * 1024 ** 2,
         metadata: { source: "worker" },
+        authorize: () => {
+          worker(req);
+          const current = store.job(job.id);
+          if (
+            !current ||
+            current.state !== "running" ||
+            current.cancelRequested
+          )
+            throw new Fault("FORBIDDEN", "文件传输授权已停止", 403);
+        },
       },
     );
   });
@@ -1041,7 +1203,9 @@ export async function createServer(options: ServerOptions) {
     if (!a || a.deleted || a.productId !== job.productId)
       throw new Fault("FORBIDDEN", "文件输入未授权", 403);
     reply.type(a.mime).header("x-sha256", a.sha256);
-    return reply.send(fs.createReadStream(artifacts.path(a.id)));
+    return reply.send(
+      artifacts.download(store.get<Product>("product", job.productId)!, a.id),
+    );
   });
   const webRoot = path.join(ROOT, "dist/web");
   if (fs.existsSync(webRoot)) {

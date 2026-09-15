@@ -33,6 +33,21 @@ const privateNet = await request(
   18880,
   "http://169.254.169.254/latest/meta-data/",
 );
+const privateTargets = [
+  "http://127.0.0.1:17889/healthz",
+  "http://[::1]:17889/healthz",
+  "http://[::ffff:127.0.0.1]:17889/healthz",
+  "http://10.0.0.1/",
+  "http://192.168.1.1/",
+  "http://198.18.0.1/",
+  "http://host.docker.internal:17889/healthz",
+];
+const addressChecks = await Promise.all(
+  privateTargets.map(async (url) => ({
+    url,
+    status: await request(18880, url),
+  })),
+);
 const ctx = await chromium.launchPersistentContext("/data/net-probe", {
   headless: true,
   channel: "chromium",
@@ -66,10 +81,13 @@ try {
     nonRoot: process.getuid() !== 0,
     directEgressDenied: !direct,
     controlRoutesDenied: control === 403,
-    privateNetworkDenied: privateNet === 403 && privateDenied,
+    privateNetworkDenied:
+      privateNet === 403 &&
+      privateDenied &&
+      addressChecks.every((x) => x.status === 403),
     publicEgressAllowed: publicAllowed,
   };
-  console.log(JSON.stringify({ checks, publicError }));
+  console.log(JSON.stringify({ checks, publicError, addressChecks }));
   if (Object.values(checks).some((v) => !v))
     throw new Error("NETWORK_PROBE_FAILED");
 } finally {

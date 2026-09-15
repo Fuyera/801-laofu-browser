@@ -1,0 +1,22 @@
+{
+  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/download-xuiPjA",
+  "scope": "32MiB慢速流，浏览器原生下载超时和用户取消，确认HTTP流停止且无完整产物；状态保守，未知时需恢复profile",
+  "results": [
+    {
+      "mode": "timeout",
+      "state": "failed",
+      "effectState": "unknown",
+      "transferStopped": true,
+      "publishedArtifacts": 0,
+      "sameKeyNotReplayed": true
+    },
+    {
+      "mode": "cancel",
+      "state": "cancelled",
+      "effectState": "unknown",
+      "transferStopped": true,
+      "publishedArtifacts": 0,
+      "sameKeyNotReplayed": true
+    }
+  ]
+}

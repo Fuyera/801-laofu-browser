@@ -1,6 +1,6 @@
 # laofu-browser
 
-老傅的独立浏览器能力服务。当前为 `0.1.0-dev.1` 内部开发版；真实通过项与尚未完成的 P4/P5 门槛见 [验收报告](docs/ACCEPTANCE.md)，不能据此宣布跨系统 v1.0。
+老傅的独立浏览器能力服务。当前为 `0.1.0-dev.2` 内部开发版；真实通过项与尚未完成的 P4/P5 门槛见 [验收报告](docs/ACCEPTANCE.md)，不能据此宣布跨系统 v1.0。
 
 提供 huashu-chrome 1.2.0 的23个原始工具，以及图文采集、持久任务、文件产物、独立凭据、人工接手。服务代码均在本工程；没有改造 Fuyera、祈道或000。
 
@@ -13,7 +13,7 @@
 - [接口文档](docs/API.md)：HTTP、TS/Python SDK、MCP 和 CLI 契约。
 - [运行手册](docs/OPERATIONS.md)：固定包安装、升级回退、隔离部署与故障恢复。
 - [验收报告](docs/ACCEPTANCE.md)：实际通过项、环境边界与 P0–P5 缺项。
-- [完整本机测试报告](docs/TEST_REPORT.md)：本轮 17 组检查的结果、修正和证据。
+- [完整本机测试报告](docs/TEST_REPORT.md)：当前检查矩阵的结果、修正和证据。
 
 干净克隆不含运行时、依赖、浏览器和发行包；首次使用源码请先按研发指南安装依赖并构建。
 
@@ -49,8 +49,8 @@ bin/laofu-browser console-login
 ## 接口和接入包
 
 - [HTTP 契约与示例](docs/API.md)、[OpenAPI](docs/openapi.json)。能力发现：`GET /v1/capabilities`。
-- TypeScript：安装 `releases/laofu-browser-0.1.0-dev.1.tgz`；示例 `examples/consumer.mjs`。
-- Python：安装 `releases/laofu_browser-0.1.0.dev1-py3-none-any.whl`；示例 `examples/consumer.py`。
+- TypeScript：安装 `releases/laofu-browser-0.1.0-dev.2.tgz`；示例 `examples/consumer.mjs`。
+- Python：安装 `releases/laofu_browser-0.1.0.dev2-py3-none-any.whl`；示例 `examples/consumer.py`。
 - MCP：`bin/laofu-browser mcp-config --profile <profileId>` 生成不含凭据的宿主配置；MCP 服务为 `bin/laofu-browser mcp`。
 - CLI：`bin/laofu-browser help`。同一任务可以从 SDK、CLI、MCP 和控制台查询。
 
@@ -60,4 +60,4 @@ SDK 不自动重试未知写入。提交前保存幂等键，连接断开后用�
 
 使用 Node22 环境执行 `npm ci && npm run build && npm test`。`npm run verify:baseline` 校验58个原版文件和23工具清单。真实浏览器回归脚本、证据分类与环境限制见 [验收报告](docs/ACCEPTANCE.md)。
 
-安装、升级、回退、Docker隔离和故障处理见 [运行手册](docs/OPERATIONS.md)。受限入口只有实际隔离报告全部通过才开放；当前本机DNS环境阻断公网校验，保持关闭。
+安装、升级、回退、Docker隔离和故障处理见 [运行手册](docs/OPERATIONS.md)。受限入口只有实际隔离报告全部通过才开放；单个执行端只有新启动对应的完整实测证明通过，才能授权产品。

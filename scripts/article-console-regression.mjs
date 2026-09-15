@@ -11,8 +11,48 @@ import { BrowserClient } from "../dist/client.js";
 const root = path.resolve("."),
   home = fs.mkdtempSync(path.join(root, "workspace/article-console-"));
 const historical =
-  process.env.LAOFU_WECHAT_FIXTURE ||
-  "/Users/laofu/Projects/101-fuyera-content-engine-v2/workspace/checks/huashu-wechat-20260914";
+  process.env.LAOFU_WECHAT_FIXTURE || path.join(home, "synthetic-fixture");
+const fixtureKind = process.env.LAOFU_WECHAT_FIXTURE
+  ? "historical-offline-replay"
+  : "synthetic-browser-fixture";
+if (!process.env.LAOFU_WECHAT_FIXTURE) {
+  fs.mkdirSync(path.join(historical, "images"), { recursive: true });
+  const paragraphs = Array.from(
+    { length: 11 },
+    (_, i) =>
+      `自建样本段落 ${i + 1}：` + "检查段落、标点和图片的顺序。".repeat(35),
+  );
+  fs.writeFileSync(
+    path.join(historical, "article.json"),
+    JSON.stringify({
+      title: "自建图文回归样本",
+      account: "测试作者",
+      published: "2026-09-14",
+      body: paragraphs.join("\n"),
+    }),
+  );
+  fs.writeFileSync(
+    path.join(historical, "image-text.json"),
+    JSON.stringify(
+      paragraphs
+        .map((text, i) => text + `\n\n![图 ${i + 1}](fixture)`)
+        .join("\n\n"),
+    ),
+  );
+  for (let i = 1; i <= 11; i++)
+    await sharp({
+      create: {
+        width: 320,
+        height: 180,
+        channels: 3,
+        background: { r: i * 20, g: 120, b: 200 },
+      },
+    })
+      .jpeg()
+      .toFile(
+        path.join(historical, `images/image-${String(i).padStart(2, "0")}.jpg`),
+      );
+}
 const article = JSON.parse(
   fs.readFileSync(path.join(historical, "article.json")),
 );
@@ -190,10 +230,10 @@ try {
     );
   }
   results.push({
-    case: "historical WeChat offline replay, 5325 source characters, 11 original image hashes, ordered DOM lines",
+    case: `${fixtureKind}: 11 image hashes and ordered DOM lines`,
     passed: true,
     jobId: historic.id,
-    evidenceKind: "historical-offline-replay",
+    evidenceKind: fixtureKind,
   });
   console.log("Historical 11-image replay passed");
   browser = await chromium.launch({ channel: "chromium", headless: true });

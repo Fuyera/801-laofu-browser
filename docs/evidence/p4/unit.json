@@ -1,0 +1,9 @@
+{
+  "source": "workspace/full-regression-e00XRn/unit.log",
+  "sha256": "bb4cd64b2eea093a1ed31aef25646cc9c92c342730068ce45121a8146620a3a5",
+  "tests": 30,
+  "passed": 30,
+  "failed": 0,
+  "status": "passed",
+  "scope": "unit and real HTTP behavior; includes one GET reconnect and no POST replay"
+}

@@ -749,6 +749,66 @@ function App() {
                             >
                               轮换
                             </button>
+                            <details>
+                              <summary>使用额度</summary>
+                              <form
+                                onSubmit={(e) => {
+                                  e.preventDefault();
+                                  const form = new FormData(e.currentTarget);
+                                  void act(() =>
+                                    api(`/admin/products/${p.id}`, "PATCH", {
+                                      limits: {
+                                        artifactBytes:
+                                          Number(form.get("disk")) * 1024 ** 2,
+                                        maxQueued: Number(form.get("queued")),
+                                        maxResident: Number(
+                                          form.get("resident"),
+                                        ),
+                                      },
+                                    }),
+                                  );
+                                }}
+                              >
+                                <label>
+                                  产物额度（MiB）
+                                  <input
+                                    name="disk"
+                                    type="number"
+                                    min="1"
+                                    max="10240"
+                                    required
+                                    defaultValue={
+                                      (p.limits?.artifactBytes ??
+                                        2 * 1024 ** 3) /
+                                      1024 ** 2
+                                    }
+                                  />
+                                </label>
+                                <label>
+                                  排队任务上限
+                                  <input
+                                    name="queued"
+                                    type="number"
+                                    min="1"
+                                    max="1000"
+                                    required
+                                    defaultValue={p.limits?.maxQueued ?? 20}
+                                  />
+                                </label>
+                                <label>
+                                  未结束任务上限
+                                  <input
+                                    name="resident"
+                                    type="number"
+                                    min="1"
+                                    max="1000"
+                                    required
+                                    defaultValue={p.limits?.maxResident ?? 24}
+                                  />
+                                </label>
+                                <button disabled={busy}>保存额度</button>
+                              </form>
+                            </details>
                             <button
                               className="text-button"
                               onClick={() => {
@@ -794,6 +854,47 @@ function App() {
               </div>
             </div>
             <h2>站点经验</h2>
+            {!!diagnostics?.cooldowns?.filter(
+              (c: any) =>
+                !c.releasedAt && (c.until === null || c.until > Date.now()),
+            ).length && (
+              <section>
+                <h2>站点冷却</h2>
+                {diagnostics.cooldowns
+                  .filter(
+                    (c: any) =>
+                      !c.releasedAt &&
+                      (c.until === null || c.until > Date.now()),
+                  )
+                  .map((c: any) => (
+                    <p key={c.id}>
+                      {c.origin} ·{" "}
+                      {c.until === null
+                        ? "恢复时间未知"
+                        : `等待至 ${new Date(c.until).toLocaleString("zh-CN")}`}{" "}
+                      <button
+                        disabled={busy}
+                        onClick={() => {
+                          if (
+                            confirm(
+                              "确认站点已允许继续访问？解除冷却不会重放旧任务。",
+                            )
+                          )
+                            void act(() =>
+                              api(
+                                `/admin/cooldowns/${c.id}/release`,
+                                "POST",
+                                {},
+                              ),
+                            );
+                        }}
+                      >
+                        已核对，解除冷却
+                      </button>
+                    </p>
+                  ))}
+              </section>
+            )}
             <form
               className="inline-form"
               onSubmit={(e) => {

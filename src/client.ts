@@ -32,21 +32,37 @@ export class BrowserClient {
     body?: unknown,
     headers: Record<string, string> = {},
   ) {
-    const response = await fetch(this.baseUrl + route, {
-      method,
-      headers: {
-        authorization: `Bearer ${this.token}`,
-        ...(body !== undefined ? { "content-type": "application/json" } : {}),
-        ...headers,
-      },
-      ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
-    });
+    const send = () =>
+      fetch(this.baseUrl + route, {
+        method,
+        headers: {
+          authorization: `Bearer ${this.token}`,
+          ...(body !== undefined ? { "content-type": "application/json" } : {}),
+          ...headers,
+        },
+        ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+      });
+    let response: Response;
+    try {
+      response = await send();
+    } catch (e: any) {
+      // A stopped/restarted service can leave an idle pooled socket behind.
+      // Retry one read on a new connection; never replay task submissions or writes.
+      if (
+        method !== "GET" ||
+        !["ECONNRESET", "UND_ERR_SOCKET"].includes(e?.cause?.code)
+      )
+        throw e;
+      response = await send();
+    }
     const data = (await response.json()) as any;
     if (!response.ok)
       throw new Fault(
         data.error?.code || "HTTP_ERROR",
         data.error?.message || "服务请求失败",
         response.status,
+        data.error?.retryable === true,
+        data.error?.details,
       );
     return data;
   }

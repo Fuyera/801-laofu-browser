@@ -16,7 +16,18 @@ export interface Product {
   role: "owner" | "product";
   scopes: string[];
   revoked: boolean;
+  limits?: ProductLimits;
 }
+export interface ProductLimits {
+  artifactBytes?: number;
+  maxQueued?: number;
+  maxResident?: number;
+}
+export const PRODUCT_LIMITS: Required<ProductLimits> = {
+  artifactBytes: 2 * 1024 ** 3,
+  maxQueued: 20,
+  maxResident: 24,
+};
 export interface Profile {
   id: string;
   name: string;
@@ -48,6 +59,14 @@ export interface Job {
   error: any;
   fence: number;
   parentId?: string;
+  executionPolicy?: AccountPolicy;
+}
+export interface AccountPolicy {
+  mode: "anonymous" | "required";
+  origins: string[];
+  selector?: string;
+  attribute?: string;
+  expectedHash?: string;
 }
 export interface EventRow {
   id: number;
@@ -95,6 +114,7 @@ export interface Limits {
   wallTimeoutSeconds?: number;
   maxSteps?: number;
   maxBytes?: number;
+  maxTabs?: number;
 }
 export interface Execution {
   profileId: string;

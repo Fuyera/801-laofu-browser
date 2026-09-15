@@ -5,6 +5,7 @@ import { Fault } from "./errors.js";
 import { canonical, hash, id, mkdir, secret } from "./util.js";
 import {
   TERMINAL,
+  PRODUCT_LIMITS,
   type Product,
   type Profile,
   type Job,
@@ -86,6 +87,18 @@ export class Store {
       .prepare("DELETE FROM credentials WHERE kind=? AND subject=?")
       .run(kind, subject);
   }
+  consumeCredential(token: string, kind: string, subject: string) {
+    return this.db.transaction(() => {
+      if (this.authenticate(token, kind) !== subject) return false;
+      return (
+        this.db
+          .prepare(
+            "DELETE FROM credentials WHERE digest=? AND kind=? AND subject=?",
+          )
+          .run(hash(token), kind, subject).changes === 1
+      );
+    })();
+  }
   createProduct(
     name: string,
     role: "owner" | "product" = "product",
@@ -114,6 +127,99 @@ export class Store {
       throw new Fault("FORBIDDEN", "无权访问此资源", 403);
     return profile;
   }
+  recordCooldown(
+    job: Job,
+    evidence: { origin: string; retryAfter?: string | null },
+  ) {
+    const origin = new URL(evidence.origin).origin;
+    const retryAfter = evidence.retryAfter?.slice(0, 200) ?? null;
+    const now = Date.now();
+    const seconds =
+      retryAfter !== null && /^\d+$/.test(retryAfter)
+        ? Number(retryAfter)
+        : NaN;
+    const date =
+      retryAfter && /^[A-Za-z]{3},/.test(retryAfter)
+        ? Date.parse(retryAfter)
+        : NaN;
+    const until =
+      Number.isSafeInteger(seconds) && seconds >= 0
+        ? now + seconds * 1000
+        : Number.isFinite(date)
+          ? Math.max(now, date)
+          : null;
+    // Local profiles share the same host egress. Be conservative across products at this exit.
+    const egressId =
+      this.get<any>("worker", job.workerId)?.egressId || "mac-local-exit";
+    const key = "cool_" + hash(origin + "|" + egressId).slice(0, 32);
+    const prior = this.get<any>("cooldown", key);
+    const priorActive =
+      prior && !prior.releasedAt && (prior.until === null || prior.until > now);
+    const record = {
+      id: key,
+      origin,
+      egressId,
+      profileId: job.profileId,
+      workerId: job.workerId,
+      accountScope: job.profileId,
+      jobId: job.id,
+      retryAfter,
+      until: priorActive
+        ? prior.until === null || until === null
+          ? null
+          : Math.max(prior.until, until)
+        : until,
+      observedAt: now,
+      releasedAt: null,
+    };
+    this.put("cooldown", key, record);
+    this.event(job.id, "cooldown", {
+      id: key,
+      origin,
+      until: record.until,
+      retryAfter,
+    });
+    return record;
+  }
+  cooldown(request: { profileId: string; workerId: string; input?: any }) {
+    let origin: string | undefined;
+    try {
+      if (request.input?.url) origin = new URL(request.input.url).origin;
+    } catch {}
+    const egressId =
+      this.get<any>("worker", request.workerId)?.egressId || "mac-local-exit";
+    return this.list<any>("cooldown").find(
+      (c) =>
+        !c.releasedAt &&
+        (c.until === null || c.until > Date.now()) &&
+        (origin
+          ? c.origin === origin &&
+            (c.egressId === egressId || c.profileId === request.profileId)
+          : c.profileId === request.profileId),
+    );
+  }
+  assertNotCooling(request: {
+    profileId: string;
+    workerId: string;
+    input?: any;
+  }) {
+    const c = this.cooldown(request);
+    if (c)
+      throw new Fault(
+        "SITE_COOLDOWN",
+        c.until === null
+          ? "站点恢复时间未知，需在诊断中明确解除冷却"
+          : "站点仍在冷却，尚未到允许重试时间",
+        429,
+        false,
+        { cooldownId: c.id, until: c.until, retryAfter: c.retryAfter },
+      );
+  }
+  releaseCooldown(key: string) {
+    const c = this.get<any>("cooldown", key);
+    if (!c) throw new Fault("NOT_FOUND", "冷却记录不存在", 404);
+    return this.put("cooldown", key, { ...c, releasedAt: Date.now() });
+  }
   createJob(p: Product, kind: "command" | "task", idem: string, request: any) {
     if (!idem || idem.length > 200)
       throw new Fault("INVALID_ARGUMENT", "必须提供稳定的 Idempotency-Key");
@@ -131,6 +237,24 @@ export class Store {
           );
         return { job: parse(prior) as Job, created: false };
       }
+      const policy = {
+        ...PRODUCT_LIMITS,
+        ...this.get<Product>("product", p.id)?.limits,
+      };
+      this.assertNotCooling(request);
+      const resident = this.jobs().filter(
+        (j) => j.productId === p.id && !TERMINAL.has(j.state),
+      );
+      if (
+        resident.length >= policy.maxResident ||
+        resident.filter((j) => j.state === "queued").length >= policy.maxQueued
+      )
+        throw new Fault(
+          "PRODUCT_QUEUE_FULL",
+          "产品排队或驻留任务已达到额度，请等待现有任务结束或取消",
+          429,
+          true,
+        );
       const now = Date.now();
       const job: Job = {
         id: id(kind === "task" ? "tsk" : "cmd"),

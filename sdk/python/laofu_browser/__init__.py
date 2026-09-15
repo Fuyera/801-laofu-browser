@@ -9,9 +9,10 @@ from urllib.parse import urlsplit, quote
 import uuid
 
 class BrowserError(Exception):
-    def __init__(self, code, message, status=None):
+    def __init__(self, code, message, status=None, retryable=False, details=None):
         super().__init__(message)
         self.code, self.status = code, status
+        self.retryable, self.details = retryable, details
 
 class BrowserClient:
     def __init__(self, base_url, token, timeout=35):
@@ -33,7 +34,7 @@ class BrowserClient:
         data = json.loads(response.read())
         if response.status >= 400:
             error = data.get('error', {})
-            raise BrowserError(error.get('code', 'HTTP_ERROR'), error.get('message', 'Request failed'), response.status)
+            raise BrowserError(error.get('code', 'HTTP_ERROR'), error.get('message', 'Request failed'), response.status, error.get('retryable', False), error.get('details'))
         return data
 
     def request(self, method, route, body=None, headers=None):

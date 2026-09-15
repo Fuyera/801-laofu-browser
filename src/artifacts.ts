@@ -1,11 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
-import { Readable } from "node:stream";
+import sharp from "sharp";
 import { Store } from "./store.js";
 import { Fault } from "./errors.js";
 import { filename, id, mkdir } from "./util.js";
 import type { Artifact, Product } from "./types.js";
+import { PRODUCT_LIMITS } from "./types.js";
 export class Artifacts {
   readonly directory: string;
   constructor(
@@ -20,6 +21,11 @@ export class Artifacts {
     return path.join(this.directory, key);
   }
   private reserved = 0;
+  private productReserved = new Map<string, number>();
+  private downloads = new Map<
+    string,
+    Set<{ stream: fs.ReadStream; productId: string }>
+  >();
   private inflight = new Set<string>();
   private diskBytes() {
     return fs
@@ -40,6 +46,7 @@ export class Artifacts {
       maxBytes?: number;
       metadata?: any;
       expectedHash?: string;
+      authorize?: () => void;
     } = {},
   ) {
     filename(name);
@@ -56,7 +63,11 @@ export class Artifacts {
       held = 0;
     try {
       for await (const raw of source) {
+        opts.authorize?.();
         const chunk = Buffer.isBuffer(raw) ? raw : Buffer.from(raw);
+        const product = this.store.get<Product>("product", productId);
+        if (!product || product.revoked)
+          throw new Fault("UNAUTHORIZED", "调用身份已撤销", 401);
         if (bytes + chunk.length > (opts.maxBytes || 512 * 1024 ** 2))
           throw new Fault("LIMIT_EXCEEDED", "文件超过本次大小预算", 413);
         // Reserve synchronously before awaiting I/O. A single service process owns this store.
@@ -66,7 +77,24 @@ export class Artifacts {
             "产物配额已满，请先清理或调整配额",
             507,
           );
+        const used = this.store
+          .artifacts()
+          .filter((a) => a.productId === productId && !a.deleted)
+          .reduce((sum, a) => sum + a.bytes, 0);
+        if (
+          used + (this.productReserved.get(productId) || 0) + chunk.length >
+          (product.limits?.artifactBytes ?? PRODUCT_LIMITS.artifactBytes)
+        )
+          throw new Fault(
+            "PRODUCT_QUOTA_EXCEEDED",
+            "产品产物额度已满，请清理产物或调整额度",
+            507,
+          );
         this.reserved += chunk.length;
+        this.productReserved.set(
+          productId,
+          (this.productReserved.get(productId) || 0) + chunk.length,
+        );
         held += chunk.length;
         bytes += chunk.length;
         digest.update(chunk);
@@ -77,22 +105,32 @@ export class Artifacts {
       const sha256 = digest.digest("hex");
       if (opts.expectedHash && opts.expectedHash !== sha256)
         throw new Fault("ARTIFACT_INCOMPLETE", "文件校验失败", 422);
+      const detectedMime = await this.detectMime(
+        temp,
+        mime,
+        opts.metadata?.source === "worker",
+      );
+      opts.authorize?.();
+      if (this.store.get<Product>("product", productId)?.revoked)
+        throw new Fault("UNAUTHORIZED", "调用身份已撤销", 401);
       fs.renameSync(temp, target);
       this.reserved -= held;
+      this.productReserved.set(
+        productId,
+        (this.productReserved.get(productId) || 0) - held,
+      );
       held = 0;
       const a: Artifact = {
         id: artifactId,
         productId,
         jobId: opts.jobId || null,
         filename: name,
-        mime: /^[\w.+-]+\/[\w.+-]+$/.test(mime)
-          ? mime
-          : "application/octet-stream",
+        mime: detectedMime,
         bytes,
         sha256,
         createdAt: Date.now(),
         deleted: false,
-        metadata: opts.metadata || {},
+        metadata: { ...opts.metadata, declaredMime: mime },
       };
       try {
         return this.store.saveArtifact(a);
@@ -107,7 +145,44 @@ export class Artifacts {
     } finally {
       this.inflight.delete(path.basename(temp));
       this.reserved -= held;
+      this.productReserved.set(
+        productId,
+        (this.productReserved.get(productId) || 0) - held,
+      );
     }
+  }
+  private async detectMime(file: string, declared: string, generated: boolean) {
+    const input = await fs.promises.open(file, "r");
+    const head = Buffer.alloc(512);
+    const { bytesRead } = await input.read(head, 0, head.length, 0);
+    await input.close();
+    const bytes = head.subarray(0, bytesRead);
+    const format = await sharp(file, { limitInputPixels: 40_000_000 })
+      .metadata()
+      .then((m) => m.format)
+      .catch(() => undefined);
+    const imageTypes: Record<string, string> = {
+      png: "image/png",
+      jpeg: "image/jpeg",
+      webp: "image/webp",
+      gif: "image/gif",
+      avif: "image/avif",
+      tiff: "image/tiff",
+    };
+    if (format && imageTypes[format]) return imageTypes[format];
+    if (bytes.subarray(0, 5).toString() === "%PDF-") return "application/pdf";
+    if (bytes.subarray(0, 4).equals(Buffer.from([0x50, 0x4b, 3, 4])))
+      return "application/zip";
+    // Only the trusted worker can label service-generated textual artifacts. Preview also verifies job provenance.
+    if (
+      generated &&
+      ["text/html", "text/markdown", "text/plain", "application/json"].includes(
+        declared,
+      ) &&
+      !bytes.includes(0)
+    )
+      return declared;
+    return "application/octet-stream";
   }
   owned(p: Product, key: string) {
     const a = this.store.artifact(key);
@@ -115,9 +190,37 @@ export class Artifacts {
       throw new Fault("FORBIDDEN", "无权访问此资源", 403);
     return a;
   }
+  download(p: Product, key: string) {
+    this.owned(p, key);
+    const stream = fs.createReadStream(this.path(key));
+    const transfer = { stream, productId: p.id };
+    const transfers = this.downloads.get(key) || new Set();
+    transfers.add(transfer);
+    this.downloads.set(key, transfers);
+    stream.once("close", () => {
+      transfers.delete(transfer);
+      if (!transfers.size) this.downloads.delete(key);
+    });
+    return stream;
+  }
+  revokeProduct(productId: string) {
+    for (const [key, transfers] of this.downloads)
+      for (const transfer of transfers)
+        if (
+          transfer.productId === productId ||
+          this.store.artifact(key)?.productId === productId
+        )
+          transfer.stream.destroy(
+            new Fault("FORBIDDEN", "文件访问已撤销", 403),
+          );
+  }
   remove(p: Product, key: string) {
     const a = this.owned(p, key);
     this.store.deleteArtifact(key);
+    for (const transfer of this.downloads.get(key) || [])
+      transfer.stream.destroy(
+        new Fault("ARTIFACT_DELETED", "产物已删除，下载已停止", 410),
+      );
     fs.rmSync(this.path(key), { force: true });
     return { id: a.id, deleted: true };
   }

@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
+import net from "node:net";
 import { spawnSync } from "node:child_process";
 import { parseArgs } from "node:util";
 import { BrowserClient } from "../dist/client.js";
@@ -11,6 +12,7 @@ const { values: v, positionals } = parseArgs({
     name: { type: "string" },
     id: { type: "string" },
     image: { type: "string" },
+    dns: { type: "string" },
   },
 });
 const root = path.resolve(import.meta.dirname, ".."),
@@ -45,6 +47,9 @@ if (command === "create") {
       "本部署器当前仅验收 Docker Desktop/macOS；Linux服务器须先完成P5网络入口验收",
     );
   const image = v.image || "laofu-browser:0.1.0-dev.1";
+  const dnsServers = v.dns ? v.dns.split(",").map((x) => x.trim()) : [];
+  if (dnsServers.some((x) => !net.isIP(x)))
+    throw new Error("--dns 只接受明确配置的 DNS IP 地址，以逗号分隔");
   const imageId = JSON.parse(docker(["image", "inspect", image]).stdout)[0].Id;
   const pair = await c.request("POST", "/v1/admin/workers", {
       name: v.name || "受限产品浏览器",
@@ -60,6 +65,7 @@ if (command === "create") {
     profileId: pair.profile.id,
     image,
     imageId,
+    dnsServers,
     network,
     gateway,
     worker,
@@ -121,6 +127,9 @@ if (command === "create") {
       network,
       "--network-alias",
       "gateway",
+      ...(dnsServers.length
+        ? ["-e", `LAOFU_PUBLIC_DNS=${dnsServers.join(",")}`]
+        : []),
       "-e",
       `LAOFU_CORE_URL=http://host.docker.internal:${new URL(owner.url).port || 17889}`,
       image,
@@ -131,6 +140,8 @@ if (command === "create") {
       "run",
       "-d",
       "--name",
+      worker,
+      "--hostname",
       worker,
       "--init",
       "--cap-drop=ALL",
@@ -152,6 +163,7 @@ if (command === "create") {
       `type=volume,src=${volume},dst=/data`,
       "--entrypoint",
       "node",
+      ...(process.env.LAOFU_DEBUG ? ["-e", "LAOFU_DEBUG=1"] : []),
       image,
       "scripts/container-entry.mjs",
     ]);

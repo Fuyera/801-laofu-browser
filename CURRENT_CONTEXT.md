@@ -1,30 +1,28 @@
 # 当前状态
 
-更新：2026-09-14。当前0.1.0-dev.1本机开发版，**17组完整本机回归16组通过、1组隔离网络失败；P4/P5未通过**。私有仓库[Fuyera/801-laofu-browser](https://github.com/Fuyera/801-laofu-browser)，主分支main。未改Fuyera/祈道/000业务代码，未动日本原huashu试验。
+更新：2026-09-14（本地）。分支 `fuyera/p4-macos`，版本 **0.1.0-dev.2**，P4 代码和报告保存在本分支。私有仓库 [Fuyera/801-laofu-browser](https://github.com/Fuyera/801-laofu-browser)，main 已推送 `2b2fdad`。**完整矩阵 22/22 通过；P4 尚余日常 Chrome 人工入口与固定制品复验。P5/跨平台/日本部署/跨端自动选择暂停。旧 dev.1 仅归档，不要求历史包迁移。**
 
-## 已实现与验证
+## 实现与当前证据
 
-- Node22.23.2/TS/Fastify、SQLite服务+独立执行端、58文件不可变上游、23工具和107参数原定义、集中补丁、React五区控制台、HTTP/OpenAPI、TS/Python SDK、MCP/CLI。
-- 23工具真实场景通过；原版与适配版25项同输入对照通过。修复等长目标文字漏判、wait明确超时误隔离、批处理未完成误报；未知动作禁止自动换方式重试。
-- 本轮重跑19项行为/HTTP、构建/契约、23工具和25项对照均通过；真实POST后回执前中断、旧worker重连、同键重投和act取消无重复提交。
-- 长文/表格/代码/原图/Markdown/安全HTML/ZIP/manifest；180段普通网页和历史公众号5325字符11图离线重放通过；>12MiB原图走受控原生下载并校验；坏图/变化/403/429不伪报完整。
-- 工程外TS/Python安装包调用真实服务，上传/下载/采集/查询/取消/等待恢复，MCP/CLI同任务；属于所有者入口技术接入，不称业务产品或受限身份正向接入。
-- 实际noVNC输入/断开重连/继续、原版ask继续取消；外部浏览器配对及停止worker保留浏览器。未操作本人日常Chrome真实账号。
-- Mac固定包安装/升级/回退等10项通过。修复性能探针遗留连接不退出；3次固定样本510–1029ms并正常收尾。容器镜像离线重建后23个源码哈希一致，接手复验通过；未启用自启动。
+产品磁盘/排队/驻留额度；精确站点与账号指纹；持久冷却/Retry-After；正文有界加载与成功页回收；MIME、上传重新验权、删除中止下载/deleted；接手单次票据；统一版本/构建信息、证据收集、包验证和离线镜像构建。容器先关闭 Chromium 再关闭显示，保留同卷配置。vendor 58 文件不变，23 工具/107 参数契约保留。
 
-本轮结果见[测试报告](docs/TEST_REPORT.md)，使用与研发分别见[用户指南](docs/USER_GUIDE.md)、[研发指南](docs/DEVELOPMENT.md)。要求映射见[验收报告](docs/ACCEPTANCE.md)。新证据在docs/evidence，原始现场在workspace/full-test-efFfYK及各回归目录。压缩包的构建提交、时间、SHA-256与追加安装验证以releases/DELIVERY.json为准；制品不含账号/profile数据库。
+- `workspace/full-regression-e00XRn`：2026-09-15 02:03–02:11 UTC 完整 22/22；30 项单元/HTTP、图文 7、运行 7、双身份 8、安装 11、兼容边界 6、实际 Codex 宿主 3 均通过。
+- 矩阵原版对照 40/40；随后补 CSP 的 `workspace/parity-ivgTQD` 单独复跑 43/43。两会话默认页/后台截图、当前 Chromium 并发 debugger、禁用 L2 拒绝无效果、原键不重放实测通过。
+- 安装复测发现并修正服务重启后 GET 复用失效连接：仅 ECONNRESET/UND_ERR_SOCKET 重连一次，POST 不重放。完整矩阵在修正后通过。
+- Docker A/B 各八项真实隔离、正常同卷重启、TS/Python 安装包公网采集、两身份 noVNC 输入/重连/同任务继续/文件归属/越权拒绝通过。账号是合成样本；公网是真实访问。
+- 候选镜像 `sha256:2f2ae06755667edf59d8d6ee0107b6b8c8b9d25f5d0c8cd40989d8d9e2d0c3ef`，dirty 来源。公网网关仅用宿主原有 DNS 8.8.8.8/8.8.4.4；内部解析及私网/保留 IP 拒绝保留。
+- 实际 Codex app-server 通过配置识别/浏览器工具调用/卸载；专用配置、临时协议上下文，没有模型轮次或持久任务。不代表 20 宿主全覆盖。
 
-## 最新公众号现场采集
+## 剩余与交付
 
-2026-09-14，通过当前本机laofu-browser服务成功采集《用GPT-6 Astra操控Blender玩3D，保姆级教程来了。》（yK65CvMwzhQqu5_E5EfVVQ），约19秒，正文未截断、版本一致、30/30图片下载且本地哈希/引用校验通过。保存于[Markdown](workspace/captures/yK65CvMwzhQqu5_E5EfVVQ/article.md)，同目录保留ZIP、manifest和任务结果。发现1项音视频或嵌入内容未下载；这是新现场图文成功证据，不是音视频完整归档或所有公众号均可采的证明。
+Mac 已开盖解锁，历史合盖中断不再阻塞。日常 Chrome 临时加载 laofu-browser 扩展仍待权限答复；只读新建 example.com，随后停止 worker 验证浏览器保留并移除本次扩展。专用服务状态 `workspace/p4/daily-chrome-state`，17992/18992；不能以测试 Chromium 结果代替日常 Chrome。
 
-## 运行入口
+代码文档提交后构建干净来源固定 Mac 包/镜像，核验清单和最终安装，再更新 DELIVERY。当前 dev.2 是候选，未冻结、推送或公开发布。旧包与 releases/DELIVERY.json 继续保留 dev.1；`workspace/p4/CANDIDATE.json` 是先前候选历史，不能当当前最终交付。
 
-本机loopback服务：http://127.0.0.1:17889。开发状态目录：workspace/local-state。使用固定Node运行`scripts/local.mjs status/start/stop --home workspace/local-state`；一次性控制台登录：`bin/laofu-browser console-login --home workspace/local-state`。没有注册开机自启。产品调用保持鉴权。
+证据索引 docs/evidence/p4/index.json；范围和复现见 docs/ACCEPTANCE.md、TEST_REPORT.md、IMPLEMENTATION_PLAN.md。根 docs/evidence 为 dev.1 历史，不混成当前一次回归。
 
-## 未关闭门槛与下一步
+## 运行与历史图文
 
-1. P0本轮完整8项仍7项通过；example.com解析为198.18.1.151保留地址，公网探针失败，受限入口保持关闭。未改DNS或放宽地址检查；此前外部DoH动作被拒绝。网络环境修复后须复验全部8项。
-2. 网络通过后跑两受限身份各自profile的采集/接手/文件与越权端到端，补充全部兼容边界场景后固定P4。当前25项代表性对照不等于所有107参数组合实测。
-3. 新公众号单篇现场图文已通过，见上方记录；本人日常Chrome人工安装仍待确认。其他文章与环境不据此自动记为通过。
-4. P4后才去日本Ubuntu24.04x86_64独立目录部署；Windows11x86_64真实测试机待用户答复。准备脚本和Mac容器Linuxarm64不能代替目标系统验收。
+本人旧服务 http://127.0.0.1:17889，状态 workspace/local-state，本轮未切换；用固定 Node 运行 scripts/local.mjs status/start/stop。凭据、Cookie/profile 不提交。
+
+历史公众号任务 yK65CvMwzhQqu5_E5EfVVQ（2026-09-14 14:05 UTC）：约 19 秒、30/30 图哈希/引用核对，正文版本一致，1 项嵌入媒体未下载；成果留在 workspace/captures。本轮没有再次请求公众号，单篇不代表所有站点全文。

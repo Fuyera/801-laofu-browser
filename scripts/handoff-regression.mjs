@@ -152,6 +152,28 @@ try {
   });
   console.log("noVNC input, reconnect and explicit resume passed");
   const session = await c.session(pair.profile.id);
+  const askTab = await c.wait(
+    (
+      await c.command(
+        session.id,
+        {
+          tool: "tabs",
+          args: {
+            action: "new",
+            url: "http://host.docker.internal:17972/article",
+            label: "ask 验收",
+          },
+        },
+        "ask-tab",
+      )
+    ).id,
+  );
+  const askTabId = Number(
+    /\[(\d+)\]/.exec(
+      askTab.result.content.map((x) => x.text || "").join("\n"),
+    )?.[1],
+  );
+  assert.ok(askTabId);
   const ask = await c.command(
     session.id,
     {
@@ -159,7 +181,7 @@ try {
       args: {
         prompt: "确认接手状态",
         timeout: 30000,
-        tabId: waiting.result.handoff.tabId,
+        tabId: askTabId,
       },
     },
     "ask-handoff",
@@ -180,7 +202,7 @@ try {
       args: {
         prompt: "取消测试",
         timeout: 30000,
-        tabId: waiting.result.handoff.tabId,
+        tabId: askTabId,
       },
     },
     "ask-cancel",

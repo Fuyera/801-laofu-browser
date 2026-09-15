@@ -15,7 +15,8 @@ fs.writeFileSync(
   JSON.stringify(
     {
       name: "@laofu/browser",
-      version: "0.1.0-dev.1",
+      version: JSON.parse(fs.readFileSync(path.join(root, "package.json")))
+        .version,
       type: "module",
       description: "TypeScript client for laofu-browser",
       exports: {

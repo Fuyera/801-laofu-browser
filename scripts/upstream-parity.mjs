@@ -43,6 +43,36 @@ for (const rel of ["background.js", "offscreen.js"]) {
   );
 }
 const fixture = http.createServer((req, res) => {
+  if (req.url === "/csp") {
+    res.setHeader(
+      "content-security-policy",
+      "default-src 'self'; script-src 'self'",
+    );
+    res.setHeader("content-type", "text/html; charset=utf-8");
+    return res.end("<title>CSP 对照</title><h1>严格 CSP 正文</h1>");
+  }
+  if (req.url.startsWith("/pages")) {
+    const url = new URL(req.url, base),
+      mode = url.searchParams.get("mode");
+    res.setHeader("content-type", "application/json");
+    if (mode === "error") {
+      res.statusCode = 503;
+      return res.end('{"error":"unavailable"}');
+    }
+    if (mode === "empty") return res.end("");
+    return res.end(
+      JSON.stringify({
+        items: ["fixed"],
+        next: mode === "cursor" ? "same" : null,
+      }),
+    );
+  }
+  if (req.url === "/edge") {
+    res.setHeader("content-type", "text/html; charset=utf-8");
+    return res.end(
+      `<title>参数族边界</title><button id="stale" onclick="document.body.dataset.wrong='clicked'">旧按钮</button><div id="rich" contenteditable="true" role="textbox" aria-label="富文本"></div><div id="shadow"></div><dialog><p>模态内容</p></dialog><canvas id="canvas" width="300" height="120" style="position:fixed;left:10px;top:400px;background:#aaddff"></canvas><output id="drag-result"></output><script>document.querySelector('#shadow').attachShadow({mode:'open'}).innerHTML='<button>Shadow 按钮</button>';document.querySelector('#canvas').addEventListener('pointerup',()=>document.querySelector('#drag-result').textContent='drag-ended');</script>`,
+    );
+  }
   if (req.url.startsWith("/data")) {
     res.setHeader("content-type", "application/json");
     res.end(JSON.stringify({ items: [{ title: "对照数据" }] }));
@@ -335,6 +365,98 @@ try {
   await check("B23", "reload");
   await new Promise((r) => setTimeout(r, 4000));
   await check("RECONNECT", "status", { text: "扩展重连后继续" });
+  for (const mode of ["repeat", "empty", "error", "cursor"])
+    await check(
+      `PAGINATION-${mode}`,
+      "fetch",
+      {
+        url: base + "/pages?mode=" + mode,
+        pages:
+          mode === "cursor"
+            ? { cursorParam: "cursor", cursorPath: "next", max: 4 }
+            : { param: "page", max: 4 },
+      },
+      {
+        assert: (r) => {
+          assert.match(text(r), /已抓 [0-2] 页/);
+          assert.doesNotMatch(text(r), /上限/);
+        },
+      },
+    );
+  await check("CSP-PAGE", "navigate", { url: base + "/csp" });
+  await check(
+    "CSP-EVAL",
+    "eval",
+    { expr: "40+2" },
+    { assert: (r) => assert.match(text(r), /42/) },
+  );
+  await check(
+    "CSP-READ",
+    "read_text",
+    {},
+    { assert: (r) => assert.match(text(r), /严格 CSP 正文/) },
+  );
+  await check("EDGE-PAGE", "navigate", { url: base + "/edge" });
+  await check(
+    "SHADOW",
+    "snapshot",
+    {},
+    { assert: (r) => assert.match(text(r), /Shadow 按钮/) },
+  );
+  await check("RICH-TEXT", "type", {
+    selector: "#rich",
+    text: "富文本写入",
+    clear: true,
+  });
+  await check(
+    "RICH-RESULT",
+    "eval",
+    { expr: "document.querySelector('#rich').textContent" },
+    { assert: (r) => assert.match(text(r), /富文本写入/) },
+  );
+  await check("CANVAS-DRAG", "click", {
+    x: 40,
+    y: 430,
+    dragTo: { x: 220, y: 430 },
+    real: true,
+  });
+  await check(
+    "CANVAS-RESULT",
+    "eval",
+    { expr: "document.querySelector('#drag-result').textContent" },
+    { assert: (r) => assert.match(text(r), /drag-ended/) },
+  );
+  await check("DIALOG-OPEN", "eval", {
+    expr: "(()=>{document.querySelector('dialog').showModal();return 'opened';})()",
+  });
+  await check(
+    "DIALOG-READ",
+    "snapshot",
+    {},
+    { assert: (r) => assert.match(text(r), /模态内容/) },
+  );
+  await check("DIALOG-CLOSE", "key", { key: "Escape", real: true });
+  const staleSnapshots = [
+    await original("snapshot", {}),
+    await adapted("snapshot", {}),
+  ].map((r) => {
+    const line = text(r)
+      .split("\n")
+      .find((x) => x.includes("旧按钮"));
+    return {
+      ref: /\b(e\d+)\b/.exec(line)?.[1],
+      snapshotId: /\[snapshot (s\d+)\]/.exec(text(r))?.[1],
+    };
+  });
+  assert.ok(staleSnapshots.every((s) => s.ref && s.snapshotId));
+  await check("RERENDER", "eval", {
+    expr: "(()=>{document.querySelector('#stale').remove();return 'removed';})()",
+  });
+  await check("STALE-REF", "click", staleSnapshots[1], {
+    originalArgs: staleSnapshots[0],
+    error: true,
+    difference: "各自原快照引用；目标被移除后均拒绝",
+  });
   assert.equal(results.filter((r) => r.status === "failed").length, 0);
 } finally {
   await mcp?.close().catch(() => {});

@@ -1,0 +1,56 @@
+{
+  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/install-NO7iYq",
+  "environment": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "node": "v22.23.2"
+  },
+  "checks": [
+    {
+      "name": "完整性校验和独立目录安装",
+      "status": "passed"
+    },
+    {
+      "name": "固定Node/Chromium/扩展启动并实际就绪",
+      "status": "passed"
+    },
+    {
+      "name": "从安装包运行真实HTTP图文采集和上传",
+      "status": "passed"
+    },
+    {
+      "name": "篡改制品拒绝且运行服务不受影响",
+      "status": "passed"
+    },
+    {
+      "name": "清单以外文件拒绝",
+      "status": "passed"
+    },
+    {
+      "name": "相同发行标识即使清单合法也拒绝不同内容",
+      "status": "passed"
+    },
+    {
+      "name": "兼容版本切换后任务和产物保留",
+      "status": "passed"
+    },
+    {
+      "name": "程序回退保留当前幂等和效果记录",
+      "status": "passed"
+    },
+    {
+      "name": "新版本启动失败自动恢复旧程序",
+      "status": "passed"
+    },
+    {
+      "name": "确认停止与SQLite在线备份文件生成",
+      "status": "passed"
+    },
+    {
+      "name": "Mac自启动配置语法校验，未注册自启动",
+      "status": "passed"
+    }
+  ],
+  "jobId": "tsk_42a0139d6bd94e9b88ef6fbb4ecee9d6",
+  "versionFixtures": "同一固定程序的两个合成发行标识，以及故意启动失败的测试程序；未声称已有历史正式版本"
+}

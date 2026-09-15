@@ -1,0 +1,30 @@
+{
+  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/faults-Iomn7Q",
+  "results": [
+    {
+      "case": "service killed after external effect before acknowledgment; original id replay does not resend",
+      "passed": true,
+      "effects": 1,
+      "jobId": "cmd_4d56f45a561c42b48932db2760ecf6a3"
+    },
+    {
+      "case": "old worker reconnect and explicit recovery do not replay the write",
+      "passed": true
+    },
+    {
+      "case": "cancel while act is executing stops subsequent atomic steps",
+      "passed": true,
+      "jobId": "cmd_6470ac0a969247a4b30d99f54b79a76b"
+    },
+    {
+      "case": "bridge killed after effect before reply, identity replay does not resend; profile quarantined",
+      "passed": true,
+      "jobId": "cmd_dcc50404996e4f4e863d2fed692db55b"
+    }
+  ],
+  "effects": [
+    1789437919233,
+    1789437935145,
+    1789437937846
+  ]
+}

@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "laofu-browser API",
-    "version": "0.1.0"
+    "version": "0.1.0-dev.2"
   },
   "components": {
     "securitySchemes": {
@@ -117,6 +117,28 @@
                     "minLength": 1,
                     "maxLength": 100
                   },
+                  "limits": {
+                    "type": "object",
+                    "properties": {
+                      "artifactBytes": {
+                        "type": "integer",
+                        "minimum": 1024,
+                        "maximum": 10737418240
+                      },
+                      "maxQueued": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 1000
+                      },
+                      "maxResident": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 1000
+                      }
+                    },
+                    "required": [],
+                    "additionalProperties": false
+                  },
                   "scopes": {
                     "type": "array",
                     "uniqueItems": true,
@@ -146,6 +168,61 @@
       }
     },
     "/v1/admin/products/{id}": {
+      "patch": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "limits": {
+                    "type": "object",
+                    "properties": {
+                      "artifactBytes": {
+                        "type": "integer",
+                        "minimum": 1024,
+                        "maximum": 10737418240
+                      },
+                      "maxQueued": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 1000
+                      },
+                      "maxResident": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 1000
+                      }
+                    },
+                    "required": [],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "limits"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      },
       "delete": {
         "parameters": [
           {
@@ -308,6 +385,88 @@
             }
           }
         },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/admin/profiles/{id}/account-policy": {
+      "put": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "mode": {
+                    "enum": [
+                      "anonymous",
+                      "required"
+                    ]
+                  },
+                  "origins": {
+                    "type": "array",
+                    "maxItems": 50,
+                    "uniqueItems": true,
+                    "items": {
+                      "type": "string",
+                      "format": "uri",
+                      "pattern": "^https?://"
+                    }
+                  },
+                  "selector": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  },
+                  "attribute": {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z][a-zA-Z0-9_-]{0,100}$"
+                  },
+                  "expectedHash": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                },
+                "required": [
+                  "mode",
+                  "origins"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      },
+      "get": {
         "parameters": [
           {
             "schema": {
@@ -2284,6 +2443,10 @@
                         },
                         "retryable": {
                           "type": "boolean"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": true
                         }
                       },
                       "required": [
@@ -2320,6 +2483,10 @@
                         },
                         "retryable": {
                           "type": "boolean"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": true
                         }
                       },
                       "required": [
@@ -2356,6 +2523,10 @@
                         },
                         "retryable": {
                           "type": "boolean"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": true
                         }
                       },
                       "required": [
@@ -2392,6 +2563,10 @@
                         },
                         "retryable": {
                           "type": "boolean"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": true
                         }
                       },
                       "required": [
@@ -2428,6 +2603,10 @@
                         },
                         "retryable": {
                           "type": "boolean"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": true
                         }
                       },
                       "required": [
@@ -3723,6 +3902,11 @@
                         "type": "integer",
                         "minimum": 1024,
                         "maximum": 1073741824
+                      },
+                      "maxTabs": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 50
                       }
                     },
                     "required": [],
@@ -3928,6 +4112,10 @@
                         },
                         "retryable": {
                           "type": "boolean"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": true
                         }
                       },
                       "required": [
@@ -3964,6 +4152,10 @@
                         },
                         "retryable": {
                           "type": "boolean"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": true
                         }
                       },
                       "required": [
@@ -4000,6 +4192,10 @@
                         },
                         "retryable": {
                           "type": "boolean"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": true
                         }
                       },
                       "required": [
@@ -4036,6 +4232,10 @@
                         },
                         "retryable": {
                           "type": "boolean"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": true
                         }
                       },
                       "required": [
@@ -4072,6 +4272,10 @@
                         },
                         "retryable": {
                           "type": "boolean"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": true
                         }
                       },
                       "required": [
@@ -4286,6 +4490,10 @@
                         },
                         "retryable": {
                           "type": "boolean"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": true
                         }
                       },
                       "required": [
@@ -4322,6 +4530,10 @@
                         },
                         "retryable": {
                           "type": "boolean"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": true
                         }
                       },
                       "required": [
@@ -4548,6 +4760,10 @@
                         },
                         "retryable": {
                           "type": "boolean"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": true
                         }
                       },
                       "required": [
@@ -4584,6 +4800,10 @@
                         },
                         "retryable": {
                           "type": "boolean"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": true
                         }
                       },
                       "required": [
@@ -4854,6 +5074,34 @@
     },
     "/v1/diagnostics": {
       "get": {
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/admin/cooldowns": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/v1/admin/cooldowns/{id}/release": {
+      "post": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
             "description": "Default Response"

@@ -1,0 +1,71 @@
+{
+  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/p4-isolated-w1UsoL",
+  "image": "laofu-browser:0.1.0-dev.2-p4-candidate",
+  "publicDns": "8.8.8.8,8.8.4.4",
+  "checks": [
+    {
+      "name": "identity A: real eight isolation checks and stale boot attestation rejected",
+      "status": "passed",
+      "checks": {
+        "nonRoot": true,
+        "directEgressDenied": true,
+        "controlRoutesDenied": true,
+        "privateNetworkDenied": true,
+        "publicEgressAllowed": true,
+        "browserSandbox": true,
+        "internalNetwork": true,
+        "noSharedDesktop": true
+      },
+      "bootId": "424d4173-873c-4a2e-b11a-2eba73cabc0d",
+      "imageDigest": "sha256:2f2ae06755667edf59d8d6ee0107b6b8c8b9d25f5d0c8cd40989d8d9e2d0c3ef"
+    },
+    {
+      "name": "packaged TypeScript SDK: restricted identity captures actual public website",
+      "status": "passed",
+      "jobId": "tsk_bf1f658c3eed48439ffdc68947fc466b",
+      "url": "https://example.com"
+    },
+    {
+      "name": "identity B: real eight isolation checks and stale boot attestation rejected",
+      "status": "passed",
+      "checks": {
+        "nonRoot": true,
+        "directEgressDenied": true,
+        "controlRoutesDenied": true,
+        "privateNetworkDenied": true,
+        "publicEgressAllowed": true,
+        "browserSandbox": true,
+        "internalNetwork": true,
+        "noSharedDesktop": true
+      },
+      "bootId": "8215ce81-98c6-42ef-9447-34a41a96386b",
+      "imageDigest": "sha256:2f2ae06755667edf59d8d6ee0107b6b8c8b9d25f5d0c8cd40989d8d9e2d0c3ef"
+    },
+    {
+      "name": "packaged Python SDK: restricted identity captures actual public website",
+      "status": "passed",
+      "jobId": "tsk_2b99cd65aab441799074370cd106e7c1",
+      "url": "https://example.com"
+    },
+    {
+      "name": "one restricted identity waits for a user while another completes a legal task",
+      "status": "passed"
+    },
+    {
+      "name": "identity A: real noVNC input, fresh ticket reconnect, same-task resume, own synthetic cookie/content/file and cross-identity rejection",
+      "status": "passed",
+      "jobId": "tsk_2e7295e3de4349e68c8a33dc5d7f503a",
+      "evidenceKind": "synthetic fixture rendered in actual isolated Chromium"
+    },
+    {
+      "name": "identity B: real noVNC input, fresh ticket reconnect, same-task resume, own synthetic cookie/content/file and cross-identity rejection",
+      "status": "passed",
+      "jobId": "tsk_dc791b5b6f8345ebba88f28d73735c52",
+      "evidenceKind": "synthetic fixture rendered in actual isolated Chromium"
+    },
+    {
+      "name": "account mismatch publishes no content; identity revocation cancels its task and invalidates old ticket without revoking peer",
+      "status": "passed"
+    }
+  ]
+}

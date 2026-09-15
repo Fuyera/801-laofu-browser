@@ -1,6 +1,6 @@
 import type WebSocket from "ws";
 import { Store } from "./store.js";
-import { Fault } from "./errors.js";
+import { Fault, problem } from "./errors.js";
 import {
   TERMINAL,
   type Job,
@@ -118,6 +118,7 @@ export class Broker {
           registered.bootId === msg.bootId &&
           registered.isolationVerified,
         version: msg.version,
+        build: msg.build,
         browserVersion: msg.browserVersion,
         environment: msg.environment,
         checkedAt: Date.now(),
@@ -154,6 +155,15 @@ export class Broker {
       return;
     }
     if (msg.type === "result") {
+      if (
+        msg.error?.code === "RATE_LIMITED" &&
+        job.type === "article.capture@v1"
+      ) {
+        this.store.recordCooldown(job, {
+          origin: msg.error.details?.origin || new URL(job.input.url).origin,
+          retryAfter: msg.error.details?.retryAfter,
+        });
+      }
       const confirmedStop = msg.stopped === true;
       if (TERMINAL.has(job.state)) {
         this.store.event(job.id, "late_evidence", {
@@ -236,6 +246,15 @@ export class Broker {
         continue;
       }
       if (j.state !== "queued" || running >= this.concurrency) continue;
+      try {
+        this.store.assertNotCooling(j);
+      } catch (e) {
+        this.store.transition(j.id, "failed", {
+          error: problem(e),
+          effectState: "not_started",
+        });
+        continue;
+      }
       if (
         jobs.some(
           (other) =>
@@ -271,7 +290,17 @@ export class Broker {
           fence,
           effectState: "started",
         });
-        this.send(j.workerId, { type: "execute", job: active });
+        this.send(j.workerId, {
+          type: "execute",
+          job: {
+            ...active,
+            executionPolicy: this.store.get("account-policy", j.profileId) || {
+              mode: "anonymous",
+              origins: [],
+            },
+          },
+        });
+        j.state = "running";
         running++;
       } catch (e) {
         if (!(e instanceof Fault && e.code === "PROFILE_BUSY")) {
@@ -317,6 +346,7 @@ export class Broker {
         "当前任务不能直接续接；未知结果需先核验",
         409,
       );
+    this.store.assertNotCooling(job);
     this.closeViewers(job.id);
     this.store.transition(job.id, "running");
     this.send(job.workerId, {

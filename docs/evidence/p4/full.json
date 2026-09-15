@@ -1,0 +1,325 @@
+{
+  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/full-regression-e00XRn",
+  "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+  "sourceDirty": true,
+  "active": null,
+  "results": [
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit"
+      ],
+      "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+      "startedAt": "2026-09-15T02:03:10.713Z",
+      "finishedAt": "2026-09-15T02:03:11.954Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": []
+    },
+    {
+      "name": "baseline",
+      "args": [
+        "scripts/verify-baseline.mjs"
+      ],
+      "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+      "startedAt": "2026-09-15T02:03:11.955Z",
+      "finishedAt": "2026-09-15T02:03:11.989Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": []
+    },
+    {
+      "name": "unit",
+      "args": [
+        "--import",
+        "tsx",
+        "--test",
+        "test/article.test.ts",
+        "test/boundaries.test.ts",
+        "test/hosts.test.ts",
+        "test/http.test.ts",
+        "test/p4.test.ts",
+        "test/policy.test.ts",
+        "test/store.test.ts"
+      ],
+      "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+      "startedAt": "2026-09-15T02:03:11.989Z",
+      "finishedAt": "2026-09-15T02:03:12.710Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": []
+    },
+    {
+      "name": "contract",
+      "args": [
+        "scripts/export-contract.mjs"
+      ],
+      "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+      "startedAt": "2026-09-15T02:03:12.711Z",
+      "finishedAt": "2026-09-15T02:03:12.951Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": []
+    },
+    {
+      "name": "smoke",
+      "args": [
+        "scripts/smoke.mjs"
+      ],
+      "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+      "startedAt": "2026-09-15T02:03:12.951Z",
+      "finishedAt": "2026-09-15T02:03:19.391Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/smoke-fGJubR/result.json"
+      ]
+    },
+    {
+      "name": "tools",
+      "args": [
+        "scripts/tool-regression.mjs"
+      ],
+      "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+      "startedAt": "2026-09-15T02:03:19.392Z",
+      "finishedAt": "2026-09-15T02:03:54.505Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/tools-OmzeF5/report.json"
+      ]
+    },
+    {
+      "name": "parity",
+      "args": [
+        "scripts/upstream-parity.mjs"
+      ],
+      "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+      "startedAt": "2026-09-15T02:03:54.505Z",
+      "finishedAt": "2026-09-15T02:04:51.292Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/parity-QXW6PE/report.json"
+      ]
+    },
+    {
+      "name": "article",
+      "args": [
+        "scripts/article-console-regression.mjs"
+      ],
+      "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+      "startedAt": "2026-09-15T02:04:51.292Z",
+      "finishedAt": "2026-09-15T02:05:13.255Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/article-console-Vo4teX/report.json"
+      ]
+    },
+    {
+      "name": "faults",
+      "args": [
+        "scripts/fault-regression.mjs"
+      ],
+      "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+      "startedAt": "2026-09-15T02:05:13.256Z",
+      "finishedAt": "2026-09-15T02:06:51.717Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/faults-Iomn7Q/report.json"
+      ]
+    },
+    {
+      "name": "sdk",
+      "args": [
+        "scripts/sdk-smoke.mjs"
+      ],
+      "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+      "startedAt": "2026-09-15T02:06:51.717Z",
+      "finishedAt": "2026-09-15T02:07:06.634Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/sdk-RqhFVk/report.json"
+      ]
+    },
+    {
+      "name": "attach",
+      "args": [
+        "scripts/attach-regression.mjs"
+      ],
+      "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+      "startedAt": "2026-09-15T02:07:06.635Z",
+      "finishedAt": "2026-09-15T02:07:12.339Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/attach-HlvuhS/report.json"
+      ]
+    },
+    {
+      "name": "compatibility-edge",
+      "args": [
+        "scripts/compatibility-edge-regression.mjs"
+      ],
+      "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+      "startedAt": "2026-09-15T02:07:12.339Z",
+      "finishedAt": "2026-09-15T02:07:39.943Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/compat-edge-JMHGvV/report.json"
+      ]
+    },
+    {
+      "name": "downloads",
+      "args": [
+        "scripts/download-regression.mjs"
+      ],
+      "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+      "startedAt": "2026-09-15T02:07:39.943Z",
+      "finishedAt": "2026-09-15T02:07:49.359Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/download-xuiPjA/report.json"
+      ]
+    },
+    {
+      "name": "handoff",
+      "args": [
+        "scripts/handoff-regression.mjs"
+      ],
+      "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+      "startedAt": "2026-09-15T02:07:49.360Z",
+      "finishedAt": "2026-09-15T02:07:58.174Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/handoff-Q62txz/report.json"
+      ]
+    },
+    {
+      "name": "p4-runtime",
+      "args": [
+        "scripts/p4-runtime-regression.mjs"
+      ],
+      "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+      "startedAt": "2026-09-15T02:07:58.174Z",
+      "finishedAt": "2026-09-15T02:09:02.865Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/p4-runtime-tsWHRT/report.json"
+      ]
+    },
+    {
+      "name": "p4-isolated",
+      "args": [
+        "scripts/p4-isolated-regression.mjs"
+      ],
+      "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+      "startedAt": "2026-09-15T02:09:02.865Z",
+      "finishedAt": "2026-09-15T02:09:53.721Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/p4-isolated-w1UsoL/report.json"
+      ]
+    },
+    {
+      "name": "install",
+      "args": [
+        "scripts/install-regression.mjs"
+      ],
+      "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+      "startedAt": "2026-09-15T02:09:53.722Z",
+      "finishedAt": "2026-09-15T02:10:52.921Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/install-NO7iYq/report.json"
+      ]
+    },
+    {
+      "name": "codex-host",
+      "args": [
+        "scripts/codex-host-regression.mjs"
+      ],
+      "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+      "startedAt": "2026-09-15T02:10:52.922Z",
+      "finishedAt": "2026-09-15T02:11:03.358Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/codex-host-tM2ySV/report.json"
+      ]
+    },
+    {
+      "name": "performance-init",
+      "args": [
+        "dist/cli.js",
+        "init",
+        "--home",
+        "/Users/laofu/Projects/801-laofu-browser/workspace/full-regression-e00XRn/performance-state",
+        "--url",
+        "http://127.0.0.1:17989"
+      ],
+      "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+      "startedAt": "2026-09-15T02:11:03.358Z",
+      "finishedAt": "2026-09-15T02:11:03.746Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": []
+    },
+    {
+      "name": "performance-start",
+      "args": [
+        "scripts/local.mjs",
+        "start",
+        "--browser",
+        "--headless",
+        "--home",
+        "/Users/laofu/Projects/801-laofu-browser/workspace/full-regression-e00XRn/performance-state"
+      ],
+      "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+      "startedAt": "2026-09-15T02:11:03.746Z",
+      "finishedAt": "2026-09-15T02:11:06.239Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": []
+    },
+    {
+      "name": "performance",
+      "args": [
+        "scripts/performance-probe.mjs"
+      ],
+      "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+      "startedAt": "2026-09-15T02:11:06.240Z",
+      "finishedAt": "2026-09-15T02:11:11.452Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/performance-hFgJ7i/report.json"
+      ]
+    },
+    {
+      "name": "performance-stop",
+      "args": [
+        "scripts/local.mjs",
+        "stop",
+        "--home",
+        "/Users/laofu/Projects/801-laofu-browser/workspace/full-regression-e00XRn/performance-state"
+      ],
+      "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+      "startedAt": "2026-09-15T02:11:11.452Z",
+      "finishedAt": "2026-09-15T02:11:11.895Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": []
+    }
+  ]
+}

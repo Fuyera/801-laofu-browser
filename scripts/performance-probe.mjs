@@ -5,7 +5,9 @@ import { execFileSync } from "node:child_process";
 import assert from "node:assert/strict";
 import { BrowserClient } from "../dist/client.js";
 const root = path.resolve("."),
-  state = path.join(root, "workspace/local-state"),
+  state = path.resolve(
+    process.env.LAOFU_TEST_STATE || path.join(root, "workspace/local-state"),
+  ),
   home = fs.mkdtempSync(path.join(root, "workspace/performance-")),
   owner = JSON.parse(fs.readFileSync(path.join(state, "owner.json"))),
   client = new BrowserClient(owner.url, owner.token),

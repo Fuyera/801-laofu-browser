@@ -1,0 +1,99 @@
+{
+  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/full-regression-rfrcwf",
+  "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+  "results": [
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit"
+      ],
+      "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+      "startedAt": "2026-09-15T01:17:35.032Z",
+      "finishedAt": "2026-09-15T01:17:36.002Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": []
+    },
+    {
+      "name": "baseline",
+      "args": [
+        "scripts/verify-baseline.mjs"
+      ],
+      "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+      "startedAt": "2026-09-15T01:17:36.003Z",
+      "finishedAt": "2026-09-15T01:17:36.031Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": []
+    },
+    {
+      "name": "unit",
+      "args": [
+        "--import",
+        "tsx",
+        "--test",
+        "test/article.test.ts",
+        "test/boundaries.test.ts",
+        "test/hosts.test.ts",
+        "test/http.test.ts",
+        "test/p4.test.ts",
+        "test/policy.test.ts",
+        "test/store.test.ts"
+      ],
+      "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+      "startedAt": "2026-09-15T01:17:36.031Z",
+      "finishedAt": "2026-09-15T01:17:36.620Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": []
+    },
+    {
+      "name": "contract",
+      "args": [
+        "scripts/export-contract.mjs"
+      ],
+      "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+      "startedAt": "2026-09-15T01:17:36.620Z",
+      "finishedAt": "2026-09-15T01:17:36.820Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": []
+    },
+    {
+      "name": "smoke",
+      "args": [
+        "scripts/smoke.mjs"
+      ],
+      "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+      "startedAt": "2026-09-15T01:17:36.820Z",
+      "finishedAt": "2026-09-15T01:17:42.709Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/smoke-PkBkUa/result.json"
+      ]
+    },
+    {
+      "name": "tools",
+      "args": [
+        "scripts/tool-regression.mjs"
+      ],
+      "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+      "startedAt": "2026-09-15T01:17:42.709Z",
+      "finishedAt": "2026-09-15T01:18:17.386Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/tools-I6aW1Y/report.json"
+      ]
+    }
+  ],
+  "status": "interrupted",
+  "sourceDirty": true,
+  "interruption": {
+    "stage": "parity",
+    "reason": "Host clamshell sleep interrupted browser execution; pmset confirms sleep 18:18:34–18:33:35 local. No final full-pass claim.",
+    "log": "parity.log"
+  }
+}

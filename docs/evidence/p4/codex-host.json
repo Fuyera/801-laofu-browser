@@ -1,0 +1,19 @@
+{
+  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/codex-host-tM2ySV",
+  "host": "/Applications/ChatGPT.app/Contents/Resources/codex",
+  "scope": "Actual Codex app-server, generated scoped config, ephemeral protocol context, no model turn or persistent user configuration change",
+  "checks": [
+    {
+      "name": "installed Codex host recognizes generated configuration and discovers browser tools",
+      "status": "passed"
+    },
+    {
+      "name": "actual Codex MCP host calls browser tools and receives real page content without a model turn",
+      "status": "passed"
+    },
+    {
+      "name": "uninstall removes generated host entry and preserves surrounding configuration",
+      "status": "passed"
+    }
+  ]
+}

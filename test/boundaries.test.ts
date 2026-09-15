@@ -25,6 +25,14 @@ test("public egress denies localhost, metadata, private IPv4 and mapped IPv6", a
   await assert.rejects(publicTarget("127.0.0.1", 80), {
     code: "NETWORK_DENIED",
   });
+  for (const host of [
+    "host.docker.internal",
+    "HOST.DOCKER.INTERNAL.",
+    "gateway",
+    "router.lan",
+    "private.local",
+  ])
+    await assert.rejects(publicTarget(host, 80), { code: "NETWORK_DENIED" });
 });
 test("incomplete or over-budget upload leaves no published artifact or partial file", async (t) => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "lb-art-"));
@@ -36,7 +44,7 @@ test("incomplete or over-budget upload leaves no published artifact or partial f
   });
   await assert.rejects(
     art.write(
-      "A",
+      store.createProduct("A").product.id,
       "x.bin",
       "application/octet-stream",
       Readable.from([Buffer.alloc(11)]),
@@ -86,13 +94,13 @@ test("parallel streaming uploads reserve quota before async disk writes", async 
   });
   const results = await Promise.allSettled([
     art.write(
-      "A",
+      store.createProduct("A").product.id,
       "a.bin",
       "application/octet-stream",
       Readable.from([Buffer.alloc(80)]),
     ),
     art.write(
-      "B",
+      store.createProduct("B").product.id,
       "b.bin",
       "application/octet-stream",
       Readable.from([Buffer.alloc(80)]),
@@ -122,7 +130,7 @@ test("retained interrupted files consume quota and broken streams cannot publish
   );
   await assert.rejects(
     a.write(
-      "A",
+      s.createProduct("A").product.id,
       "full.bin",
       "application/octet-stream",
       Readable.from([Buffer.alloc(10)]),
@@ -136,7 +144,12 @@ test("retained interrupted files consume quota and broken streams cannot publish
     throw Object.assign(new Error("injected disk failure"), { code: "ENOSPC" });
   }
   await assert.rejects(
-    a.write("A", "disk.bin", "application/octet-stream", diskFailure()),
+    a.write(
+      s.createProduct("A").product.id,
+      "disk.bin",
+      "application/octet-stream",
+      diskFailure(),
+    ),
     { code: "ENOSPC" },
   );
   assert.equal(s.artifacts().length, 0);

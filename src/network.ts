@@ -3,6 +3,16 @@ import ipaddr from "ipaddr.js";
 import http from "node:http";
 import net from "node:net";
 import { Fault } from "./errors.js";
+const configured = (process.env.LAOFU_PUBLIC_DNS || "")
+  .split(",")
+  .map((x) => x.trim())
+  .filter(Boolean);
+if (configured.some((ip) => !net.isIP(ip)))
+  throw new Error("LAOFU_PUBLIC_DNS requires DNS server IP addresses");
+const publicResolver = configured.length
+  ? new dns.Resolver({ timeout: 3000, tries: 2 })
+  : null;
+publicResolver?.setServers(configured);
 export function publicAddress(address: string) {
   try {
     let ip = ipaddr.parse(address);
@@ -14,6 +24,9 @@ export function publicAddress(address: string) {
   }
 }
 export async function publicTarget(host: string, port: number) {
+  host = String(host || "")
+    .toLowerCase()
+    .replace(/\.$/, "");
   if (
     !host ||
     !Number.isInteger(port) ||
@@ -21,13 +34,27 @@ export async function publicTarget(host: string, port: number) {
     port > 65535 ||
     host.endsWith(".localhost") ||
     host.endsWith(".local") ||
+    host.endsWith(".internal") ||
+    host.endsWith(".lan") ||
+    (!host.includes(".") && !net.isIP(host.replace(/^\[|\]$/g, ""))) ||
     host === "localhost"
   )
     throw new Fault("NETWORK_DENIED", "目标网络未授权", 403);
   const clean = host.replace(/^\[|\]$/g, "");
   const rows = net.isIP(clean)
     ? [{ address: clean }]
-    : await dns.lookup(clean, { all: true });
+    : publicResolver
+      ? (
+          await Promise.allSettled([
+            publicResolver.resolve4(clean),
+            publicResolver.resolve6(clean),
+          ])
+        ).flatMap((r) =>
+          r.status === "fulfilled"
+            ? r.value.map((address) => ({ address }))
+            : [],
+        )
+      : await dns.lookup(clean, { all: true });
   if (!rows.length || rows.some((r) => !publicAddress(r.address)))
     throw new Fault("NETWORK_DENIED", "私网或保留地址不可访问", 403);
   return rows[0].address;

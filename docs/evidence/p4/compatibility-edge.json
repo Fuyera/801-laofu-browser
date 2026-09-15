@@ -1,0 +1,30 @@
+{
+  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/compat-edge-JMHGvV",
+  "evidenceKind": "actual Chromium; synthetic local pages and competing test extension",
+  "checks": [
+    {
+      "name": "two sessions retain distinct default tabs across one shared worker/extension connection",
+      "status": "passed"
+    },
+    {
+      "name": "screenshots capture each requested session, including a background tab, without capturing the peer page",
+      "status": "passed"
+    },
+    {
+      "name": "current Chromium permits another debugger concurrently; click executes once and the other debugger remains usable",
+      "status": "passed"
+    },
+    {
+      "name": "disabled high-fidelity mode refuses real click and CSP evaluation without falling back or producing side effects",
+      "status": "passed"
+    },
+    {
+      "name": "explicitly enabling high-fidelity mode permits a new CSP read; failed idempotency key is never replayed",
+      "status": "passed"
+    },
+    {
+      "name": "stopping attached worker preserves the externally started browser",
+      "status": "passed"
+    }
+  ]
+}

@@ -1,58 +1,59 @@
-# 完整本机回归报告
+# P4 本轮测试报告
 
-日期：2026-09-14。版本：`0.1.0-dev.1`。运行源码基线：`fd4699795d647cebcf0d5302e49ca9607143faf7`；本轮另外修改了测试镜像选择和性能探针收尾逻辑。原始现场目录：`workspace/full-test-efFfYK`。
+日期：2026-09-14（本地；运行日志为 2026-09-15 UTC）。版本 `0.1.0-dev.2`，源码基线 `2b2fdad6df4a712cd33f594fd1c9399587199e14` 加 `fuyera/p4-macos` 本轮改动。**完整矩阵 22/22 通过；日常 Chrome 人工入口与最终固定制品复验仍待关闭。** P5/跨平台暂停。
 
-**17 组当前可执行的本机检查，16 组通过，1 组未通过。P0 公网隔离检查仍失败，P4 与 P5 未通过。** 这里的“完整”指本轮检查矩阵全部有结果，不代表所有系统、站点、参数组合或业务接入均已验证。
+## 当前结果
 
-机器可读结果见 [full-test.json](evidence/full-test.json)，全部固定报告和截图的来源及 SHA-256 见 [index.json](evidence/index.json)。本报告与 [产品验收报告](ACCEPTANCE.md) 分工：前者说明这次执行，后者维护产品要求与阶段门槛。
+完整矩阵在 02:03:10–02:11:11 UTC 执行，见 [完整报告](evidence/p4/full.json)。每组退出码为 0，真实运行报告逐项通过。22 组包含性能服务的初始化、启动和停止，不是 22 个功能或 22 个平台。
 
-## 执行结果
-
-|检查组|结果|证据与范围|
+|检查|结果|实际来源|
 |---|---|---|
-|构建|通过|上游校验、24 处补丁生成、TypeScript、Vite 构建均退出 0|
-|类型检查|通过|`tsc --noEmit` 退出 0|
-|行为及 HTTP|19/19 通过|权限、资源归属、幂等、控制权、文件限额、预览、经验恢复|
-|上游基线|通过|58 个文件 SHA-256；23 工具清单|
-|接口契约|通过|23 工具、107 个参数及嵌套定义逐项相等；重新导出的 OpenAPI/Schema 无差异|
-|基础真实采集|通过|独立服务、Chromium、正文/图片、ZIP 下载与哈希|
-|原始工具|23/23 通过|[tools.json](evidence/tools.json)|
-|原版语义对照|25/25 通过|[parity.json](evidence/parity.json)，包含错误和扩展重连|
-|图文及控制台|7 个报告场景通过|[article-console.json](evidence/article-console.json)，另包含小预算拒绝与恶意 HTML 预览拒绝断言|
-|故障恢复|4/4 通过|[faults.json](evidence/faults.json)，外部 POST 后回执前中断、旧 worker、同键重投、act 取消|
-|SDK 与多入口|通过|[sdk.json](evidence/sdk.json)，工程外安装 TS/Python 本地包，上传下载、取消、人工等待恢复、CLI/MCP 同任务|
-|外部浏览器配对|通过|[attach.json](evidence/attach.json)，独立测试 Chrome；不是日常账号安装|
-|慢速下载|2/2 通过|[downloads.json](evidence/downloads.json)，超时与取消后流停止、无完整产物、原键不重放|
-|远程人工接手|2/2 通过|[handoff.json](evidence/handoff.json)，与源码匹配的新容器镜像；实际 noVNC 输入/重连、继续与取消|
-|隔离执行环境|7/8，通过组判定为失败|[isolation.json](evidence/isolation.json)，失败项为公网正向访问|
-|Mac 安装与回退|10/10 通过|[install.json](evidence/install.json)，本次新建专用候选、真实启动/采集/上传、完整性、升级/回退、失败恢复、备份、plist|
-|性能固定样本|3/3 通过，进程正常退出|[performance.json](evidence/performance.json)，180 段本地页面，每次 510–1029 ms、8 步、0 模型调用|
+|类型、构建及原版基线|通过；58 个 vendor 文件不变|矩阵 typecheck/baseline；`workspace/p4/build-read-reconnect.log`|
+|行为及 HTTP|30/30|[unit](evidence/p4/unit.json)，含读取断线重连及写请求不重放|
+|契约、基础采集、原始工具|通过；23 工具、107 参数|矩阵 contract/smoke；[tools](evidence/p4/tools.json)|
+|原版同输入对照|矩阵 40/40；补 CSP 后单独复跑 43/43|[parity](evidence/p4/parity.json)，`workspace/parity-ivgTQD`|
+|兼容边界|6/6|[compatibility-edge](evidence/p4/compatibility-edge.json)：会话、后台页截图、并发 debugger、禁用 L2/CSP、原键不重放|
+|图文及控制台|7/7|[article](evidence/p4/article.json)，仓库自建样本，不是新公众号现场|
+|P4 实际运行|7/7|[runtime](evidence/p4/runtime.json)：doctor、30 次回收、账号、SSE 续传/撤销、下载删除、429/重启|
+|双隔离身份|8/8|[isolated](evidence/p4/isolated.json)：两身份各八项隔离、同卷重启、安装 SDK、公网、合成账号与 noVNC|
+|故障、下载、接手|4/4、2/2、2/2|[faults](evidence/p4/faults.json)、[downloads](evidence/p4/downloads.json)、[handoff](evidence/p4/handoff.json)|
+|TS/Python 与 attach|通过|[sdk](evidence/p4/sdk.json)、[attach](evidence/p4/attach.json)；attach 使用独立测试 Chromium|
+|dev.2 独立安装|11/11|[install](evidence/p4/install.json)：篡改、同 ID 合法清单冲突、数据保留、恢复、幂等记录|
+|实际 Codex 宿主|3/3|[codex-host](evidence/p4/codex-host.json)：识别配置、真实工具调用、卸载|
+|本地性能样本|3 次通过|[performance](evidence/p4/performance.json)：180 段固定本地页面，1.533–2.045 秒；进程树 RSS 峰值约 1.69–1.71 GiB，包含共享页重复计数，不是物理独占内存或公网 SLO|
 
-测试运行于 macOS arm64、Node 22.23.2、Playwright 1.63.0 与其配套 Chromium。容器为 Mac Docker Desktop 上的 Linux arm64。性能数字含 SDK 轮询；进程树 RSS 约 2.61–2.95 GB，包含共享页重复计数与现有专用浏览器状态，不能当作独占内存、长时间稳定性或公网 SLO。
+所有固定报告的来源、范围和 SHA-256 见 [索引](evidence/p4/index.json)。矩阵中的候选镜像为 `sha256:2f2ae06755667edf59d8d6ee0107b6b8c8b9d25f5d0c8cd40989d8d9e2d0c3ef`，Mac 安装候选为 `workspace/p4/package-final-matrix`；均记录 dirty 来源，不能冒充已提交的固定发行。43 项对照是补充执行，不能篡改矩阵中原有的 40 项结果。
 
-控制台已执行真实登录、提交、ZIP 下载、安全预览、五区切换、390 px 无横向溢出断言及页面错误检查；另外人工查看了[桌面截图](evidence/console-tasks.png)和[移动截图](evidence/console-mobile.png)。
+## 修正与范围
 
-## 未通过项
+- 服务重启后，TS SDK 可能复用已被关闭的 HTTP 连接，GET 报 `ECONNRESET`。仅对 GET 的 `ECONNRESET` / `UND_ERR_SOCKET` 重建连接重试一次；POST、写操作和其他失败均不自动重试。真实 HTTP 断线测试证明写请求只发生一次；安装 11 项及 SDK 复测通过后，完整矩阵再次通过。
+- 容器退出由 worker 统一关闭持久 Chromium，再关闭显示服务；同卷正常重启退出码为 0，旧 boot 证明失效。未删除 profile 锁或丢弃原配置来使测试通过。
+- 先注册受控页面再导航，避免漏掉初次导航 429。实际 `Retry-After: 120` 保存并跨服务重启阻止再次访问；解除冷却不重放旧任务。
+- 当前 Chromium 153 允许两个扩展并发使用 debugger，实测另一调试连接保持可用且点击只发生一次。显式禁用 L2 时，真实点击与 CSP 执行以 `NEEDS_L2` 拒绝、效果计数为零；恢复 L2 后新请求可读，旧幂等键仍不重放。该结果不推断其他 Chrome 版本或所有 DevTools 状态。
+- 实际宿主是已安装的 Codex app-server，使用专用目录配置与临时协议上下文；发现工具、调用浏览器并读取自建页面、卸载均通过。没有模型轮次、持久用户任务或个人宿主配置变更；不代表 20 宿主应用全覆盖。
+- 两容器的公网访问、隔离与 noVNC 均是真实执行；账号/Cookie 内容使用明确标注的合成样本。公网网关仅使用宿主原有 DNS `8.8.8.8/8.8.4.4`，内部 Docker 解析及私网/保留 IP 检查保持有效。
 
-隔离容器中的系统 DNS 将 `example.com` 解析为 `198.18.1.151`，属于保留地址；网关公共 IP 检查拒绝后，浏览器得到 `ERR_TUNNEL_CONNECTION_FAILED`。非 root、浏览器 Namespace/Seccomp 沙箱、内部网络、直接出站拒绝、控制接口拒绝、私网拒绝和独立桌面均通过。
+## 复现
 
-本轮调用实际部署器分别完成全部检查并保存失败报告，`isolationVerified=false`、`enabledForProducts=false`。没有提交虚假的隔离通过证明，没有修改 DNS、替换外部解析器或放宽地址校验。两个受限身份的完整正向流程须待这道门槛关闭后再运行；现有 HTTP 越权拒绝测试不抵消正向流程缺失。
+需要 Mac 开盖唤醒、Docker 可用，使用专用候选目录：
 
-## 本轮修正与制品对应
+```sh
+export PATH="$PWD/.runtime/node-v22.23.2-darwin-arm64/bin:$PATH"
+export npm_config_cache="$PWD/workspace/p4/npm-cache"
+npm run build
+node scripts/package-sdk.mjs
+python3 -m pip wheel --no-deps --no-build-isolation --no-index ./sdk/python -w releases
+node scripts/build-container.mjs --base laofu-browser:0.1.0-dev.1-delivery-2b2fdad --tag laofu-browser:0.1.0-dev.2-p4-candidate
+node scripts/package-release.mjs --staging --output workspace/p4/新候选目录
+LAOFU_CODEX_BINARY=/Applications/ChatGPT.app/Contents/Resources/codex LAOFU_PUBLIC_DNS=8.8.8.8,8.8.4.4 LAOFU_TEST_IMAGE=laofu-browser:0.1.0-dev.2-p4-candidate LAOFU_PACKAGE_CANDIDATE="$PWD/workspace/p4/新候选目录" caffeinate -i -s node scripts/full-regression.mjs
+```
 
-- 性能脚本首次已得到 3 次成功采集，却留下到测试端口 17976 的 TCP 连接，进程不退出。保存现场后停止了该探针；新增对这个测试服务器的 `closeAllConnections()`，复跑三次成功并以退出码 0 正常结束。
-- 旧 Docker tag 的源码与工作区字节不完全相同，差异包含扩展标签更新。使用既有依赖与 Chromium，在 `--network=none` 下构建独立镜像 `laofu-browser:0.1.0-dev.1-retest-fd46997`，随后重跑接手和完整隔离。最终镜像 ID 为 `sha256:543a46f66b1b00fb49e8c915005273e6d6e1fbab901447348c60f4af76aa83ac`，23 个源码、锁文件及补丁生成器哈希与工作区一致。
-- `handoff-regression.mjs`、`isolated-smoke.mjs` 增加 `LAOFU_TEST_IMAGE`，可显式选取独立测试镜像。全 8 项失败现场使用 `deploy/isolated.mjs create/verify --image` 流程采集；避免 smoke 遇到首项错误即提前退出导致其余证据丢失。
-- 本轮 SDK 回归安装的是现有本地包；额外比较 TS 包的 8 个 JS/类型文件和 Python wheel 主模块，均与当前构建/源码一致。详见 [source-verification.json](evidence/source-verification.json)。
+DNS 参数仅适用于当前已授权路径。未配置 `LAOFU_CODEX_BINARY` 时不执行实际宿主组，不能据此称 22 组通过。安装回归会修改专用副本，勿指向已冻结发行目录。完整矩阵包含现在的 43 项对照。
 
-上述完整回归结束时，新 Mac 候选仅用于安装测试，当时尚未替换发行压缩包。后续压缩包更新的源码提交、时间、SHA-256 和追加验证以包外 `releases/DELIVERY.json` 为准；Mac 包内 `RELEASE.json` 记录来源提交与逐文件哈希。更新制品不改变本报告的失败项与验收范围。测试容器、网络、卷在记录日志后清理；安装回归服务已停止。浏览器 profile、凭据及原始任务日志仍在被 Git 忽略的本地运行目录。
+## 剩余与历史
 
-## 公众号证据与其余缺项
+日常 Chrome 尚待允许临时加载扩展后，完成公开 `example.com` 读取、停止 worker 保留浏览器与移除本次扩展。随后核验已提交来源的最终包/镜像和安装结果，更新交付记录。
 
-本轮执行了 5325 字符、11 张原图的历史公众号离线重放。同时重新核验了 2026-09-14 14:05 UTC 既有现场采集《用GPT-6 Astra操控Blender玩3D，保姆级教程来了。》的 Markdown 哈希、30/30 图片哈希和相对引用，均通过；正文记录为当前可见范围完整、未截断且版本一致，仍有 1 项音视频或嵌入内容未下载。[复核记录](evidence/capture-verification.json)
+此前 [合盖中断报告](evidence/p4/full-interrupted.json)保留为历史；它已由本轮 22/22 结果替代。开盖后的首次矩阵发现 GET 断线问题，修正后的当前矩阵全部通过。旧 dev.1 仅归档，不要求历史包迁移；新包安装回退使用同程序的合成发行标识，不声称历史 dev.1 降级兼容。
 
-本轮没有重新向公众号发送采集请求。该单篇现场成功与历史离线重放分别记录，不推广为所有公众号、折叠正文、分页或全部媒体完整。
-
-下列项目保留缺项：Windows 11 x86_64 真实机器、日本 Ubuntu 24.04 x86_64 部署、日常 Chrome 真实账号人工安装、所有 107 参数组合和全部边界、20 个宿主应用逐一启动。联网 npm 漏洞审计本轮未重跑，此前该外发动作被拒绝；依赖与锁文件未因此更换。
-
-研发复现步骤与数据准备见 [DEVELOPMENT](DEVELOPMENT.md)；实际使用见 [USER_GUIDE](USER_GUIDE.md)。
+历史 dev.1 报告与公众号单篇 30 图证据留在 `docs/evidence/` 根目录；本轮没有再次请求公众号。没有 Windows、Ubuntu、日本部署或 20 个宿主全部现场通过的声明。最终判断见 [ACCEPTANCE](ACCEPTANCE.md)。

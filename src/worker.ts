@@ -1,3 +1,4 @@
+import { VERSION, BUILD, API_VERSION } from "./version.js";
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
@@ -68,7 +69,8 @@ export class Worker {
           profileId: this.config.profileId,
           browserReady: ready,
           bootId: this.bootId,
-          version: "0.1.0",
+          version: VERSION,
+          build: BUILD,
           browserVersion: this.browser.browserVersion,
           environment: {
             platform: process.platform,
@@ -474,12 +476,29 @@ export class Worker {
       let result: any,
         state = "succeeded";
       if (job.kind === "task" && job.type === "article.capture@v1") {
-        const article = await captureArticle(
-          job.input,
-          dir,
-          (tool, args, raw) => this.run(job, tool, args, raw),
-          (info) => this.human(job, info),
-        );
+        let article;
+        try {
+          article = await captureArticle(
+            job.input,
+            dir,
+            (tool, args, raw) => this.run(job, tool, args, raw),
+            (info) => this.human(job, info),
+            job.executionPolicy,
+          );
+        } catch (e) {
+          if (e instanceof Fault && e.code === "RATE_LIMITED") {
+            const origin = e.details?.origin || new URL(job.input.url).origin;
+            const observed = this.browser.rateLimit(origin, this.activeStarted);
+            e.details = {
+              origin,
+              retryAfter: observed?.retryAfter ?? null,
+              evidence: observed
+                ? "browser_response"
+                : "page_rate_limit_without_header",
+            };
+          }
+          throw e;
+        }
         const artifacts = [];
         for (const f of article.files) {
           this.check(job);
@@ -489,6 +508,13 @@ export class Worker {
         }
         result = { manifest: article.manifest, artifacts };
         state = article.state;
+        await this.run(
+          job,
+          "tabs",
+          { action: "close", tabId: article.tabId },
+          true,
+        );
+        result.captureTab = { id: article.tabId, closed: true };
       } else if (job.kind === "task" && job.type === "browser.flow@v1") {
         const steps = [];
         for (const step of job.input.steps) {
@@ -648,6 +674,10 @@ export class Worker {
       fs.rmSync(dir, { recursive: true, force: true });
     } catch (e) {
       stopped = !this.uncertain;
+      this.browser.diagnostic("job_failed", {
+        jobId: job.id,
+        error: e instanceof Error ? e.stack : String(e),
+      });
       await this.browser.control(job, true).catch(() => {
         stopped = false;
       });

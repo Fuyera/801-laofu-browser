@@ -1,9 +1,49 @@
-import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';
-const out=path.resolve('docs/evidence');fs.mkdirSync(out,{recursive:true});
-const sources={tools:'workspace/tools-G1Tqxa/report.json',parity:'workspace/parity-MJtMuv/report.json','article-console':'workspace/article-console-DG14fm/report.json',faults:'workspace/faults-igwZLL/report.json',sdk:'workspace/sdk-9Xn2Pv/report.json',handoff:'workspace/handoff-aSxBiv/report.json',attach:'workspace/attach-hvfgvv/report.json',install:'workspace/install-n58Eho/report.json',isolation:'workspace/local-state/isolated/wrk_49ac4305ff314ef397417ae51854c2cd-verification.json',performance:'workspace/performance-YgIJbl/report.json',downloads:'workspace/download-KVb1q4/report.json'};
-const index=[];for(const[name,source]of Object.entries(sources)){const bytes=fs.readFileSync(source);JSON.parse(bytes);fs.writeFileSync(path.join(out,name+'.json'),bytes);index.push({name,file:name+'.json',source,sha256:crypto.createHash('sha256').update(bytes).digest('hex')});}
-fs.copyFileSync('workspace/article-console-DG14fm/console-tasks.png',path.join(out,'console-tasks.png'));fs.copyFileSync('workspace/article-console-DG14fm/console-mobile.png',path.join(out,'console-mobile.png'));fs.writeFileSync(path.join(out,'index.json'),JSON.stringify({collectedAt:new Date().toISOString(),scope:'curated test reports only; no credentials, browser profiles or real account databases',reports:index},null,2));
-const baseline=JSON.parse(fs.readFileSync('docs/LAOFU_BROWSER_BASELINE.json'));const requirements=baseline.tools.map(t=>({requirementId:t.id,name:t.name,schema:`docs/LAOFU_BROWSER_BASELINE.json#/tools/${baseline.tools.indexOf(t)}/inputSchema`,parameterCount:Object.keys(t.inputSchema.properties||{}).length,implementation:['src/worker.ts','src/browser.ts','scripts/build-engine.mjs','vendor/huashu-chrome-1.2.0/src/mcp-server.js','vendor/huashu-chrome-1.2.0/extension/background.js'],tests:['scripts/tool-regression.mjs','scripts/upstream-parity.mjs'],evidence:['docs/evidence/tools.json','docs/evidence/parity.json'],environment:'macOS arm64; Node22.23.2; PW1.63.0; upstream1.2.0',status:'verified',scope:'原参数契约和代表性真实场景；不是全参数组合或全部环境通过'}));
-const groups=[['L01','verified',['src/article.ts'],['scripts/article-console-regression.mjs'],['article-console']],['L02','partial',['src/server.ts','src/client.ts','sdk/python/laofu_browser/__init__.py','src/mcp.ts'],['scripts/sdk-smoke.mjs'],['sdk']],['L03','partial',['src/worker.ts','src/relay.ts'],['scripts/handoff-regression.mjs'],['handoff']],['L04','verified',['src/broker.ts','src/worker.ts'],['scripts/handoff-regression.mjs','scripts/attach-regression.mjs'],['handoff','attach']],['L05','verified',['src/article.ts'],['test/article.test.ts','scripts/article-console-regression.mjs'],['article-console']],['L06','verified',['src/store.ts','src/broker.ts','src/worker.ts'],['scripts/fault-regression.mjs'],['faults']],['L07','verified',['src/store.ts','src/server.ts'],['test/store.test.ts','scripts/performance-probe.mjs'],['performance']],['R01','blocked',['src/network.ts','src/relay.ts','deploy/isolated.mjs'],['test/policy.test.ts','scripts/network-probe.mjs'],['isolation']],['R02','verified',['src/store.ts','src/broker.ts','src/worker.ts'],['scripts/fault-regression.mjs'],['faults']],['R03','verified',['scripts/download-handler.txt','src/worker.ts','src/broker.ts'],['scripts/download-regression.mjs','scripts/handoff-regression.mjs'],['downloads','handoff']],['R04','partial',['src/catalog.ts','src/contracts.ts','src/hosts.ts','scripts/build-engine.mjs'],['scripts/upstream-parity.mjs','scripts/export-contract.mjs','test/hosts.test.ts'],['parity','tools']],['R05','verified',['src/worker.ts','src/broker.ts','web/main.tsx'],['scripts/handoff-regression.mjs'],['handoff']],['R06','partial',['src/artifacts.ts','src/network.ts','src/server.ts'],['test/boundaries.test.ts','test/policy.test.ts'],['article-console','isolation']],['R07','verified',['src/article.ts'],['scripts/article-console-regression.mjs'],['article-console']],['R08','partial',['src/server.ts','sdk'],['scripts/sdk-smoke.mjs'],['sdk']]];
-for(const[id,status,implementation,tests,evidence]of groups)requirements.push({requirementId:id,status,implementation,tests,evidence:evidence.map(n=>'docs/evidence/'+n+'.json'),scope:'详细限制见docs/ACCEPTANCE.md；未验证系统和受限产品正向链路不记通过'});
-fs.writeFileSync('docs/traceability.json',JSON.stringify({version:'0.1.0-dev.1',updatedAt:new Date().toISOString(),overallGate:'P4 not passed; P5 not completed',requirements},null,2));console.log(JSON.stringify({reports:index.length,requirements:requirements.length}));
+import fs from "node:fs";
+import path from "node:path";
+import crypto from "node:crypto";
+const input = process.argv[2],
+  output = process.argv[3];
+if (!input || !output)
+  throw Error("Usage: collect-evidence.mjs RUN_MANIFEST.json OUTPUT_DIRECTORY");
+const manifest = JSON.parse(fs.readFileSync(input));
+if (!Array.isArray(manifest.reports) || !manifest.reports.length)
+  throw Error("explicit reports list required");
+const out = path.resolve(output);
+fs.mkdirSync(out, { recursive: true });
+const index = [];
+for (const entry of manifest.reports) {
+  if (
+    !/^[a-zA-Z0-9_-]+$/.test(entry.name) ||
+    !entry.source ||
+    !entry.scope ||
+    !["passed", "failed", "partial", "not_run"].includes(entry.status)
+  )
+    throw Error("report must declare name, source, scope and verified status");
+  const bytes = fs.readFileSync(entry.source);
+  JSON.parse(bytes);
+  fs.writeFileSync(path.join(out, entry.name + ".json"), bytes);
+  index.push({
+    ...entry,
+    file: entry.name + ".json",
+    sha256: crypto.createHash("sha256").update(bytes).digest("hex"),
+  });
+}
+fs.writeFileSync(
+  path.join(out, "index.json"),
+  JSON.stringify(
+    {
+      collectedAt: new Date().toISOString(),
+      sourceCommit: manifest.sourceCommit || null,
+      reports: index,
+    },
+    null,
+    2,
+  ),
+);
+console.log(
+  JSON.stringify({
+    reports: index.length,
+    output: out,
+    requirementStatusChanged: false,
+  }),
+);

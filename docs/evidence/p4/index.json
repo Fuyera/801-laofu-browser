@@ -1,0 +1,142 @@
+{
+  "collectedAt": "2026-09-15T02:16:41.662Z",
+  "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
+  "reports": [
+    {
+      "name": "full",
+      "source": "workspace/full-regression-e00XRn/report.json",
+      "scope": "22/22 sequential checks; parity in this matrix was 40 cases",
+      "status": "passed",
+      "file": "full.json",
+      "sha256": "632498ffb03fe2e79aa5f585cbd627c3d105f12523266670e7e20e7966439bf9"
+    },
+    {
+      "name": "unit",
+      "source": "workspace/p4/unit-final.json",
+      "scope": "30 unit and HTTP tests",
+      "status": "passed",
+      "file": "unit.json",
+      "sha256": "c0efb48ba157df6f6b5a46d80e908bc1aac79c0eaf58d82f9cbeb401995b095d"
+    },
+    {
+      "name": "tools",
+      "source": "workspace/tools-OmzeF5/report.json",
+      "scope": "23 actual browser tools",
+      "status": "passed",
+      "file": "tools.json",
+      "sha256": "e8aef85d9508778eac64f9a816e1daf58bf958e7622886a58a2a9a1d5d4ae9a2"
+    },
+    {
+      "name": "isolated",
+      "source": "workspace/p4-isolated-w1UsoL/report.json",
+      "scope": "8 groups with two real containers, public sites, packaged SDKs, and explicitly synthetic account fixtures",
+      "status": "passed",
+      "file": "isolated.json",
+      "sha256": "8b95f677b1c3a6dc89ec3a3092877d4c26989b4e3320e469cb0655d9f64cf0ab"
+    },
+    {
+      "name": "runtime",
+      "source": "workspace/p4-runtime-tsWHRT/report.json",
+      "scope": "7 groups including doctor, 30 captures, SSE reconnect/revocation, download deletion and real Retry-After restart",
+      "status": "passed",
+      "file": "runtime.json",
+      "sha256": "848d8b94381c8e99505f8a1ab84f6c754cea8c4b00088ff04b6eed7d48a8b4ed"
+    },
+    {
+      "name": "parity",
+      "source": "workspace/parity-ivgTQD/report.json",
+      "scope": "43 original/adapter cases; targeted rerun after adding 3 CSP cases",
+      "status": "passed",
+      "file": "parity.json",
+      "sha256": "55b5836538c4cc56b0835b198e0b5ee2136e13d6138ec7bb38e3aa2b2b7fb9ac"
+    },
+    {
+      "name": "compatibility-edge",
+      "source": "workspace/compat-edge-JMHGvV/report.json",
+      "scope": "6 real Chromium groups; synthetic pages, concurrent debugger extension and explicit disabled L2",
+      "status": "passed",
+      "file": "compatibility-edge.json",
+      "sha256": "ff0494597688b913b5e8b4443af093567d749d0f07a4e9fc39ed32d19ce82227"
+    },
+    {
+      "name": "article",
+      "source": "workspace/article-console-Vo4teX/report.json",
+      "scope": "7 synthetic article and console groups; no fresh WeChat capture",
+      "status": "passed",
+      "file": "article.json",
+      "sha256": "807a548fe2f783ce7da0d3726740289b13a8c44624791bf314c100cac5a14686"
+    },
+    {
+      "name": "install",
+      "source": "workspace/install-NO7iYq/report.json",
+      "scope": "11 candidate installation groups including legal same-ID conflict and synthetic version recovery",
+      "status": "passed",
+      "file": "install.json",
+      "sha256": "57e2e1244a173ef65ba0cd40e906d9ba42474a2a55ee9fd87d735e4db2a793ad"
+    },
+    {
+      "name": "sdk",
+      "source": "workspace/sdk-RqhFVk/report.json",
+      "scope": "Installed TS/Python SDKs against actual browser service",
+      "status": "passed",
+      "file": "sdk.json",
+      "sha256": "8285005cae9c4968a3d7f74f339e535d49ddcc51de434c4ab8407d1c098cfc0c"
+    },
+    {
+      "name": "codex-host",
+      "source": "workspace/codex-host-tM2ySV/report.json",
+      "scope": "3 actual installed Codex app-server groups, scoped config, ephemeral protocol, no model turn",
+      "status": "passed",
+      "file": "codex-host.json",
+      "sha256": "914bf0dbea4a5437e8789caad68daed6ca88c89c56e0fbbbd4f4e290420f0755"
+    },
+    {
+      "name": "handoff",
+      "source": "workspace/handoff-Q62txz/report.json",
+      "scope": "2 actual noVNC groups",
+      "status": "passed",
+      "file": "handoff.json",
+      "sha256": "71fc036397934f6ec0af1fe016a521ee7a5d89d1314a6aa3595150a6631b2fbf"
+    },
+    {
+      "name": "downloads",
+      "source": "workspace/download-xuiPjA/report.json",
+      "scope": "2 actual interrupted-download groups",
+      "status": "passed",
+      "file": "downloads.json",
+      "sha256": "fcff3dbbe7fbbd4802f70816c4dea6d9353b0287f960c0d410dc5aad279c1689"
+    },
+    {
+      "name": "faults",
+      "source": "workspace/faults-Iomn7Q/report.json",
+      "scope": "4 interrupted-command groups; no unknown write replay",
+      "status": "passed",
+      "file": "faults.json",
+      "sha256": "265d4f7b8b253c238e47d024a54fa21c85e9a2126ba39b096704ac6df7c530ef"
+    },
+    {
+      "name": "attach",
+      "source": "workspace/attach-HlvuhS/report.json",
+      "scope": "External test Chromium; does not replace daily Chrome acceptance",
+      "status": "passed",
+      "file": "attach.json",
+      "sha256": "e7cae336bd4ee1f659320a92d3d118b7b21476c223bf3707123ccda81f68456b"
+    },
+    {
+      "name": "performance",
+      "source": "workspace/performance-hFgJ7i/report.json",
+      "scope": "3 local 180-paragraph samples; no public-site SLO",
+      "status": "passed",
+      "file": "performance.json",
+      "sha256": "b4e74693999b68e5b7526045c2e87cf81c2a590ce065f2ad3493f2e858c5ea9a"
+    },
+    {
+      "name": "full-interrupted",
+      "source": "workspace/full-regression-rfrcwf/report.json",
+      "scope": "Historical interruption by Mac clamshell sleep; superseded by full pass",
+      "status": "partial",
+      "file": "full-interrupted.json",
+      "sha256": "c95211286de3da34ea64944d0f9ad52816aaf1b0b36f360d8e8d8fed3ab3dbeb"
+    }
+  ]
+}

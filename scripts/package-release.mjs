@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import { spawnSync } from "node:child_process";
+import { parseArgs } from "node:util";
 import { chromium } from "playwright";
 const root = path.resolve(import.meta.dirname, ".."),
   version = JSON.parse(
@@ -11,7 +12,10 @@ if (process.platform !== "darwin" || process.arch !== "arm64")
   throw new Error(
     "This local binary packager currently targets macOS arm64; other platforms must build natively.",
   );
-const staging = process.argv.includes("--staging");
+const { values } = parseArgs({
+  options: { staging: { type: "boolean" }, output: { type: "string" } },
+});
+const staging = values.staging === true;
 const revision = spawnSync("git", ["rev-parse", "HEAD"], {
   cwd: root,
   encoding: "utf8",
@@ -24,11 +28,17 @@ const source = {
   commit: revision.status === 0 ? revision.stdout.trim() : null,
   dirty: changes.status === 0 ? changes.stdout.trim().length > 0 : null,
 };
-const dir = path.join(
-  root,
-  staging ? "workspace" : "releases",
-  staging ? "package-candidate" : `laofu-browser-${version}-macos-arm64`,
-);
+if (!staging && (source.dirty || !source.commit))
+  throw new Error(
+    "固定发行包必须来自已提交的干净源码；开发验证请使用 --staging",
+  );
+const dir = values.output
+  ? path.resolve(values.output)
+  : path.join(
+      root,
+      staging ? "workspace" : "releases",
+      staging ? "package-candidate" : `laofu-browser-${version}-macos-arm64`,
+    );
 if (fs.existsSync(dir))
   throw new Error("发行目录已存在；使用新的发行版本或先归档本次生成的临时目录");
 fs.mkdirSync(dir, { recursive: true });
@@ -50,6 +60,7 @@ for (const name of [
   "dist",
   "vendor",
   "runtime/engine",
+  "runtime/build.json",
   "sdk",
   "examples",
   "node_modules",
@@ -79,8 +90,14 @@ for (const name of fs.readdirSync(cache).filter((n) => n.startsWith("ffmpeg-")))
     verbatimSymlinks: true,
   });
 fs.mkdirSync(path.join(dir, "releases"), { recursive: true });
-for (const file of [`laofu-browser-${version}.tgz`, "laofu_browser-0.1.0.dev1-py3-none-any.whl"]) {
-  fs.copyFileSync(path.join(root, "releases", file), path.join(dir, "releases", file));
+for (const file of [
+  `laofu-browser-${version}.tgz`,
+  `laofu_browser-${version.replace("-dev.", ".dev")}-py3-none-any.whl`,
+]) {
+  fs.copyFileSync(
+    path.join(root, "releases", file),
+    path.join(dir, "releases", file),
+  );
 }
 const entries = {};
 function walk(base, rel = "") {
@@ -112,7 +129,7 @@ const release = {
   playwright: "1.63.0",
   upstream: "huashu-chrome@1.2.0",
   schema: { min: 1, max: 1 },
-  stage: "development; P4/P5 gates remain in acceptance report",
+  stage: "macOS P4 development candidate; P5 paused; see acceptance report",
   source,
   entries,
 };

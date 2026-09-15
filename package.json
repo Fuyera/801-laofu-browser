@@ -1,6 +1,6 @@
 {
   "name": "laofu-browser",
-  "version": "0.1.0-dev.1",
+  "version": "0.1.0-dev.2",
   "private": true,
   "type": "module",
   "engines": {
@@ -8,7 +8,7 @@
   },
   "scripts": {
     "engine": "node scripts/build-engine.mjs",
-    "build": "npm run engine && tsc -p tsconfig.json && vite build --config web/vite.config.ts",
+    "build": "node scripts/build-info.mjs && npm run engine && tsc -p tsconfig.json && vite build --config web/vite.config.ts",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test test/*.test.ts",
     "start": "node dist/cli.js serve",

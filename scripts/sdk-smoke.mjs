@@ -120,7 +120,10 @@ try {
         "--ignore-scripts",
         "--no-audit",
         "--no-fund",
-        path.join(root, "releases/laofu-browser-0.1.0-dev.1.tgz"),
+        path.join(
+          root,
+          `releases/laofu-browser-${JSON.parse(fs.readFileSync(path.join(root, "package.json"))).version}.tgz`,
+        ),
       ],
       { cwd: ts, env },
     ),
@@ -136,7 +139,10 @@ try {
       "install",
       "--no-index",
       "--no-deps",
-      path.join(root, "releases/laofu_browser-0.1.0.dev1-py3-none-any.whl"),
+      path.join(
+        root,
+        `releases/laofu_browser-${JSON.parse(fs.readFileSync(path.join(root, "package.json"))).version.replace("-dev.", ".dev")}-py3-none-any.whl`,
+      ),
     ]),
   );
   fs.copyFileSync("examples/consumer.py", path.join(py, "consumer.py"));
