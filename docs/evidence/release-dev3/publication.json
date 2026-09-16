@@ -1,0 +1,14 @@
+{
+  "repository": "https://github.com/Fuyera/801-laofu-browser",
+  "visibility": "public",
+  "license": "MIT",
+  "release": "https://github.com/Fuyera/801-laofu-browser/releases/tag/v0.1.0-dev.3",
+  "publishedAt": "2026-09-16T11:09:02Z",
+  "prerelease": true,
+  "anonymousApiRead": true,
+  "anonymousSDKDownloadVerified": true,
+  "assetCount": 9,
+  "remoteAssetDigestsMatched": 9,
+  "buildCommit": "c1a12c9d06fd9ee08c4ce6d6dd8d0730dd3c4aeb",
+  "publicationNote": "Visibility change was followed by a transient 404 publishing the draft. Readback confirmed the same draft and all assets; retry published successfully."
+}

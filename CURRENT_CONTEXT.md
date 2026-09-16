@@ -4,7 +4,7 @@
 
 ## 交付状态
 
-用户已明确授权完成剩余交付：合并 main、同步 GitHub、公开仓库及发布预览版。源码已合并本地 main，固定构建提交 `c1a12c9d06fd9ee08c4ce6d6dd8d0730dd3c4aeb`，工作区构建时干净。最新安装包、SDK、SHA256SUMS、DELIVERY.json 和脱敏验收证据已生成，GitHub 发布正在执行。
+用户已明确授权完成剩余交付：合并 main、同步 GitHub、公开仓库及发布预览版。源码已合并并同步 GitHub main，固定构建提交 `c1a12c9d06fd9ee08c4ce6d6dd8d0730dd3c4aeb`，工作区构建时干净。最新安装包、SDK、SHA256SUMS、DELIVERY.json 和脱敏验收证据已上传。仓库已公开，预览 Release 已于 2026-09-16 11:09 UTC 发布；9 个附件大小与 SHA-256 全部匹配，匿名仓库／Release 访问和 SDK 下载验证通过。P4 本轮收口完成。
 
 项目地址：https://github.com/Fuyera/801-laofu-browser
 
