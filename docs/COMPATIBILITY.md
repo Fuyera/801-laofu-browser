@@ -1,5 +1,7 @@
 # 与huashu-chrome 1.2.0的兼容差异
 
+**简体中文** | [English](COMPATIBILITY.en.md)
+
 原版MIT署名和源码快照保留。23工具的公开参数保持原定义；HTTP的profile、requestId、幂等键、输入产物与原工具args分离。仅tools/params数量一致不能证明语义相同；本轮代表性双实现同输入对照43项通过，另有6组实际兼容边界；范围见ACCEPTANCE。
 
 |差异|类别|实际行为与原因|

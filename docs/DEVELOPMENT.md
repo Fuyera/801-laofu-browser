@@ -1,5 +1,7 @@
 # 研发指南
 
+**简体中文** | [English](DEVELOPMENT.en.md)
+
 适用版本：`0.1.0-dev.2`。仓库：[Fuyera/801-laofu-browser](https://github.com/Fuyera/801-laofu-browser)，主分支 `main`。当前交付与缺项以 [CURRENT_CONTEXT](../CURRENT_CONTEXT.md) 和 [验收报告](ACCEPTANCE.md) 为准；能构建不代表 P4/P5 已通过。
 
 ## 代码与契约入口

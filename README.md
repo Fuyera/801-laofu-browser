@@ -91,13 +91,17 @@ node scripts/local.mjs stop --home workspace/local-state
 
 ## 文档与反馈
 
-项目首页提供中英文切换；当前网页控制台和详细指南使用中文。
+全套项目自有 Markdown 文档均提供中文和英文版，页首可切换语言；英文指南之间使用英文链接。网页控制台目前仍使用中文。
 
 - [用户指南](docs/USER_GUIDE.md)：采集、成果下载、人工接手和常见问题。
 - [研发指南](docs/DEVELOPMENT.md)：源码构建、架构、SDK 打包和回归。
 - [接口文档](docs/API.md)：HTTP、SDK、MCP 与 CLI。
 - [运行手册](docs/OPERATIONS.md)：安装、备份、恢复及隔离部署。
 - [验收状态](docs/ACCEPTANCE.md)：已通过项与剩余范围。
+- [设计说明](docs/DESIGN.md)与[实施计划](docs/IMPLEMENTATION_PLAN.md)：需求、决策及暂停范围。
+- [测试报告](docs/TEST_REPORT.md)、[X 验收](docs/X_READ_ACCEPTANCE.md)与[兼容说明](docs/COMPATIBILITY.md)：证据与限制。
+- [原始对抗报告](docs/ADVERSARIAL_TEST.md)、[逐项复核](docs/ADVERSARIAL_REVIEW.md)与[已确认缺陷修复](docs/ADVERSARIAL_FIXES.md)：问题、裁定和修复结果。
+- [项目卡](docs/PROJECT_CARD.md)、[当前状态](CURRENT_CONTEXT.md)、[协作规则](AGENTS.md)与[来源许可](NOTICE.md)：项目范围及维护信息。
 
 反馈问题时附上版本、系统、复现步骤和脱敏错误信息。不要提交 Cookie、登录票据、API 密钥、浏览器 profile 或完整个人状态目录。历史测试报告的公开副本已按[证据说明](docs/evidence/README.md)处理本机路径；运行日志和原始账号数据不在仓库中。
 

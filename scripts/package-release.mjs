@@ -44,10 +44,14 @@ if (fs.existsSync(dir))
 fs.mkdirSync(dir, { recursive: true });
 for (const name of [
   "AGENTS.md",
+  "AGENTS.en.md",
   "CURRENT_CONTEXT.md",
+  "CURRENT_CONTEXT.en.md",
   "README.md",
+  "README.en.md",
   "LICENSE",
   "NOTICE.md",
+  "NOTICE.en.md",
   "laofu-browser.png",
   "package.json",
   "package-lock.json",

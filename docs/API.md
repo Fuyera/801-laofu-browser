@@ -1,5 +1,7 @@
 # HTTP、SDK、MCP 与 CLI 契约
 
+**简体中文** | [English](API.en.md)
+
 API路径统一使用 `/v1`。可执行请求验证来自 `src/contracts.ts`，OpenAPI由真实Fastify路由导出为 `openapi.json`，请求/响应和错误定义见 `schemas.json`。冻结原始23工具 schema 没有增加幂等参数，107项参数定义与上游一致。
 
 ## 认证与权限

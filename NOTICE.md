@@ -1,5 +1,7 @@
 # 来源与许可证
 
+**简体中文** | [English](NOTICE.en.md)
+
 laofu-browser 的自有代码采用 [MIT 许可证](LICENSE)。Copyright (c) 2026 Fuyera and laofu-browser contributors。
 
 `vendor/huashu-chrome-1.2.0/` 是花叔（alchaincyf）的 [huashu-chrome](https://github.com/alchaincyf/huashu-chrome) 1.2.0 原始快照。该部分采用 MIT，保留原版权声明 `Copyright (c) 2026 花叔 (alchaincyf)` 和完整许可证：`vendor/huashu-chrome-1.2.0/LICENSE`。项目根许可证不替换上游署名。

@@ -1,5 +1,7 @@
 # laofu-browser 产品设计要求
 
+**简体中文** | [English](DESIGN.en.md)
+
 > 2026-09-14 执行修订：本文件保留 v0.2 的能力与 R01–R08 要求。用户已确认的开发计划见 [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)，优先于本文历史阶段 A–D 与消费者安排：独立工程为 801-laofu-browser，先Mac，P0→P5；本轮两份工程外安装的SDK程序调用真实服务，不改造Fuyera/祈道/000，不称为两个业务产品接入。当前运行事实见 [ACCEPTANCE.md](ACCEPTANCE.md) 与 [CURRENT_CONTEXT.md](../CURRENT_CONTEXT.md)。下文“尚未建立仓库”等为原设计成文时状态，不作为当前事实。
 
 

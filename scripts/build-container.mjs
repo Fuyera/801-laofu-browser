@@ -56,7 +56,7 @@ const out = fs.mkdtempSync(path.resolve("workspace/container-build-"));
 const file = path.join(out, "Dockerfile");
 fs.writeFileSync(
   file,
-  `FROM ${v.base}\nUSER root\nENV LAOFU_BUILD_COMMIT=${commit} LAOFU_BUILD_DIRTY=${sourceDirty}\nCOPY package.json package-lock.json tsconfig.json AGENTS.md README.md CURRENT_CONTEXT.md LICENSE NOTICE.md laofu-browser.png /app/\nCOPY src /app/src\nCOPY web /app/web\nCOPY scripts /app/scripts\nCOPY docs /app/docs\nCOPY vendor /app/vendor\nCOPY sdk /app/sdk\nCOPY deploy /app/deploy\nCOPY test /app/test\nCOPY examples /app/examples\nCOPY bin /app/bin\nRUN npm run build\nUSER node\nLABEL org.opencontainers.image.revision="${commit}"\n`,
+  `FROM ${v.base}\nUSER root\nENV LAOFU_BUILD_COMMIT=${commit} LAOFU_BUILD_DIRTY=${sourceDirty}\nCOPY package.json package-lock.json tsconfig.json AGENTS.md AGENTS.en.md README.md README.en.md CURRENT_CONTEXT.md CURRENT_CONTEXT.en.md LICENSE NOTICE.md NOTICE.en.md laofu-browser.png /app/\nCOPY src /app/src\nCOPY web /app/web\nCOPY scripts /app/scripts\nCOPY docs /app/docs\nCOPY vendor /app/vendor\nCOPY sdk /app/sdk\nCOPY deploy /app/deploy\nCOPY test /app/test\nCOPY examples /app/examples\nCOPY bin /app/bin\nRUN npm run build\nUSER node\nLABEL org.opencontainers.image.revision="${commit}"\n`,
 );
 const build = run("docker", [
   "build",

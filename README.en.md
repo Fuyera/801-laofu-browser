@@ -46,7 +46,7 @@ Browser sign-in state stays in its execution environment. Use dedicated Chromium
 
 ## Install the preview package
 
-On the [download page](https://github.com/Fuyera/801-laofu-browser/releases), choose the macOS arm64 archive and its matching `.sha256` file. The package includes Node, Chromium, and dependencies; development tools are not required for package installation. Verification, installation, and startup commands are in the [operations guide, in Chinese](docs/OPERATIONS.md#固定mac制品). This developer preview is not Apple-signed or notarized and is not listed in the Chrome Web Store.
+On the [download page](https://github.com/Fuyera/801-laofu-browser/releases), choose the macOS arm64 archive and its matching `.sha256` file. The package includes Node, Chromium, and dependencies; development tools are not required for package installation. Verification, installation, and startup commands are in the [operations guide](docs/OPERATIONS.en.md#fixed-mac-artifacts). This developer preview is not Apple-signed or notarized and is not listed in the Chrome Web Store.
 
 ## Build from source
 
@@ -73,39 +73,43 @@ node scripts/local.mjs stop --home workspace/local-state
 
 Stopping preserves tasks, artifacts, and browser state. A Git clone does not include Node, browsers, dependencies, credentials, or release packages; the build and browser installation steps above are required.
 
-To use your signed-in Chrome, follow [Connect existing Chrome, in Chinese](docs/OPERATIONS.md#本人日常chrome) to pair and load its extension. This connection has your browser's full permissions and is intended only for your authorized operations.
+To use your signed-in Chrome, follow [Connect existing Chrome](docs/OPERATIONS.en.md#personal-daily-chrome) to pair and load its extension. This connection has your browser's full permissions and is intended only for your authorized operations.
 
 ## Connect AI tools and applications
 
-- **MCP:** `bin/laofu-browser mcp-config --profile prf_YOUR_PROFILE_ID --home workspace/local-state` generates host configuration. See the [API guide](docs/API.md).
+- **MCP:** `bin/laofu-browser mcp-config --profile prf_YOUR_PROFILE_ID --home workspace/local-state` generates host configuration. See the [API guide](docs/API.en.md).
 - **HTTP API:** query `/v1/capabilities` for available browsers and capabilities. The [OpenAPI specification](docs/openapi.json) lists the endpoints.
-- **CLI:** run `bin/laofu-browser help`. The [user guide](docs/USER_GUIDE.md) covers capture, status queries, downloads, and human takeover.
-- **SDKs:** source is in `sdk/typescript/` and `sdk/python/`. See the [development guide](docs/DEVELOPMENT.md#接入包安装候选与-docker) for package builds and `examples/` for consumers. Locally generated files in `releases/` are not included in a Git clone.
+- **CLI:** run `bin/laofu-browser help`. The [user guide](docs/USER_GUIDE.en.md) covers capture, status queries, downloads, and human takeover.
+- **SDKs:** source is in `sdk/typescript/` and `sdk/python/`. See the [development guide](docs/DEVELOPMENT.en.md#sdk-packages-installation-candidates-and-docker) for package builds and `examples/` for consumers. Locally generated files in `releases/` are not included in a Git clone.
 
 ## Verified scope and limitations
 
-- The macOS arm64 service, isolated browser execution, installation candidates, and SDKs have real execution records. See the [test report](docs/TEST_REPORT.md); check the code, package, and environment versions separately.
-- Reading public X profiles, individual posts, search results, and scrolled pages has been tested. **List extraction can omit offscreen posts and is not guaranteed to be exhaustive.** For completeness-sensitive work, collect post links and verify individual detail pages. The list issue is deferred; see [X acceptance](docs/X_READ_ACCEPTANCE.md).
+- The macOS arm64 service, isolated browser execution, installation candidates, and SDKs have real execution records. See the [test report](docs/TEST_REPORT.en.md); check the code, package, and environment versions separately.
+- Reading public X profiles, individual posts, search results, and scrolled pages has been tested. **List extraction can omit offscreen posts and is not guaranteed to be exhaustive.** For completeness-sensitive work, collect post links and verify individual detail pages. The list issue is deferred; see [X acceptance](docs/X_READ_ACCEPTANCE.en.md).
 - Website sign-in, CAPTCHAs, and rate limits may require your intervention. Article capture covers currently authorized, accessible content; it does not guarantee archives of collapsed, paid, paginated, audio, or video content.
 - The final dev.3 package, both SDKs, and daily Chrome stop/reconnect lifecycle passed acceptance. Results accompany the Release. Windows, Linux desktop, and server installation are not currently promised.
-- This README is bilingual. The web console and detailed guides are currently in Chinese; the links above do not imply an English UI or a complete English documentation set.
+- The web console currently uses Chinese; the complete project documentation is available in Chinese and English.
 
 ## Documentation and feedback
 
-The detailed guides below are currently in Chinese:
+All project-owned Markdown documents have Chinese and English editions. Use the language links at the top of each page. English guides link to other English guides; the console retains its current Chinese UI.
 
-- [User guide](docs/USER_GUIDE.md): capture, downloads, human takeover, and troubleshooting.
-- [Development guide](docs/DEVELOPMENT.md): source builds, architecture, SDK packaging, and regression tests.
-- [API guide](docs/API.md): HTTP, SDK, MCP, and CLI.
-- [Operations guide](docs/OPERATIONS.md): installation, backup, recovery, and isolation.
-- [Acceptance status](docs/ACCEPTANCE.md): verified scope and remaining limitations.
+- [User guide](docs/USER_GUIDE.en.md): capture, downloads, human takeover, and troubleshooting.
+- [Development guide](docs/DEVELOPMENT.en.md): source builds, architecture, SDK packaging, and regression tests.
+- [API guide](docs/API.en.md): HTTP, SDK, MCP, and CLI.
+- [Operations guide](docs/OPERATIONS.en.md): installation, backup, recovery, and isolation.
+- [Acceptance status](docs/ACCEPTANCE.en.md): verified scope and remaining limitations.
+- [Design requirements](docs/DESIGN.en.md) and [implementation plan](docs/IMPLEMENTATION_PLAN.en.md): requirements, decisions, and paused scope.
+- [Test report](docs/TEST_REPORT.en.md), [X acceptance](docs/X_READ_ACCEPTANCE.en.md), and [compatibility](docs/COMPATIBILITY.en.md): evidence and limits.
+- [Original adversarial report](docs/ADVERSARIAL_TEST.en.md), [item-by-item review](docs/ADVERSARIAL_REVIEW.en.md), and [confirmed fixes](docs/ADVERSARIAL_FIXES.en.md): findings, adjudication, and resolution.
+- [Project card](docs/PROJECT_CARD.en.md), [current context](CURRENT_CONTEXT.en.md), [collaboration rules](AGENTS.en.md), and [attribution](NOTICE.en.md): project scope and maintenance information.
 
-When reporting an issue, include the version, OS, reproduction steps, and redacted error details. Do not submit cookies, login tickets, API keys, browser profiles, or complete personal state directories. Public copies of historical test reports redact local paths as explained in the [evidence notes](docs/evidence/README.md). Runtime logs and raw account data are excluded from the repository.
+When reporting an issue, include the version, OS, reproduction steps, and redacted error details. Do not submit cookies, login tickets, API keys, browser profiles, or complete personal state directories. Public copies of historical test reports redact local paths as explained in the [evidence notes](docs/evidence/README.en.md). Runtime logs and raw account data are excluded from the repository.
 
 ## License, upstream credit, and scope of changes
 
-The project's own code is licensed under [MIT](LICENSE), Copyright (c) 2026 Fuyera and laofu-browser contributors. Third-party components retain their respective licenses; see [NOTICE](NOTICE.md).
+The project's own code is licensed under [MIT](LICENSE), Copyright (c) 2026 Fuyera and laofu-browser contributors. Third-party components retain their respective licenses; see [NOTICE](NOTICE.en.md).
 
 Thanks to **花叔 / Huashu (alchaincyf)** for **huashu-chrome**. Upstream repository: [https://github.com/alchaincyf/huashu-chrome](https://github.com/alchaincyf/huashu-chrome). This project builds on its **1.2.0** browser tools, Chrome extension, and bridge. The original snapshot, full [MIT license](vendor/huashu-chrome-1.2.0/LICENSE), and attribution **Copyright (c) 2026 花叔 (alchaincyf)** are preserved.
 
-Additions and extensions include the independent web console, HTTP service and SDKs, persistent tasks and multi-step execution, product permissions and execution isolation, article delivery and artifact management, human takeover workflows, recovery and outcome tracking, versioned site notes, and installation, backup, and regression verification. The comparison baseline is huashu-chrome 1.2.0. The original `vendor/` snapshot remains unchanged; build scripts generate extension and bridge adaptations in `runtime/`. See [compatibility differences](docs/COMPATIBILITY.md) for details.
+Additions and extensions include the independent web console, HTTP service and SDKs, persistent tasks and multi-step execution, product permissions and execution isolation, article delivery and artifact management, human takeover workflows, recovery and outcome tracking, versioned site notes, and installation, backup, and regression verification. The comparison baseline is huashu-chrome 1.2.0. The original `vendor/` snapshot remains unchanged; build scripts generate extension and bridge adaptations in `runtime/`. See [compatibility differences](docs/COMPATIBILITY.en.md) for details.

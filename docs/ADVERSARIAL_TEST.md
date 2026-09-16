@@ -1,5 +1,7 @@
 # laofu-browser 对抗性测试记录与结论
 
+**简体中文** | [English](ADVERSARIAL_TEST.en.md)
+
 - 日期：2026-09-15。
 - 审计对象：本仓库 `fuyera/p4-macos` 分支提交 `592b5c9` 加当时未提交的工作区改动（扩展图标、住宅出口方案文档等），版本 0.1.0-dev.2；`runtime/engine` 为 2026-09-15T08:48Z 由当前 `scripts/build-engine.mjs` 生成。
 - 对照标准：[DESIGN.md](DESIGN.md) 的 B01–B23 工具矩阵、L01–L07 特色能力、第 4 节运行能力、第 7 节接口与状态、第 8 节安全边界、R01–R08 复核结论；[LAOFU_BROWSER_BASELINE.json](LAOFU_BROWSER_BASELINE.json) 冻结 schema（23 工具 / 107 顶层参数 / 58 文件）。

@@ -1,5 +1,7 @@
 # laofu-browser 协作规则
 
+**简体中文** | [English](AGENTS.en.md)
+
 - 先读 CURRENT_CONTEXT.md；产品范围以 docs/DESIGN.md 和 docs/IMPLEMENTATION_PLAN.md 为准。
 - 独立公共能力工程；不直接依赖或改造 Fuyera、祈道、000。
 - 原版 vendor/huashu-chrome-1.2.0 为不可变基线；补丁只通过 scripts/build-engine.mjs 生成到 runtime/。

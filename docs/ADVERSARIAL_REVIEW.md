@@ -1,5 +1,7 @@
 # 对抗报告逐项复核与裁定
 
+**简体中文** | [English](ADVERSARIAL_REVIEW.en.md)
+
 日期：2026-09-15。对象：[原始对抗报告](ADVERSARIAL_TEST.md) 的全部 **41 条**。原报告保持不变。
 
 复核来源：`fuyera/p4-macos`，HEAD `592b5c97530c3c716909fb3cda66bf6f5dceece7` 加现有工作区；直接执行当前 `src/*.ts`，浏览器使用当前生成的 `runtime/engine`。本轮只添加诊断与审阅文档，没有修复业务代码，没有推送、发布或改动日常 Chrome。
@@ -19,6 +21,8 @@
 28 条不等于 28 个独立重大缺陷，也不沿用原报告的全部严重性评级。采集完整性数项存在重叠；契约说明、错误码、事件和容量治理与会导致内容失真的问题应分别排序。
 
 ## 证据与范围
+
+下文 `runtime/engine/` 源码位置是历史本地生成文件的引用；执行源码构建后才会生成该目录，不是 GitHub 中跟踪的文件。
 
 - **U，原有测试**：当前源码执行 `node --import tsx --test test/*.test.ts`，**30/30 通过**。第一次沙箱内运行有一项因回环监听权限失败；取得测试权限后重跑全部通过。记录：测试输出（本地留档，不随仓库发布）。
 - **C，定向代码执行**：21 组 SQLite／Broker／Worker／Fastify／MCP handler 探针，另 1 组表格转换探针，共 **22 组**。涉及崩溃窗口、断线和浏览器回执的地方使用明确故障注入，不能冒充实际进程崩溃或远端事故。记录：core-results.json（本地留档，不随仓库发布）、table-results.json（本地留档，不随仓库发布）。
@@ -51,7 +55,7 @@
 | AT-P2-01 | **A，部分成立** | 在持久写入 cancelRequested 后、状态转移前注入中断，再执行 tick，queued 任务确实被派发。问题是取消持久化不原子和派发漏查。报告后果有两处错误：此时取消 HTTP 尚未成功回执；完成后实测是 `cancelled + confirmed`，不必然 unknown。未做 kill 精确命中该窗口的进程级试验。 | C Broker 注入；[broker.ts](../src/broker.ts#L248)、[cancel](../src/broker.ts#L320) |
 | AT-P2-02 | **A，成立** | 已隔离 profile 的 waiting_user 可被 resume；模拟 socket 已关闭时 send 抛 WORKER_OFFLINE，但状态已变 running。与 resumeAllowed 的门禁不一致。属于状态／门禁缺陷，未证明双执行。 | C Broker；[broker.ts](../src/broker.ts#L342)、[viewJob](../src/server.ts#L188) |
 | AT-P2-03 | **C，漏读现有契约** | 同产品、同键、不同 kind 可生成两条记录，执行已确认。但 API.md 第 39 行已经明确“相同身份/类型/键/请求返回同一 ID”，也不是报告所说的尚未明示。DESIGN 的概述应补齐命名空间以消除歧义；不能据此直接改唯一键并破坏现有调用约定。 | C Store、S 文档；[API.md](API.md#L39)、[store.ts](../src/store.ts#L223) |
-| AT-P2-04 | **A，成立** | 真实分页 fetch 已在文本中报告超过 maxBody，但没有结构化 output 元信息；Worker 返回 succeeded、truncated=false。属于提前返回分支遗漏。 | B fetch；[生成前端](../runtime/engine/src/mcp-server.js#L570)、[worker.ts](../src/worker.ts#L584) |
+| AT-P2-04 | **A，成立** | 真实分页 fetch 已在文本中报告超过 maxBody，但没有结构化 output 元信息；Worker 返回 succeeded、truncated=false。属于提前返回分支遗漏。 | B fetch；`../runtime/engine/src/mcp-server.js#L570`、[worker.ts](../src/worker.ts#L584) |
 | AT-P2-05 | **A，成立** | 以 CLI 的实际 payload 形状调用真实 HTTP 路由，upload 被 INVALID_ARGUMENT 拒绝；CLI call 构造没有 inputArtifacts。CLI 源码与 HTTP 执行足以确认入口断供，本轮未额外启动 CLI 子进程做端到端上传。 | C Fastify、S CLI；[cli.ts](../src/cli.ts#L348)、[server.ts](../src/server.ts#L589) |
 | AT-P2-06 | **A，成立，状态表述有误** | 真实 flow 的 reload 成功后，status 步骤返回 CONTROL_REVOKED，整条 flow **partial**。报告写成必然 failed/unknown 不准确。reload 本身在上游明确属于有破坏性的维护动作；应拒绝在普通 flow 中组合，或实现明确的升级续接协议，不能只假定它像页面 reload。 | B flow reload；[browser.ts](../src/browser.ts#L304)、[worker.ts](../src/worker.ts#L518) |
 | AT-P2-07 | **A，成立** | 真实扩展 ask 面板进入 waiting_user，测试经 Worker 的继续处理器结束 ask，下一步 click 返回 CONTROL_REVOKED，flow partial。真实控制权回收缺失已复现；不只是 mock 结论。 | B flow ask、C control 序列；[worker.ts](../src/worker.ts#L297) |
@@ -65,7 +69,7 @@
 | AT-P2-15 | **A，部分成立** | 实际采集后让第 2 个文件上传失败：job=failed，已上传 article.md 仍能在 task.artifacts 列出并下载 200，manifest 未上传。与“包的完成标志和引用原子提交”有差距。但该文件自身已经完整校验，并非坏字节／半个文件；任务也没有假报 succeeded。应区分“完整单文件”和“未完成图文包”。 | B capture＋真实 artifact 存储＋上传故障注入；[worker.ts](../src/worker.ts#L503)、[server.ts](../src/server.ts#L153) |
 | AT-P2-16 | **A，混合真假** | “原任务 URL 无处可查”被反证：任务终态仍保留 input.url。失败图片的原始抓取地址还可能在步骤 journal 参数／原始结果中，但没有结构化、受限、带期限的重试元信息。路径凭据及未匹配的 query 名实测不会脱敏；完整二进制回执 base64 会持久入 journal，缺少 TTL。不能将原 URL 保留与凭据隔离、消费侧脱敏视为同一件事。 | C URL、journal；[store.ts](../src/store.ts#L267)、[util.ts](../src/util.ts#L66)、[worker.ts](../src/worker.ts#L256) |
 | AT-P2-17 | **A，契约缺口** | AUTH_REQUIRED 只有码表定义，无发射点；登录处理依赖 waiting_user 的 reason 或其他错误码。能确认冻结码表与实际协议缺少映射，不能解释为“登录功能完全不可用”。可通过定义正常等待与失败错误码之间的映射解决，而非机械把 waiting_user 改成错误。 | S 全 src 检索与状态路径；[contracts.ts](../src/contracts.ts#L280)、[article.ts](../src/article.ts#L304) |
-| AT-P2-18 | **A，有条件的输出治理缺口** | 普通截图实际以内联 base64 返回，本次长度 39,520、artifacts=0。保留上游 image content 本身是兼容行为；缺口是较大输出没有应用层大小／产物化策略，最终只能碰传输上限。没有做 32 MiB 截图或内存耗尽实验，不能称普通截图已经导致故障。 | B screenshot、S 输出路径；[生成前端](../runtime/engine/src/mcp-server.js#L646)、[worker.ts](../src/worker.ts#L556) |
+| AT-P2-18 | **A，有条件的输出治理缺口** | 普通截图实际以内联 base64 返回，本次长度 39,520、artifacts=0。保留上游 image content 本身是兼容行为；缺口是较大输出没有应用层大小／产物化策略，最终只能碰传输上限。没有做 32 MiB 截图或内存耗尽实验，不能称普通截图已经导致故障。 | B screenshot、S 输出路径；`../runtime/engine/src/mcp-server.js#L646`、[worker.ts](../src/worker.ts#L556) |
 | AT-P2-19 | **A，匿名代理暴露已实测** | 默认 bridge 邻居无凭据对 18880 发 CONNECT 到公网 1.1.1.1:443，实际得到 200；私网目标仍 403，控制路由仍 403。18881 合法 relay 路由会转发到故意不存在的 core 并得到 502，证明 relay 自身不验权，**不证明 core 鉴权可绕过**。同 L2 不等于已能监听 bearer；未做流量窃取试验。 | D 临时 Docker 拓扑；[isolated.mjs](../deploy/isolated.mjs#L138)、[network.ts](../src/network.ts#L62)、[relay.ts](../src/relay.ts#L74) |
 | AT-P2-20 | **A，成立** | Worker 异常分支实际留下 jobs 目录；未找到失败目录／启动残留 partial 的期限回收机制。现有边界测试明确证明残留 partial 占用配额，属于安全计费行为；缺的是回收策略，不能将“计入额度”本身算错。本轮未用长时间灌盘证明磁盘最终耗尽。 | C Worker、U retained interrupted files、S 清理路径；[worker.ts](../src/worker.ts#L675)、[artifacts.ts](../src/artifacts.ts#L30) |
 

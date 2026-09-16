@@ -1,5 +1,7 @@
 # laofu-browser Mac P4 验收
 
+**简体中文** | [English](ACCEPTANCE.en.md)
+
 ## dev.3 发布验收（2026-09-16）
 
 Mac Apple Silicon 预览范围已收口：干净源码 `c1a12c9`，50/50 单元／接口、最终包 19,818 文件校验、安装恢复 11/11、两套独立 SDK、日常 Chrome 最新版停止／重连／原页面保留均通过。[本轮验收](evidence/release-dev3/acceptance.json)与[交付清单](evidence/release-dev3/delivery.json)固定版本及哈希。P4 当前范围完成；X 列表遗漏保留为已知限制；P5／跨平台继续暂停。下文为 dev.2 历史快照，其中待办已由本轮结果覆盖。
