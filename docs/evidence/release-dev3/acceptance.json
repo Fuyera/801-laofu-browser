@@ -1,0 +1,177 @@
+{
+  "at": "2026-09-16T11:03:28.702400+00:00",
+  "version": "0.1.0-dev.3",
+  "source": {
+    "commit": "c1a12c9d06fd9ee08c4ce6d6dd8d0730dd3c4aeb",
+    "dirty": false
+  },
+  "scope": "macOS Apple Silicon developer preview; no P5 or cross-platform acceptance",
+  "build": "passed",
+  "unit": {
+    "passed": 50,
+    "failed": 0,
+    "rawLogSha256": "4a8b32479286a149678f5e359f496364d7edfb216be266824d36e3137439706a"
+  },
+  "archive": {
+    "directory": "<repo>/workspace/release-dev3/extracted/laofu-browser-0.1.0-dev.3-macos-arm64",
+    "releaseId": "0.1.0-dev.3-macos-arm64",
+    "source": {
+      "commit": "c1a12c9d06fd9ee08c4ce6d6dd8d0730dd3c4aeb",
+      "dirty": false
+    },
+    "verifiedFiles": 19818,
+    "status": "passed"
+  },
+  "packageAudit": {
+    "releaseId": "0.1.0-dev.3-macos-arm64",
+    "source": {
+      "commit": "c1a12c9d06fd9ee08c4ce6d6dd8d0730dd3c4aeb",
+      "dirty": false
+    },
+    "manifestFiles": 19818,
+    "privateRuntimePaths": [],
+    "regressionSourceHashesMatched": 37,
+    "dailyExtensionFilesMatched": 18,
+    "dailyPairingConfigExcluded": true,
+    "sdkLicenses": "MIT matched"
+  },
+  "install": {
+    "home": "<repo>/workspace/install-sc6U24",
+    "environment": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "node": "v22.23.2"
+    },
+    "checks": [
+      {
+        "name": "完整性校验和独立目录安装",
+        "status": "passed"
+      },
+      {
+        "name": "固定Node/Chromium/扩展启动并实际就绪",
+        "status": "passed"
+      },
+      {
+        "name": "从安装包运行真实HTTP图文采集和上传",
+        "status": "passed"
+      },
+      {
+        "name": "篡改制品拒绝且运行服务不受影响",
+        "status": "passed"
+      },
+      {
+        "name": "清单以外文件拒绝",
+        "status": "passed"
+      },
+      {
+        "name": "相同发行标识即使清单合法也拒绝不同内容",
+        "status": "passed"
+      },
+      {
+        "name": "兼容版本切换后任务和产物保留",
+        "status": "passed"
+      },
+      {
+        "name": "程序回退保留当前幂等和效果记录",
+        "status": "passed"
+      },
+      {
+        "name": "新版本启动失败自动恢复旧程序",
+        "status": "passed"
+      },
+      {
+        "name": "确认停止与SQLite在线备份文件生成",
+        "status": "passed"
+      },
+      {
+        "name": "Mac自启动配置语法校验，未注册自启动",
+        "status": "passed"
+      }
+    ],
+    "jobId": "tsk_f450967941714d65ad06028005f34d80",
+    "versionFixtures": "同一固定程序的两个合成发行标识，以及故意启动失败的测试程序；未声称已有历史正式版本"
+  },
+  "sdk": {
+    "home": "<repo>/workspace/sdk-UsnkWi",
+    "external": "<tmp>/laofu-consumers-CsRLiU",
+    "results": [
+      {
+        "sdk": "typescript",
+        "capture": "tsk_741e285cd97c445eba987d9246462f12",
+        "resumed": "tsk_3905a997717943a982e22a2e5ee4ab93",
+        "cancelled": "tsk_e2ea2b97efbf42c2a65f3d31bcc73f55",
+        "upload": "art_442f7c0745b54a24b7944e3963e54e60",
+        "state": "succeeded"
+      },
+      {
+        "sdk": "python",
+        "capture": "tsk_cb54e25f0c3d4dd899230fb38dec50e9",
+        "resumed": "tsk_67062cf367d242da9aab02fb0bd8c13b",
+        "cancelled": "tsk_de72761dcb1b47ce84bb94ca71341aeb",
+        "upload": "art_8be1f06b50c14fc98a50224ca8c0748a",
+        "state": "succeeded"
+      }
+    ],
+    "scope": "两个独立安装的 SDK 程序通过所有者入口访问真实服务；不作为受限产品隔离或业务产品接入证据",
+    "cliMcpSameTask": true
+  },
+  "dailyChrome": {
+    "build": {
+      "version": "0.1.0-dev.3",
+      "commit": "c1a12c9d06fd9ee08c4ce6d6dd8d0730dd3c4aeb",
+      "dirty": false,
+      "builtAt": "2026-09-16T10:58:44.950Z"
+    },
+    "profile": "owner daily Chrome, previously installed extension",
+    "checks": [
+      "Actual product API read before upgrade",
+      "Stopped idle previous service, retained Chrome and test tab, backed up service state",
+      "Reloaded paired extension in Chrome UI; 18 extension implementation files match package",
+      "New clean-build service read original Example Domain tab",
+      "Stopped dev.3 service and observed original Chrome tab still visible in native UI",
+      "Restarted dev.3 and read same tab through product API without another extension reload",
+      "Closed only test-created tab and test session; left service ready"
+    ],
+    "commandReceipts": [
+      {
+        "tool": "tabs",
+        "id": "cmd_e444a9f78fc0410bbb76886b70c3c284",
+        "state": "succeeded"
+      },
+      {
+        "tool": "read_text",
+        "id": "cmd_b236c173dadd44b39977594baab45eeb",
+        "state": "succeeded"
+      },
+      {
+        "tool": "read_text",
+        "id": "cmd_2a198e8a259c4378ac342fd5e7c71083",
+        "state": "succeeded"
+      },
+      {
+        "tool": "read_text",
+        "id": "cmd_db71d96f99324b1c9f020f500ca0705b",
+        "state": "succeeded"
+      },
+      {
+        "tool": "tabs",
+        "id": "cmd_0559b91937b2497ea60fbe1d694c6177",
+        "state": "succeeded"
+      }
+    ],
+    "rawEvidenceSha256": "fd183c91303c53a0725f74fa570a92bde8639674fb7065af85d18cc595ee60be"
+  },
+  "reusedRegression": {
+    "sourceFilesMatched": 37,
+    "browser": "19/19",
+    "dockerIsolation": "8/8",
+    "handoff": "2/2",
+    "reference": "../adversarial-fixes/index.json",
+    "note": "Previous real regressions; relevant recorded source files still identical. Not rerun as a single full matrix this release."
+  },
+  "knownLimitations": [
+    "X list reading may omit offscreen posts; accepted and deferred",
+    "Windows, Linux desktop, Japan server deployment and P5 paused",
+    "Unsigned and unnotarized developer preview; no Chrome Web Store submission"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "version": "0.1.0-dev.3",
+  "releaseTag": "v0.1.0-dev.3",
+  "stage": "macOS Apple Silicon preview",
+  "source": {
+    "commit": "c1a12c9d06fd9ee08c4ce6d6dd8d0730dd3c4aeb",
+    "dirty": false
+  },
+  "assets": [
+    {
+      "name": "laofu-browser-0.1.0-dev.3-macos-arm64.tar.gz",
+      "bytes": 292025008,
+      "sha256": "ec551f6a697cb47214d4067899cfb0f8451bc9f0122f52aae5666b20b88c9610"
+    },
+    {
+      "name": "laofu-browser-0.1.0-dev.3.tgz",
+      "bytes": 6085,
+      "sha256": "613e933b975e1499a714b34391bd5bea5c925e8823275fa5bf6fb247af08b30d"
+    },
+    {
+      "name": "laofu_browser-0.1.0.dev3-py3-none-any.whl",
+      "bytes": 4751,
+      "sha256": "b9ea900e4cd603b4577dcc21c9aafe69d541ec7443fb7c4d0c249eba0e1491d0"
+    }
+  ],
+  "acceptance": {
+    "file": "ACCEPTANCE-dev3.json",
+    "sha256": "5b5b822aa323d4317efc50f745967485c892b29111af46e6d0cca732b1c9fd9b"
+  },
+  "scope": "macOS Apple Silicon developer preview; no P5 or cross-platform acceptance",
+  "knownLimitations": [
+    "X list reading may omit offscreen posts; accepted and deferred",
+    "Windows, Linux desktop, Japan server deployment and P5 paused",
+    "Unsigned and unnotarized developer preview; no Chrome Web Store submission"
+  ]
+}

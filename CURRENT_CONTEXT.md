@@ -1,33 +1,29 @@
 # 当前状态
 
-更新：2026-09-16。版本 **0.1.0-dev.3**，分支 `fuyera/p4-macos`，HEAD `592b5c97530c3c716909fb3cda66bf6f5dceece7` 加未提交改动。仓库 [Fuyera/801-laofu-browser](https://github.com/Fuyera/801-laofu-browser) 仍为私有。
+更新：2026-09-16。**0.1.0-dev.3，macOS Apple Silicon 开发者预览版**。产品定位为连接 AI 助手与浏览器的本地浏览器助手。P5、跨平台和日本服务器部署继续暂停；X 列表遗漏作为已知限制暂缓处理。
 
-## 当前主线：预览版交付收尾
+## 交付状态
 
-用户已授权自有代码采用 **MIT**，保留上游版权和许可证，README 最底部保留署名、来源链接及修改范围；用户现已明确授权完成剩余交付，包括同步 main、公开 GitHub 仓库和发布预览版 Release。范围为 macOS Apple Silicon 预览版，P5／跨平台／日本部署继续暂停。
+用户已明确授权完成剩余交付：合并 main、同步 GitHub、公开仓库及发布预览版。源码已合并本地 main，固定构建提交 `c1a12c9d06fd9ee08c4ce6d6dd8d0730dd3c4aeb`，工作区构建时干净。最新安装包、SDK、SHA256SUMS、DELIVERY.json 和脱敏验收证据已生成，GitHub 发布正在执行。
 
-已加入根 LICENSE，更新 NOTICE、README、SDK 许可与 Mac／Docker 打包入口。README 提供源码安装、能力说明、支持范围和已知限制。公开文档与证据副本已清除个人绝对路径和私人服务器地址；原始副本留在忽略目录 `workspace/public-prep/originals`，公开报告标记脱敏并保存原哈希，索引校验公开副本。未修改 vendor 基线。整理工作不等于已公开仓库；未推送、创建 GitHub Release、重写历史或升级日常服务。
+项目地址：https://github.com/Fuyera/801-laofu-browser
 
-本轮验证：临时副本的 TS／Python SDK 打包均包含 MIT；上游 58 文件不变，46 项证据索引哈希及文档链接通过。226 个拟公开文件的定向凭据模式检查无命中；这不是完整安全审计。记录 `workspace/public-prep/verification.json`。
+预览版地址：https://github.com/Fuyera/801-laofu-browser/releases/tag/v0.1.0-dev.3
 
-## 已确认缺陷与验证
+包内文档为构建时快照，main 后续提交补充最终验收，不改变固定程序。旧 dev.1／dev.2 候选仅本地归档，不覆盖同版本制品，不要求历史降级迁移。此次不提供 Docker 镜像发行包，隔离实现和既有证据保留于源码。
 
-此前授权仅修复对抗复核 **28 条 A 类问题中成立部分**；B 类 8 条、C 类 2 条、D 类 3 条暂不处理。28 条已实现，逐项见 [修复记录](docs/ADVERSARIAL_FIXES.md)，原裁定见 [复核](docs/ADVERSARIAL_REVIEW.md)。
+## 验证
 
-功能修复证据：单元／接口 **50/50**、隔离浏览器 **19/19**、双身份 Docker **8/8**、接手 **2/2**。首轮矩阵 **22/24**；旧 Python 选用问题与 Docker 默认 DNS 的保留地址问题，经 Python 3.11 和原有公共 DNS 配置补跑解决。**24 个矩阵项目均有通过证据**，首轮失败保留。[证据索引](docs/evidence/adversarial-fixes/index.json)区分阶段与修复时源码哈希；本轮公开整理及打包许可修改不冒充当时已测内容。
+- 本轮构建、单元／接口 50/50；上游 58 文件不变，23 工具基线一致。
+- 最终压缩包解压后 19,818 文件通过校验；独立副本安装、升级、回退、故障恢复 11/11。
+- 最终 TS／Python SDK 独立安装及真实浏览器调用、CLI／MCP 同任务验证通过。
+- 日常 Chrome 已升级 dev.3：扩展重载、读取、停止保留原浏览器与页面、自动重连和原页面读取通过；18 个扩展实现文件与固定包一致。原账号与其他标签页保留；仅关闭本次验收页。
+- 前次对抗修复 28 项成立缺陷已完成；37 项相关源码哈希仍一致，复用浏览器 19/19、双身份 Docker 8/8、接手 2/2。历史矩阵首轮 22/24 与补跑均保留，未冒称本轮重新运行完整矩阵。
 
-X 的公开主页、两篇单帖、搜索和滚动基础读取已通过日常 Chrome 实测；列表 DOM 12 条而 text／Markdown 仅返回 11 条且未标截断。用户决定 **X-READ-01 暂缓处理，作为预览版已知限制，不阻塞此次开放准备**。不承诺列表全量无遗漏。实测环境为 08:58 UTC 的已安装构建，尚不包含最新修复。见 [X 验收](docs/X_READ_ACCEPTANCE.md)。
+最新证据：[发布验收](docs/evidence/release-dev3/acceptance.json)、[交付清单](docs/evidence/release-dev3/delivery.json)。
 
-## 交付与待完成项
+## 公开范围与边界
 
-P4 尚余最新候选的日常 Chrome 生命周期验收与最终冻结。日常扩展已完成安装、品牌、连接及旧构建 X 读取；配对目录 `workspace/p4/daily-chrome-state`，服务／桥端口 17992／18992。旧服务 `workspace/local-state` 未切换。Cookie、凭据与 profile 不提交。
+自有代码 MIT，保留上游版权／许可证，README 底部保留署名、完整来源地址及修改范围。当前公开文档已脱敏，凭据、Cookie、profile、数据库、原始现场日志和账号数据不提交。当前文件及历史提交的定向密钥／私人服务器地址扫描无命中；历史报告含本机目录路径，保留原始 Git 历史，不宣称完整安全审计。
 
-干净来源候选 `workspace/p4/package-clean-580a6cf` 和 `workspace/p4/CANDIDATE.json` 不含后续修复。`workspace/adversarial-package-candidate` 是修复过程中的隔离回归候选，也不是最终包；正式 `releases/DELIVERY.json` 仍记录归档 dev.1。下一交付须固定最新源码、重建并验收对应安装包。旧 dev.1 仅归档，不要求历史包迁移。
-
-已定向检查当前 226 文件和历史 4 个提交的 367 个 blob，未命中常见密钥和私人服务器地址；历史报告仍有本机目录路径，不含凭据。保留历史，不重写 Git。新包采用 dev.3，避免覆盖旧版本；最终安装与日常 Chrome 生命周期验收后发布。
-
-## 历史现场边界
-
-日本服务器历史只读核验确认机房出口和浏览器自动化特征，未证明 IP 是公众号验证的唯一原因；未购买住宅出口、改网或恢复 P5。具体地址及原始证据留在受控本地，方案见 IMPLEMENTATION_PLAN。
-
-历史公众号图文曾核对 30/30 图片哈希与引用，1 项嵌入媒体未下载；本轮未重新访问公众号。成果留在 `workspace/captures`。
+日常服务位于受控 `workspace/p4/daily-chrome-state`，端口 17992／18992，已停止后备份状态并升级；旧 `workspace/local-state` 未切换。未改动业务消费者。预览包未签名／公证、未上架 Chrome 商店；不能称为跨平台稳定 v1.0。

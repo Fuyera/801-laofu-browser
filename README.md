@@ -61,7 +61,7 @@ node scripts/local.mjs stop --home workspace/local-state
 - macOS arm64 的服务、隔离浏览器、安装候选及 SDK 有真实测试记录，详见[测试报告](docs/TEST_REPORT.md)。测试环境、代码和安装包的版本应分别核对。
 - X 的公开主页、单帖、搜索和滚动读取已经实测可用。**列表读取可能漏掉屏幕外帖子，不保证全量无遗漏**；完整性要求较高时应取得帖子链接后逐帖核对。该问题暂缓处理，见[X 验收记录](docs/X_READ_ACCEPTANCE.md)。
 - 网站的登录、验证码和限流可能需要本人处理。图文采集范围为当前授权可见内容，不保证折叠、付费、分页或音视频全部归档。
-- 版本对应的安装与日常 Chrome 验收结果随 Release 提供；当前不承诺 Windows、Linux 桌面或服务器可直接安装使用。
+- dev.3 的最终安装包、两套 SDK 和日常 Chrome 停止／重连已验收，结果随 Release 提供；当前不承诺 Windows、Linux 桌面或服务器可直接安装使用。
 
 ## 文档与反馈
 

@@ -2,11 +2,11 @@
 
 当前预览版面向 macOS arm64，固定包与版本对应的验收记录见 [GitHub Releases](https://github.com/Fuyera/801-laofu-browser/releases)。Ubuntu24.04 x86_64、Windows11 x86_64尚未实际验收，不能把Mac Docker内的Linux arm64结果算成这些目标系统通过。
 
-日常登录、采集和人工接手见 [用户指南](USER_GUIDE.md)，源码与测试环境见 [研发指南](DEVELOPMENT.md)。当前 [测试报告](TEST_REPORT.md)记录完整矩阵 22/22、两隔离身份与实际 Codex 宿主通过；干净来源候选也已通过安装/隔离/压缩包校验；日常 Chrome 人工入口及最终冻结仍待收口。
+日常登录、采集和人工接手见 [用户指南](USER_GUIDE.md)，源码与测试环境见 [研发指南](DEVELOPMENT.md)。dev.3 的最终安装包、两套 SDK 与日常 Chrome 停止／重连均已验收，详见[测试报告](TEST_REPORT.md)。Docker 隔离保留源码和既有验证记录，本次预览 Release 不附 Docker 镜像包。
 
 ## 固定Mac制品
 
-`laofu-browser-0.1.0-dev.3-macos-arm64.tar.gz` 包含源码、锁文件、生成扩展、服务、控制台、Node22.23.2、Chromium及依赖。旁边的sha256校验包完整性；它不等于第三方签名。RELEASE.json保存来源提交、工作区是否有未提交改动、逐文件哈希及平台/数据库范围。包外DELIVERY.json记录各压缩包的构建提交、哈希、Docker镜像身份及验证结果；固定包不允许同发行标识替换内容；重建测试只写入候选目录。包不包含本机账号、浏览器profile或测试运行凭据。
+`laofu-browser-0.1.0-dev.3-macos-arm64.tar.gz` 包含源码、锁文件、生成扩展、服务、控制台、Node22.23.2、Chromium及依赖。旁边的sha256校验包完整性；它不等于第三方签名。RELEASE.json保存来源提交、工作区是否有未提交改动、逐文件哈希及平台/数据库范围。包外DELIVERY.json记录各交付文件的构建提交、哈希及验证结果；固定包不允许同发行标识替换内容；重建测试只写入候选目录。包不包含本机账号、浏览器profile或测试运行凭据。
 
 先在下载目录校验与解压：
 
