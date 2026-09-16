@@ -1,5 +1,5 @@
 {
-  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/faults-U7eEER",
+  "home": "<repo>/workspace/faults-U7eEER",
   "results": [
     {
       "case": "service killed after external effect before acknowledgment; original id replay does not resend",
@@ -26,5 +26,11 @@
     1789400668619,
     1789400682305,
     1789400684998
-  ]
+  ],
+  "publicRedaction": {
+    "at": "2026-09-15T23:29:11.534709+00:00",
+    "fields": "local filesystem prefixes and private environment identifiers only",
+    "originalSha256": "6a467dc4118295403396e0fa8c38c2fc53f786b78655101ca0383bb8320d1167",
+    "originalRetainedLocally": true
+  }
 }

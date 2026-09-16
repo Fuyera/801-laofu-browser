@@ -1,5 +1,5 @@
 {
-  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/handoff-AgvdzG",
+  "home": "<repo>/workspace/handoff-AgvdzG",
   "scope": "owner container handoff only; not a restricted product network attestation",
   "results": [
     {
@@ -11,5 +11,11 @@
       "case": "raw ask durable wait, explicit continue, cancellation mapped to command outcome",
       "passed": true
     }
-  ]
+  ],
+  "publicRedaction": {
+    "at": "2026-09-15T23:29:11.534709+00:00",
+    "fields": "local filesystem prefixes and private environment identifiers only",
+    "originalSha256": "b092dee7a2f5f37bf6ef88839b6737a77a470e1550932db664a0022009bbf8f0",
+    "originalRetainedLocally": true
+  }
 }

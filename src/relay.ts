@@ -1,8 +1,19 @@
 import http from "node:http";
 import net from "node:net";
+import os from "node:os";
 import { egressProxy } from "./network.js";
 /** This gateway is on one private worker network; only worker protocol routes reach the core. */
 export function gateway(coreUrl: string, relayPort = 18881, proxyPort = 18880) {
+  const iface = process.env.LAOFU_GATEWAY_INTERFACE;
+  const bind = iface
+    ? os
+        .networkInterfaces()
+        [iface]?.find((a) => a.family === "IPv4" && !a.internal)?.address
+    : "127.0.0.1";
+  if (!bind)
+    throw new Error(
+      "Gateway private interface unavailable; refusing public bind",
+    );
   const core = new URL(coreUrl);
   if (core.protocol !== "http:")
     throw new Error("Gateway core transport must be a private HTTP endpoint");
@@ -71,8 +82,8 @@ export function gateway(coreUrl: string, relayPort = 18881, proxyPort = 18880) {
     socket.on("error", () => upstream.destroy());
     socket.on("close", () => upstream.destroy());
   });
-  server.listen(relayPort, "0.0.0.0");
-  const proxy = egressProxy(proxyPort, "0.0.0.0");
+  server.listen(relayPort, bind);
+  const proxy = egressProxy(proxyPort, bind);
   return {
     close() {
       server.close();

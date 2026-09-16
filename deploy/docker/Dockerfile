@@ -5,11 +5,13 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci && npx playwright install --with-deps chromium
 COPY tsconfig.json ./
+COPY LICENSE NOTICE.md ./
 COPY src ./src
 COPY web ./web
 COPY scripts ./scripts
 COPY docs/LAOFU_BROWSER_BASELINE.json ./docs/LAOFU_BROWSER_BASELINE.json
 COPY vendor ./vendor
+COPY laofu-browser.png ./
 RUN npm run build && mkdir -p /data /home/node/.cache && chown -R node:node /data /home/node /opt/browsers
 USER node
 ENV LAOFU_HOME=/data

@@ -9,7 +9,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { BrowserClient } from "./client.js";
-import { problem } from "./errors.js";
+import { problem, Fault } from "./errors.js";
 export async function serveMcp(client: BrowserClient, profileId: string) {
   const server = new Server(
     { name: "laofu-browser", version: VERSION },
@@ -21,7 +21,13 @@ export async function serveMcp(client: BrowserClient, profileId: string) {
       name: "laofu_jobs",
       description:
         "列出本调用方的任务和命令，找回连接中断前的命令 ID；不会重放",
-      inputSchema: { type: "object", properties: {} },
+      inputSchema: {
+        type: "object",
+        properties: {
+          limit: { type: "integer", minimum: 1, maximum: 200 },
+          cursor: { type: "string" },
+        },
+      },
     },
     {
       name: "laofu_task",
@@ -76,12 +82,24 @@ export async function serveMcp(client: BrowserClient, profileId: string) {
     ],
   }));
   server.setRequestHandler(CallToolRequestSchema, async (req) => {
+    let submission:
+      | { idempotencyKey: string; sessionId?: string; commandId?: string }
+      | undefined;
     try {
       const args: any = req.params.arguments || {};
       let result: any;
       if (req.params.name === "laofu_jobs")
-        result = await client.request("GET", "/v1/tasks?includeCommands=1");
-      else if (req.params.name === "laofu_task")
+        result = await client.request(
+          "GET",
+          "/v1/tasks?" +
+            new URLSearchParams({
+              includeCommands: "1",
+              ...(args.limit ? { limit: String(args.limit) } : {}),
+              ...(args.cursor ? { cursor: args.cursor } : {}),
+            }),
+        );
+      else if (req.params.name === "laofu_task") {
+        submission = { idempotencyKey: args.idempotencyKey };
         result = await client.submitTask(
           {
             type: "article.capture@v1",
@@ -90,7 +108,7 @@ export async function serveMcp(client: BrowserClient, profileId: string) {
           },
           args.idempotencyKey,
         );
-      else if (req.params.name === "laofu_job")
+      } else if (req.params.name === "laofu_job")
         result = await client.job(args.id);
       else if (req.params.name === "laofu_cancel")
         result = await client.cancel(args.id);
@@ -106,11 +124,13 @@ export async function serveMcp(client: BrowserClient, profileId: string) {
           forwarded.path = path.basename(args.path);
         }
         if (args.savePath) forwarded.savePath = path.basename(args.savePath);
+        submission = { sessionId, idempotencyKey: crypto.randomUUID() };
         const job = await client.command(
           sessionId,
           { tool: req.params.name, args: forwarded, inputArtifacts },
-          crypto.randomUUID(),
+          submission.idempotencyKey,
         );
+        submission.commandId = job.id;
         try {
           result = await client.wait(job.id, { timeoutMs: 30000 });
         } catch (e: any) {
@@ -143,10 +163,32 @@ export async function serveMcp(client: BrowserClient, profileId: string) {
         isError: result.state === "failed",
       };
     } catch (e) {
+      const unknown =
+        submission &&
+        (!(e instanceof Fault) || e.statusCode >= 500 || submission.commandId);
       return {
         isError: true,
         content: [
-          { type: "text", text: JSON.stringify({ error: problem(e) }) },
+          {
+            type: "text",
+            text: JSON.stringify(
+              unknown
+                ? {
+                    error: {
+                      code: "EFFECT_UNKNOWN",
+                      message:
+                        "提交或等待连接中断，结果未知。先用 laofu_jobs / laofu_job 查询记录，不要生成新键重发。",
+                      retryable: false,
+                    },
+                    recovery: {
+                      ...submission,
+                      queryTool: "laofu_jobs",
+                      nextAction: "query_before_resubmit",
+                    },
+                  }
+                : { error: problem(e) },
+            ),
+          },
         ],
       };
     }

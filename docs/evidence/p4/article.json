@@ -1,5 +1,5 @@
 {
-  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/article-console-Vo4teX",
+  "home": "<repo>/workspace/article-console-Vo4teX",
   "results": [
     {
       "case": "synthetic-browser-fixture: 11 image hashes and ordered DOM lines",
@@ -34,5 +34,11 @@
       "passed": true
     }
   ],
-  "imageRequests": 17
+  "imageRequests": 17,
+  "publicRedaction": {
+    "at": "2026-09-15T23:29:11.534709+00:00",
+    "fields": "local filesystem prefixes and private environment identifiers only",
+    "originalSha256": "807a548fe2f783ce7da0d3726740289b13a8c44624791bf314c100cac5a14686",
+    "originalRetainedLocally": true
+  }
 }

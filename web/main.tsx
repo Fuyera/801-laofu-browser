@@ -90,6 +90,10 @@ function App() {
     [profile, setProfile] = useState(""),
     [tasks, setTasks] = useState<any[]>([]),
     [artifacts, setArtifacts] = useState<any[]>([]),
+    [taskCursor, setTaskCursor] = useState(""),
+    [artifactCursor, setArtifactCursor] = useState(""),
+    [nextTaskCursor, setNextTaskCursor] = useState(""),
+    [nextArtifactCursor, setNextArtifactCursor] = useState(""),
     [products, setProducts] = useState<any[]>([]),
     [diagnostics, setDiagnostics] = useState<any>(null),
     [selected, setSelected] = useState(""),
@@ -119,13 +123,15 @@ function App() {
   async function refresh() {
     const [p, t, a, d] = await Promise.all([
       api("/profiles"),
-      api("/tasks?includeCommands=1"),
-      api("/artifacts"),
+      api("/tasks?includeCommands=1&cursor=" + taskCursor),
+      api("/artifacts?cursor=" + artifactCursor),
       api("/diagnostics"),
     ]);
     setProfiles(p.items);
     setTasks(t.items);
     setArtifacts(a.items);
+    setNextTaskCursor(t.nextCursor || "");
+    setNextArtifactCursor(a.nextCursor || "");
     setDiagnostics(d);
     setProfile((old) => old || p.items[0]?.id || "");
     if (me?.product?.role === "owner")
@@ -171,7 +177,7 @@ function App() {
       2500,
     );
     return () => clearInterval(timer);
-  }, [me]);
+  }, [me, taskCursor, artifactCursor]);
   useEffect(() => {
     setEvents([]);
     if (!selected) return;
@@ -358,6 +364,22 @@ function App() {
                 <h2>
                   最近任务 <span>{tasks.length}</span>
                 </h2>
+                {(taskCursor || nextTaskCursor) && (
+                  <div>
+                    <button
+                      disabled={!taskCursor}
+                      onClick={() => setTaskCursor("")}
+                    >
+                      最新任务
+                    </button>
+                    <button
+                      disabled={!nextTaskCursor}
+                      onClick={() => setTaskCursor(nextTaskCursor)}
+                    >
+                      更早任务
+                    </button>
+                  </div>
+                )}
                 {!tasks.length && (
                   <div className="empty">
                     <h3>先保存一篇文章</h3>
@@ -595,6 +617,22 @@ function App() {
             <p className="intro">
               下载 ZIP 可完整离线阅读。成果由你主动清理，系统不会自动删除。
             </p>
+            {(artifactCursor || nextArtifactCursor) && (
+              <div>
+                <button
+                  disabled={!artifactCursor}
+                  onClick={() => setArtifactCursor("")}
+                >
+                  最新产物
+                </button>
+                <button
+                  disabled={!nextArtifactCursor}
+                  onClick={() => setArtifactCursor(nextArtifactCursor)}
+                >
+                  更早产物
+                </button>
+              </div>
+            )}
             {!artifacts.length ? (
               <div className="empty">
                 采集完成或上传文件后，成果会出现在这里。

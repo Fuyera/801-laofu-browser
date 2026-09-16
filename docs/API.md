@@ -85,3 +85,21 @@ MCP保留23原工具，另提供 laofu_task、laofu_job、laofu_jobs、laofu_can
 - `POST /v1/tasks/:id/handoffs` 返回 `ticket`、`ticketExpiresAt`，并为浏览器设置 HttpOnly、SameSite=Strict 的专用 Cookie。票据最多 60 秒、单次兑换，绑定当前身份/任务/profile；非浏览器 WebSocket 使用原鉴权加 `x-handoff-ticket` 请求头。票据不放 URL，断线后重新 POST 领取。handoff ID 本身不能代替票据。
 - 产物保留 `metadata.declaredMime`，实际识别不明时为 `application/octet-stream`。删除/吊销中止未完成的服务端下载；上传每块及发布前重新核验授权。任务 `artifacts` 和 `result.artifacts` 保留 deleted 状态；已下载的客户端字节不能撤回。
 - `/healthz` 和 `/v1/capabilities` 提供软件 `version`、`apiVersion:v1` 与 `build`；worker 报告同一构建字段。版本输出不能代替对应执行环境的通过报告。
+
+## 2026-09-15 已确认缺陷修复的协议补充
+
+- `GET /v1/tasks`（含 `includeCommands=1`）与 `GET /v1/artifacts` 支持 `limit`（默认 50，1–200）和 `cursor`。返回 `{items,truncated,nextCursor}`；`nextCursor=null` 表示结束。沿返回的游标查更早记录，不把第一页当作全部。MCP `laofu_jobs` 接受相同分页参数，控制台提供“更早任务／产物”。
+- `browser.flow@v1` 在受理前拒绝包含 `reload` 的流程，返回 `CAPABILITY_UNAVAILABLE`；扩展维护使用独立 `reload` command。`ask` 继续或满足调用方显式 `until` 后，恢复自动控制再执行下一步；取消、超时、禁用均停止后续步骤。flow 的 `humanWaitSeconds` 是累计人工预算，也限制每次 ask 的 timeout。
+- resume 在隔离或执行端断线时拒绝，保持原等待状态；发送恢复消息发生不确定错误时转 suspended，返回 `RESUME_UNKNOWN`，禁止盲目重发。取消标志、`cancel_requested` 事件与排队任务终态在同一事务写入，墙钟超时同样记录事件。终态关闭现有接手连接。
+- `act` 执行了部分步骤再中断，返回 partial、`effectState=unknown`，隔离原控制器并保留结果供核验。执行前明确拒绝与在途结果未知仍有区别。`fetch.pages` 达到正文输出上限时提供结构化 `truncated/originalLength`；有可用结果时 command 为 partial。错误摘要超过 1,000 字符时增加 `messageTruncated/originalMessageLength`，完整 content 仍保留。
+- 截图的 image content 在不超过 256 KiB base64 时保留兼容行为；更大截图转为受控 artifact，结果中有下载引用。扩展回执另有 16 MiB 编码上限，超过时返回 `LIMIT_EXCEEDED`，应缩小截图范围。`full:true` 是原工具的完整 PNG 参数。
+- CLI `call upload` 先上传本地文件，再提交 `inputArtifacts.path`；同一 `--key` 复用已准备的 artifact 和原命令。MCP 提交／等待连接异常时返回 `EFFECT_UNKNOWN` 及 recovery 内的原幂等键、sessionId 和已知 commandId，指向 `laofu_jobs/laofu_job` 查询；确定的受理前拒绝保留原错误。
+- 限流检测涵盖页面子资源和 fetch 命令；顶层 URL、命令 `args.url` 与 flow 全部步骤 URL 参与同出口冷却检查。限流证据写入持久冷却，停止后续自动动作；解除不会重放旧操作。HTTP JSON 超 2 MiB 返回 413 / `LIMIT_EXCEEDED`。
+
+图文采集等待当前页面有界加载，识别登录墙／加载占位正文；登录需要处理时继续使用 waiting_user，附 `code:AUTH_REQUIRED`，不是把正常等待改为终态失败。仍未加载出正文返回 `ARTICLE_NOT_READY`。懒加载最多滚动 32 次、准备预算 9 秒，不自动展开或翻页；疑似 1×1／2×2 占位图标为 `SUSPECTED_PLACEHOLDER`，不计入成功下载。srcset 按尺寸取候选，嵌入媒体逐项记录类型、位置和未下载状态。
+
+冻结时同时绑定元信息与 DOM，逐片校验长度、结束后核对版本；竞态返回 partial，短片段拒绝交付。`documentRevision` 是冻结源 HTML 的 SHA-256，`contentHash` 是交付 `article.html` 文件字节的 SHA-256，`markdownHash` 对应 Markdown 文件；`verification` 写明各哈希及有序块的核验范围；有序块按 HTML main 中 p/h1–h6/pre/table/img 的文档次序列出，`textHash` 是解析该元素文本（保留空白，按 Cheerio text 语义）的 SHA-256，图片另含相对路径。表格单元格的管道符转义，避免输出额外列。
+
+图文文件先以 `metadata.publication=staged` 保存，不出现在列表且不可下载。全部文件引用通过校验后，与任务 succeeded/partial 在同一数据库事务发布；上传失败或提交失败不会露出未完成包。普通单文件上传继续独立发布。已交付产物仍由用户主动删除，不自动到期清理。
+
+消费侧来源 URL 隐去凭据路径、未知 query 值及 fragment；原请求仍在受控状态库。图文原始来源与图片重试地址单独保存在执行端 `source-metadata/<jobId>.json`，目录 0700、文件 0600、默认保留 7 天，不进入 ZIP。manifest 的 `sourceUrlRedacted/finalUrlRedacted` 与图片 `sourceReference/sourceRedacted` 标明脱敏字段和受控记录的对应关系。journal 不重复保存二进制正文，普通回执正文保留 7 天；到期只清载荷，永久保留命令摘要、状态与幂等记录。旧 journal 从首次运行新版本起计期，过期结果不可重放。启动及每分钟回收过期元信息、已终态的暂存包及超过 24 小时的本组件残留临时文件；未知任务不自动恢复。

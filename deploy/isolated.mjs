@@ -127,6 +127,8 @@ if (command === "create") {
       network,
       "--network-alias",
       "gateway",
+      "-e",
+      "LAOFU_GATEWAY_INTERFACE=eth0",
       ...(dnsServers.length
         ? ["-e", `LAOFU_PUBLIC_DNS=${dnsServers.join(",")}`]
         : []),

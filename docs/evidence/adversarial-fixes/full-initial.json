@@ -1,0 +1,357 @@
+{
+  "home": "<repo>/workspace/full-regression-yAmF0R",
+  "sourceCommit": "592b5c97530c3c716909fb3cda66bf6f5dceece7",
+  "sourceDirty": true,
+  "active": null,
+  "results": [
+    {
+      "name": "typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit"
+      ],
+      "sourceCommit": "592b5c97530c3c716909fb3cda66bf6f5dceece7",
+      "startedAt": "2026-09-15T14:30:39.786Z",
+      "finishedAt": "2026-09-15T14:30:41.014Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": []
+    },
+    {
+      "name": "baseline",
+      "args": [
+        "scripts/verify-baseline.mjs"
+      ],
+      "sourceCommit": "592b5c97530c3c716909fb3cda66bf6f5dceece7",
+      "startedAt": "2026-09-15T14:30:41.015Z",
+      "finishedAt": "2026-09-15T14:30:41.042Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": []
+    },
+    {
+      "name": "unit",
+      "args": [
+        "--import",
+        "tsx",
+        "--test",
+        "test/adversarial-interfaces.test.ts",
+        "test/adversarial.test.ts",
+        "test/article.test.ts",
+        "test/boundaries.test.ts",
+        "test/hosts.test.ts",
+        "test/http.test.ts",
+        "test/p4.test.ts",
+        "test/policy.test.ts",
+        "test/store.test.ts"
+      ],
+      "sourceCommit": "592b5c97530c3c716909fb3cda66bf6f5dceece7",
+      "startedAt": "2026-09-15T14:30:41.042Z",
+      "finishedAt": "2026-09-15T14:30:43.021Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": []
+    },
+    {
+      "name": "contract",
+      "args": [
+        "scripts/export-contract.mjs"
+      ],
+      "sourceCommit": "592b5c97530c3c716909fb3cda66bf6f5dceece7",
+      "startedAt": "2026-09-15T14:30:43.021Z",
+      "finishedAt": "2026-09-15T14:30:43.247Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": []
+    },
+    {
+      "name": "adversarial-browser",
+      "args": [
+        "--import",
+        "tsx",
+        "scripts/adversarial-browser-regression.mjs"
+      ],
+      "sourceCommit": "592b5c97530c3c716909fb3cda66bf6f5dceece7",
+      "startedAt": "2026-09-15T14:30:43.248Z",
+      "finishedAt": "2026-09-15T14:31:19.054Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/adversarial-fixes-browser-zy7iaP/report.json"
+      ]
+    },
+    {
+      "name": "adversarial-docker",
+      "args": [
+        "scripts/adversarial-docker-regression.mjs"
+      ],
+      "sourceCommit": "592b5c97530c3c716909fb3cda66bf6f5dceece7",
+      "startedAt": "2026-09-15T14:31:19.055Z",
+      "finishedAt": "2026-09-15T14:31:22.787Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": []
+    },
+    {
+      "name": "smoke",
+      "args": [
+        "scripts/smoke.mjs"
+      ],
+      "sourceCommit": "592b5c97530c3c716909fb3cda66bf6f5dceece7",
+      "startedAt": "2026-09-15T14:31:22.789Z",
+      "finishedAt": "2026-09-15T14:31:29.255Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/smoke-Ajzgh9/result.json"
+      ]
+    },
+    {
+      "name": "tools",
+      "args": [
+        "scripts/tool-regression.mjs"
+      ],
+      "sourceCommit": "592b5c97530c3c716909fb3cda66bf6f5dceece7",
+      "startedAt": "2026-09-15T14:31:29.255Z",
+      "finishedAt": "2026-09-15T14:32:04.616Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/tools-A3wgwE/report.json"
+      ]
+    },
+    {
+      "name": "parity",
+      "args": [
+        "scripts/upstream-parity.mjs"
+      ],
+      "sourceCommit": "592b5c97530c3c716909fb3cda66bf6f5dceece7",
+      "startedAt": "2026-09-15T14:32:04.617Z",
+      "finishedAt": "2026-09-15T14:33:00.595Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/parity-ySCiTW/report.json"
+      ]
+    },
+    {
+      "name": "article",
+      "args": [
+        "scripts/article-console-regression.mjs"
+      ],
+      "sourceCommit": "592b5c97530c3c716909fb3cda66bf6f5dceece7",
+      "startedAt": "2026-09-15T14:33:00.595Z",
+      "finishedAt": "2026-09-15T14:33:26.975Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/article-console-OgW9k1/report.json"
+      ]
+    },
+    {
+      "name": "faults",
+      "args": [
+        "scripts/fault-regression.mjs"
+      ],
+      "sourceCommit": "592b5c97530c3c716909fb3cda66bf6f5dceece7",
+      "startedAt": "2026-09-15T14:33:26.975Z",
+      "finishedAt": "2026-09-15T14:35:06.115Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/faults-0zpLw8/report.json"
+      ]
+    },
+    {
+      "name": "sdk",
+      "args": [
+        "scripts/sdk-smoke.mjs"
+      ],
+      "sourceCommit": "592b5c97530c3c716909fb3cda66bf6f5dceece7",
+      "startedAt": "2026-09-15T14:35:06.116Z",
+      "finishedAt": "2026-09-15T14:35:14.605Z",
+      "exitCode": 1,
+      "status": "failed",
+      "reports": []
+    },
+    {
+      "name": "attach",
+      "args": [
+        "scripts/attach-regression.mjs"
+      ],
+      "sourceCommit": "592b5c97530c3c716909fb3cda66bf6f5dceece7",
+      "startedAt": "2026-09-15T14:35:14.605Z",
+      "finishedAt": "2026-09-15T14:35:20.286Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/attach-t1KtbK/report.json"
+      ]
+    },
+    {
+      "name": "compatibility-edge",
+      "args": [
+        "scripts/compatibility-edge-regression.mjs"
+      ],
+      "sourceCommit": "592b5c97530c3c716909fb3cda66bf6f5dceece7",
+      "startedAt": "2026-09-15T14:35:20.286Z",
+      "finishedAt": "2026-09-15T14:35:41.010Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/compat-edge-Z7Nfeb/report.json"
+      ]
+    },
+    {
+      "name": "downloads",
+      "args": [
+        "scripts/download-regression.mjs"
+      ],
+      "sourceCommit": "592b5c97530c3c716909fb3cda66bf6f5dceece7",
+      "startedAt": "2026-09-15T14:35:41.011Z",
+      "finishedAt": "2026-09-15T14:35:49.950Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/download-TimeRk/report.json"
+      ]
+    },
+    {
+      "name": "handoff",
+      "args": [
+        "scripts/handoff-regression.mjs"
+      ],
+      "sourceCommit": "592b5c97530c3c716909fb3cda66bf6f5dceece7",
+      "startedAt": "2026-09-15T14:35:49.950Z",
+      "finishedAt": "2026-09-15T14:35:58.783Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/handoff-3ta9a5/report.json"
+      ]
+    },
+    {
+      "name": "p4-runtime",
+      "args": [
+        "scripts/p4-runtime-regression.mjs"
+      ],
+      "sourceCommit": "592b5c97530c3c716909fb3cda66bf6f5dceece7",
+      "startedAt": "2026-09-15T14:35:58.784Z",
+      "finishedAt": "2026-09-15T14:37:07.576Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/p4-runtime-LuPTik/report.json"
+      ]
+    },
+    {
+      "name": "p4-isolated",
+      "args": [
+        "scripts/p4-isolated-regression.mjs"
+      ],
+      "sourceCommit": "592b5c97530c3c716909fb3cda66bf6f5dceece7",
+      "startedAt": "2026-09-15T14:37:07.577Z",
+      "finishedAt": "2026-09-15T14:37:09.264Z",
+      "exitCode": 1,
+      "status": "failed",
+      "reports": []
+    },
+    {
+      "name": "install",
+      "args": [
+        "scripts/install-regression.mjs"
+      ],
+      "sourceCommit": "592b5c97530c3c716909fb3cda66bf6f5dceece7",
+      "startedAt": "2026-09-15T14:37:09.265Z",
+      "finishedAt": "2026-09-15T14:38:05.715Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/install-k39UT6/report.json"
+      ]
+    },
+    {
+      "name": "codex-host",
+      "args": [
+        "scripts/codex-host-regression.mjs"
+      ],
+      "sourceCommit": "592b5c97530c3c716909fb3cda66bf6f5dceece7",
+      "startedAt": "2026-09-15T14:38:05.715Z",
+      "finishedAt": "2026-09-15T14:38:17.591Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/codex-host-1HKo0L/report.json"
+      ]
+    },
+    {
+      "name": "performance-init",
+      "args": [
+        "dist/cli.js",
+        "init",
+        "--home",
+        "<repo>/workspace/full-regression-yAmF0R/performance-state",
+        "--url",
+        "http://127.0.0.1:17989"
+      ],
+      "sourceCommit": "592b5c97530c3c716909fb3cda66bf6f5dceece7",
+      "startedAt": "2026-09-15T14:38:17.591Z",
+      "finishedAt": "2026-09-15T14:38:17.967Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": []
+    },
+    {
+      "name": "performance-start",
+      "args": [
+        "scripts/local.mjs",
+        "start",
+        "--browser",
+        "--headless",
+        "--home",
+        "<repo>/workspace/full-regression-yAmF0R/performance-state"
+      ],
+      "sourceCommit": "592b5c97530c3c716909fb3cda66bf6f5dceece7",
+      "startedAt": "2026-09-15T14:38:17.967Z",
+      "finishedAt": "2026-09-15T14:38:19.917Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": []
+    },
+    {
+      "name": "performance",
+      "args": [
+        "scripts/performance-probe.mjs"
+      ],
+      "sourceCommit": "592b5c97530c3c716909fb3cda66bf6f5dceece7",
+      "startedAt": "2026-09-15T14:38:19.917Z",
+      "finishedAt": "2026-09-15T14:38:25.172Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": [
+        "workspace/performance-0xz9Zl/report.json"
+      ]
+    },
+    {
+      "name": "performance-stop",
+      "args": [
+        "scripts/local.mjs",
+        "stop",
+        "--home",
+        "<repo>/workspace/full-regression-yAmF0R/performance-state"
+      ],
+      "sourceCommit": "592b5c97530c3c716909fb3cda66bf6f5dceece7",
+      "startedAt": "2026-09-15T14:38:25.172Z",
+      "finishedAt": "2026-09-15T14:38:25.625Z",
+      "exitCode": 0,
+      "status": "passed",
+      "reports": []
+    }
+  ],
+  "publicRedaction": {
+    "at": "2026-09-15T23:29:11.534709+00:00",
+    "fields": "local filesystem prefixes and private environment identifiers only",
+    "originalSha256": "e3469bd7bf5f5b17c304d4f2b24c6bf3760457a0cd60a1b68f3c8907371047b9",
+    "originalRetainedLocally": true
+  }
+}

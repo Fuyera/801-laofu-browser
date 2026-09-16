@@ -1,0 +1,21 @@
+{
+  "home": "<repo>/workspace/handoff-O83Y5Z",
+  "scope": "owner container handoff only; not a restricted product network attestation",
+  "results": [
+    {
+      "case": "real noVNC keyboard input, disconnect/reconnect same headed browser, explicit resume, no duplicated fixture action",
+      "passed": true,
+      "jobId": "tsk_b63afeb582b34148ab5ebda9da44f17a"
+    },
+    {
+      "case": "raw ask durable wait, explicit continue, cancellation mapped to command outcome",
+      "passed": true
+    }
+  ],
+  "publicRedaction": {
+    "at": "2026-09-15T23:29:11.534709+00:00",
+    "fields": "local filesystem prefixes and private environment identifiers only",
+    "originalSha256": "26d4f96e12acb17f4cf85cb8c077f113be91e807baf5b260182a46b7d9e0b926",
+    "originalRetainedLocally": true
+  }
+}

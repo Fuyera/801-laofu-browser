@@ -1,7 +1,11 @@
 # 来源与许可证
 
-本产品为内部开发版。`vendor/huashu-chrome-1.2.0/` 固定保存花叔（alchaincyf）的 huashu-chrome 1.2.0；该部分使用 MIT 许可证，原许可证随源码和本地制品保留。上游仓库：https://github.com/alchaincyf/huashu-chrome 。
+laofu-browser 的自有代码采用 [MIT 许可证](LICENSE)。Copyright (c) 2026 Fuyera and laofu-browser contributors。
 
-`runtime/engine/` 是从上述快照生成的派生代码，自有修改集中在 `scripts/build-engine.mjs` 与下载处理补丁。原版功能来源与自有服务、隔离、持久任务、图文转换和接入包分别列在兼容说明中。
+`vendor/huashu-chrome-1.2.0/` 是花叔（alchaincyf）的 [huashu-chrome](https://github.com/alchaincyf/huashu-chrome) 1.2.0 原始快照。该部分采用 MIT，保留原版权声明 `Copyright (c) 2026 花叔 (alchaincyf)` 和完整许可证：`vendor/huashu-chrome-1.2.0/LICENSE`。项目根许可证不替换上游署名。
 
-Node.js、Chromium、Playwright、SQLite、React、Fastify 及其他依赖分别适用其随包许可证；固定版本和完整性来源保存在 package-lock.json、上游基线和 RELEASE.json。Chromium/Node 的随包 LICENSE 保留。自有源码未在本次任务中公开发布或授予新的开源许可。
+原始快照保持不变；`runtime/engine/` 由 `scripts/build-engine.mjs` 和 `scripts/download-handler.txt` 生成适配补丁。修改范围包括品牌与图标、实例配对与输出适配、下载和异常处理；新增服务、权限隔离、持久任务、图文产物、控制台、HTTP／SDK／MCP／CLI 及安装验证。具体兼容差异见 [兼容说明](docs/COMPATIBILITY.md)。
+
+Node.js、Chromium、Playwright、SQLite、React、Fastify 及其他依赖分别适用其自带许可证。固定版本和完整性来源记录于 `package-lock.json`、上游基线及发行包的 `RELEASE.json`；分发时保留随包版权和许可证。
+
+MIT 授权范围是本项目软件，不改变所访问网站、用户账号数据或采集内容本身的权利归属。

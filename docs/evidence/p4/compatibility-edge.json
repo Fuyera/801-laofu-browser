@@ -1,5 +1,5 @@
 {
-  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/compat-edge-JMHGvV",
+  "home": "<repo>/workspace/compat-edge-JMHGvV",
   "evidenceKind": "actual Chromium; synthetic local pages and competing test extension",
   "checks": [
     {
@@ -26,5 +26,11 @@
       "name": "stopping attached worker preserves the externally started browser",
       "status": "passed"
     }
-  ]
+  ],
+  "publicRedaction": {
+    "at": "2026-09-15T23:29:11.534709+00:00",
+    "fields": "local filesystem prefixes and private environment identifiers only",
+    "originalSha256": "ff0494597688b913b5e8b4443af093567d749d0f07a4e9fc39ed32d19ce82227",
+    "originalRetainedLocally": true
+  }
 }

@@ -46,7 +46,9 @@ for (const name of [
   "AGENTS.md",
   "CURRENT_CONTEXT.md",
   "README.md",
+  "LICENSE",
   "NOTICE.md",
+  "laofu-browser.png",
   "package.json",
   "package-lock.json",
   "tsconfig.json",
@@ -129,7 +131,7 @@ const release = {
   playwright: "1.63.0",
   upstream: "huashu-chrome@1.2.0",
   schema: { min: 1, max: 1 },
-  stage: "macOS P4 development candidate; P5 paused; see acceptance report",
+  stage: "macOS Apple Silicon preview; P5 paused; see release acceptance evidence",
   source,
   entries,
 };

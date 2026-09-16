@@ -1,0 +1,236 @@
+{
+  "at": "2026-09-15T14:48:02.068Z",
+  "sourceCommit": "592b5c97530c3c716909fb3cda66bf6f5dceece7",
+  "sourceDirty": true,
+  "sourceFiles": {
+    "src/article.ts": "0b4b8dca61542871d8a1b075d4daf814f4e18ea4d1d968f3139445f04143e5d3",
+    "src/artifacts.ts": "214073efccb0e7be2bc041adc700ed309e4f79e7a6ec808a18072c7edfa8238f",
+    "src/broker.ts": "716a599499e27e942e42bd2d4916d40a3b169f547aac41b09d938fd299a0d2ab",
+    "src/browser.ts": "955018ac9698dc4aa8d0ba5b6a3de27c35bdde123f19ccd8683baa348150fbfe",
+    "src/catalog.ts": "2bfee6b58baaeec3c77709d0fae030746619cc569333407d5ac0070667222ba5",
+    "src/cli.ts": "fa849742d0bc52b595d93adc2c90ca54c9477d59e1d136b9fa71ddd4f140f564",
+    "src/client.ts": "447a18bfd052eacef29f974b34fd3004af25fa5e6ef709655278946e430c59cc",
+    "src/contracts.ts": "77a81ea8868c1b0972615472bcd3d84e6ea64b0048f47f2ac1e957aecfca8821",
+    "src/errors.ts": "fff3ec953878f51c16cc2e2d4e2c0e02849fb68b0d42ccd6052426e3d6f981f5",
+    "src/hosts.ts": "5b835795414aa69679aa137e6c094e424f317c64a1d6c451cb2536452d17034d",
+    "src/lock.ts": "819f392fbc5ec5d7bdf8273734db0d317990164ce3c5a3c176bdcab559385a71",
+    "src/logs.ts": "195bb7b3e3a09536952d4f4c9bcc36b1b36025505ea5d537d29751215264e6d9",
+    "src/mcp.ts": "6092c5912e23277b1b8a9ff28763e5e323c33134669d75f1d21854adb5726799",
+    "src/network.ts": "36b10cc6cfd690e87edb703e4ff201139d1e325bb058676da7e703a51bb295a5",
+    "src/relay.ts": "08d8d51483883575aaee4e379c7c3ca5a538cbc5435d5c137d43dd0dac7b112a",
+    "src/server.ts": "cfc226bffa9d7827f63c8170ada6d78f1810d3b29ce61d22bf20ab3723617c8f",
+    "src/shims.d.ts": "d47bddb0607d7f363f9466f8bc5c9eeaf857df17748ffdd2df1e0ec315a0af51",
+    "src/store.ts": "d86d23e1ef0c745e97716bc44578a6f685b8cae21f472f8836340af146cde1ba",
+    "src/types.ts": "03e9671b4b4745242955cc167f2fe9dd946002077abcaf76f23e8171d70cb27b",
+    "src/util.ts": "546381ccca4fcf5161410aee3d7b4413f84d823b2529fb879490d96c0bf573fe",
+    "src/version.ts": "a14e4c2657d59e39e7e59ed16f736c1fe088fbb9786ea271002c3ceb828b4d03",
+    "src/worker.ts": "55489cc07b85b569d3088c03718708e16fa49fdd1ce5a0bb10edb2f1a56f5903",
+    "test/adversarial-interfaces.test.ts": "8814a1d6b3b0b5c88816dae5b37541a4f2356bb27e58b60db8ea9eaf129fcc7a",
+    "test/adversarial.test.ts": "c23d538c5820553a456b38d1c01c780a91db0d1295039e34d7fb4ac560faa1f6",
+    "test/article.test.ts": "5f5828c6a78d1efaa2b659e950129d8582e08a8a9d40020b33566c273d8e037d",
+    "test/boundaries.test.ts": "6d6b6fc5c2a8d2a3bdf23542b029957d120993390d97d6de9f935b20c396a4a6",
+    "test/hosts.test.ts": "8e325dcdbc3bcaf401251e743b5f9547ce38a86ce66bdd91a535293f06974983",
+    "test/http.test.ts": "64f3d21f56ee9b46e6309097b76eceb804d503ca7bf4f358eb8737218a262714",
+    "test/p4.test.ts": "73a1409d0aca7c0892b72bbe904061890ce140ae09bb6a3fd23377565ccd33ac",
+    "test/policy.test.ts": "6d5e1c8b90daefbf6ee2ec96fd2b68440ec6f659096b30d26c51c54e567b3c33",
+    "test/store.test.ts": "91f58faaf4a084d20c9eca7a051aff422ea7b521ca821bf86b6fdf2a57140f63",
+    "scripts/build-engine.mjs": "029f7fe5de0d9970cacb6def882744369345780002ebd91d0382255eda628460",
+    "scripts/adversarial-browser-regression.mjs": "fc7eebce308eece6dba859abdcac055dc7f9bcca7c76b918e03aa56806b8aaf0",
+    "scripts/adversarial-docker-regression.mjs": "8bca8f6d77b2aefa6b9b7c9da46595ad3170caad273800f2a5ee4e363275a670",
+    "scripts/full-regression.mjs": "d2edc05b1c648f9568ff3c7ab474a49e21af093ec6a05db7aec45a59068ad116",
+    "web/main.tsx": "e5823056492363b12a21c6a95442ea7c6498708ed9efd9ac966c38f6181ef5f9",
+    "deploy/isolated.mjs": "22d9d38867dad7d93b56cbfba454f1f86b4726eb5b643a0065ea0351eb9da70d"
+  },
+  "scope": "28 confirmed A findings only; no B/C/D changes, no deployment or publication",
+  "matrix": {
+    "original": {
+      "passed": 22,
+      "total": 24,
+      "file": "full-initial.json"
+    },
+    "effective": {
+      "passed": 24,
+      "total": 24
+    },
+    "results": [
+      {
+        "name": "typecheck",
+        "status": "passed",
+        "reports": []
+      },
+      {
+        "name": "baseline",
+        "status": "passed",
+        "reports": []
+      },
+      {
+        "name": "unit",
+        "status": "passed",
+        "reports": []
+      },
+      {
+        "name": "contract",
+        "status": "passed",
+        "reports": []
+      },
+      {
+        "name": "adversarial-browser",
+        "status": "passed",
+        "reports": [
+          "workspace/adversarial-fixes-browser-zy7iaP/report.json"
+        ]
+      },
+      {
+        "name": "adversarial-docker",
+        "status": "passed",
+        "reports": []
+      },
+      {
+        "name": "smoke",
+        "status": "passed",
+        "reports": [
+          "workspace/smoke-Ajzgh9/result.json"
+        ]
+      },
+      {
+        "name": "tools",
+        "status": "passed",
+        "reports": [
+          "workspace/tools-A3wgwE/report.json"
+        ]
+      },
+      {
+        "name": "parity",
+        "status": "passed",
+        "reports": [
+          "workspace/parity-ySCiTW/report.json"
+        ]
+      },
+      {
+        "name": "article",
+        "status": "passed",
+        "reports": [
+          "workspace/article-console-OgW9k1/report.json"
+        ]
+      },
+      {
+        "name": "faults",
+        "status": "passed",
+        "reports": [
+          "workspace/faults-0zpLw8/report.json"
+        ]
+      },
+      {
+        "name": "sdk",
+        "status": "passed",
+        "initialStatus": "failed",
+        "initialReport": "full-initial.json",
+        "rerun": "workspace/sdk-mUR09H/report.json",
+        "reason": "Python 3.9 was selected by toolchain PATH; rerun with existing Python 3.11.15"
+      },
+      {
+        "name": "attach",
+        "status": "passed",
+        "reports": [
+          "workspace/attach-t1KtbK/report.json"
+        ]
+      },
+      {
+        "name": "compatibility-edge",
+        "status": "passed",
+        "reports": [
+          "workspace/compat-edge-Z7Nfeb/report.json"
+        ]
+      },
+      {
+        "name": "downloads",
+        "status": "passed",
+        "reports": [
+          "workspace/download-TimeRk/report.json"
+        ]
+      },
+      {
+        "name": "handoff",
+        "status": "passed",
+        "reports": [
+          "workspace/handoff-3ta9a5/report.json"
+        ]
+      },
+      {
+        "name": "p4-runtime",
+        "status": "passed",
+        "reports": [
+          "workspace/p4-runtime-LuPTik/report.json"
+        ]
+      },
+      {
+        "name": "p4-isolated",
+        "status": "passed",
+        "initialStatus": "failed",
+        "initialReport": "full-initial.json",
+        "rerun": "workspace/p4-isolated-MYiA0d/report.json",
+        "reason": "Python 3.9 first; default DNS resolved example.com to reserved 198.18.1.151; rerun with existing approved public DNS and final image"
+      },
+      {
+        "name": "install",
+        "status": "passed",
+        "reports": [
+          "workspace/install-k39UT6/report.json"
+        ]
+      },
+      {
+        "name": "codex-host",
+        "status": "passed",
+        "reports": [
+          "workspace/codex-host-1HKo0L/report.json"
+        ]
+      },
+      {
+        "name": "performance-init",
+        "status": "passed",
+        "reports": []
+      },
+      {
+        "name": "performance-start",
+        "status": "passed",
+        "reports": []
+      },
+      {
+        "name": "performance",
+        "status": "passed",
+        "reports": [
+          "workspace/performance-0xz9Zl/report.json"
+        ]
+      },
+      {
+        "name": "performance-stop",
+        "status": "passed",
+        "reports": []
+      }
+    ]
+  },
+  "finalTargeted": {
+    "unit": {
+      "passed": 50,
+      "total": 50,
+      "log": "workspace/adversarial-all-unit-final.log"
+    },
+    "browser": {
+      "passed": 19,
+      "total": 19,
+      "report": "browser.json"
+    },
+    "handoff": {
+      "passed": 2,
+      "total": 2,
+      "report": "handoff-final.json"
+    },
+    "isolated": {
+      "passed": 8,
+      "total": 8,
+      "report": "isolated-final.json"
+    }
+  },
+  "validationPhases": "Original matrix tested first repair checkpoint. Final metadata flags, unique artifact reference validation and worker readiness guard were followed by a complete build, 50 tests, 19 browser checks, live handoff, and final-image isolated checks. Installation candidate was the initial repair checkpoint, not a final frozen release.",
+  "image": "sha256:e1401d838324ddbde7af48bdf26990ddd87ce5d150b82f6f4b6b73f2181d3137"
+}

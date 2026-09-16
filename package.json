@@ -1,6 +1,7 @@
 {
   "name": "laofu-browser",
-  "version": "0.1.0-dev.2",
+  "version": "0.1.0-dev.3",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "engines": {

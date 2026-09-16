@@ -67,12 +67,18 @@ export function redactUrl(input: string) {
   try {
     const u = new URL(input);
     for (const k of [...u.searchParams.keys()])
-      if (
-        /token|secret|password|passwd|pass_ticket|auth|cookie|credential|session|api.?key|access.?key|^(key|uin|sig|signature)$/i.test(
-          k,
-        )
-      )
+      if (!/^(page|p|offset|limit|lang|format|sort)$/i.test(k))
         u.searchParams.set(k, "[redacted]");
+    const parts = u.pathname.split("/");
+    u.pathname = parts
+      .map((part, index) =>
+        /^(s|token|auth|secret|signature)$/i.test(parts[index - 1] || "") ||
+        /^[a-zA-Z0-9_-]{24,}$/.test(part)
+          ? "[redacted]"
+          : part,
+      )
+      .join("/");
+    if (u.hash) u.hash = "";
     u.username = "";
     u.password = "";
     return u.href;

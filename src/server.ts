@@ -14,7 +14,15 @@ import { Artifacts } from "./artifacts.js";
 import { Broker } from "./broker.js";
 import { Fault, problem } from "./errors.js";
 import { tools, ROOT, validateTool, readingTools } from "./catalog.js";
-import { bounded, filename, id, safeUrl, secret, canonical } from "./util.js";
+import {
+  bounded,
+  filename,
+  id,
+  safeUrl,
+  secret,
+  canonical,
+  redactUrl,
+} from "./util.js";
 import {
   TERMINAL,
   PRODUCT_LIMITS,
@@ -82,7 +90,13 @@ export async function createServer(options: ServerOptions) {
       });
     return reply.code((error as any).statusCode || 500).send({
       error: {
-        code: "INTERNAL",
+        code:
+          (error as any).statusCode === 413
+            ? "LIMIT_EXCEEDED"
+            : (error as any).statusCode >= 400 &&
+                (error as any).statusCode < 500
+              ? "INVALID_ARGUMENT"
+              : "INTERNAL",
         message: "请求失败；请检查本机诊断",
         retryable: false,
       },
@@ -152,9 +166,30 @@ export async function createServer(options: ServerOptions) {
   };
   function viewJob(job: Job) {
     const p = store.get<Profile>("profile", job.profileId);
-    const files = store.artifacts().filter((a) => a.jobId === job.id);
+    const files = store
+      .artifacts()
+      .filter(
+        (a) => a.jobId === job.id && a.metadata?.publication !== "staged",
+      );
     return {
       ...job,
+      input: {
+        ...job.input,
+        ...(job.input.url ? { url: redactUrl(job.input.url) } : {}),
+        ...(job.input.args?.url
+          ? { args: { ...job.input.args, url: redactUrl(job.input.args.url) } }
+          : {}),
+        ...(job.input.steps
+          ? {
+              steps: job.input.steps.map((s: any) => ({
+                ...s,
+                ...(s.args?.url
+                  ? { args: { ...s.args, url: redactUrl(s.args.url) } }
+                  : {}),
+              })),
+            }
+          : {}),
+      },
       result: job.result && {
         ...job.result,
         ...(job.result.artifacts
@@ -163,6 +198,7 @@ export async function createServer(options: ServerOptions) {
                 const current = store.artifact(a.id);
                 return {
                   ...a,
+                  metadata: current?.metadata ?? a.metadata,
                   deleted: current?.deleted ?? true,
                   unavailableReason:
                     !current || current.deleted ? "deleted" : null,
@@ -188,7 +224,11 @@ export async function createServer(options: ServerOptions) {
             : null,
       capabilityVersion: VERSION,
       resumeAllowed:
-        job.state === "waiting_user" && !job.cancelRequested && !p?.quarantined,
+        job.state === "waiting_user" &&
+        !job.cancelRequested &&
+        !p?.quarantined &&
+        broker.workers.get(job.workerId)?.socket.readyState === 1 &&
+        broker.workers.get(job.workerId)?.ready === true,
       artifacts: files,
     };
   }
@@ -664,6 +704,12 @@ export async function createServer(options: ServerOptions) {
         throw new Fault("INVALID_ARGUMENT", "流程需包含1到30步");
       for (const step of steps) {
         validateTool(step.tool, step.args || {});
+        if (step.tool === "reload")
+          throw new Fault(
+            "CAPABILITY_UNAVAILABLE",
+            "reload 是维护操作，请排空任务后单独调用，不能放入 flow",
+            400,
+          );
         if (step.args?.path || step.args?.savePath || step.args?.__lb)
           throw new Fault(
             "INVALID_ARGUMENT",
@@ -709,12 +755,15 @@ export async function createServer(options: ServerOptions) {
     reply.code(202);
     return { ...viewJob(record.job), created: record.created };
   });
-  app.get("/v1/tasks", async (req: any) => ({
-    items: store
-      .jobs(product(req))
-      .filter((j) => j.kind === "task" || req.query.includeCommands === "1")
-      .map(viewJob),
-  }));
+  app.get("/v1/tasks", async (req: any) => {
+    const page = store.page(product(req), "jobs", {
+      limit:
+        req.query.limit === undefined ? undefined : Number(req.query.limit),
+      cursor: req.query.cursor,
+      includeCommands: req.query.includeCommands === "1",
+    });
+    return { ...page, items: page.items.map(viewJob) };
+  });
   for (const kind of ["tasks", "commands"]) {
     app.get(`/v1/${kind}/:id`, async (req: any) =>
       viewJob(store.ownedJob(product(req), req.params.id)),
@@ -786,9 +835,13 @@ export async function createServer(options: ServerOptions) {
     reply.code(201);
     return a;
   });
-  app.get("/v1/artifacts", async (req) => ({
-    items: store.artifacts(product(req)).filter((a) => !a.deleted),
-  }));
+  app.get("/v1/artifacts", async (req: any) =>
+    store.page(product(req), "artifacts", {
+      limit:
+        req.query.limit === undefined ? undefined : Number(req.query.limit),
+      cursor: req.query.cursor,
+    }),
+  );
   app.get("/v1/artifacts/:id", async (req: any) =>
     artifacts.owned(product(req), req.params.id),
   );
@@ -1112,7 +1165,12 @@ export async function createServer(options: ServerOptions) {
         expectedHash: req.headers["x-sha256"],
         maxBytes:
           job.kind === "task" ? job.input.limits?.maxBytes : 512 * 1024 ** 2,
-        metadata: { source: "worker" },
+        metadata: {
+          source: "worker",
+          ...(job.type === "article.capture@v1"
+            ? { publication: "staged" }
+            : {}),
+        },
         authorize: () => {
           worker(req);
           const current = store.job(job.id);
@@ -1215,7 +1273,18 @@ export async function createServer(options: ServerOptions) {
       wildcard: false,
     });
   }
+  const maintainRetention = () => {
+    try {
+      artifacts.sweep();
+    } catch (error) {
+      app.log.error({ err: error }, "artifact retention failed");
+    }
+  };
+  maintainRetention();
+  const retentionTimer = setInterval(maintainRetention, 60000);
+  retentionTimer.unref();
   app.addHook("onClose", async () => {
+    clearInterval(retentionTimer);
     broker.close();
     logs.close();
     store.close();

@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { createHash } from "node:crypto";
+import sharp from "sharp";
 import "./verify-baseline.mjs";
 const root = path.resolve(import.meta.dirname, ".."),
   out = path.join(root, "runtime/engine");
@@ -249,22 +250,103 @@ patch("extension/background.js", [
   ],
   [
     "completed: !stopped, doneCount: doneTop };",
-    "completed: !stopped, doneCount: doneTop, effectUnknown:stopped?.code==='EFFECT_UNKNOWN' };",
+    "completed: !stopped, doneCount: doneTop, effectUnknown:!!stopped && (doneTop>0 || ['EFFECT_UNKNOWN','TIMEOUT','DIALOG_BLOCKING'].includes(stopped.code)) };",
+  ],
+]);
+// Keep bounded output metadata on early-return paths as well as normal replies.
+patch("src/mcp-server.js", [
+  [
+    "return { content: [{ type: 'text', text: await fetchPages(bridge, args) }] };",
+    "const output = {}; const text = await fetchPages(bridge, {...args,__lbOutput:output}); return {content:[{type:'text',text}],_meta:{'laofu.output':output}};",
+  ],
+  [
+    "const kb = Math.round(pagesOut.reduce((s, p) => s + p.raw.length, 0) / 1024);",
+    "const fullLength=pagesOut.reduce((s,p)=>s+(`--- ${p.url} (${p.status}) ---\\n${p.raw}\\n`).length,0); if(args.__lbOutput)Object.assign(args.__lbOutput,{truncated:!args.savePath&&fullLength>(Number(args.maxBody)||200000),originalLength:fullLength,nextAction:'use_savePath_or_continue_pagination',nextPage:pg.param?n:null});\n  const kb = Math.round(pagesOut.reduce((s, p) => s + p.raw.length, 0) / 1024);",
+  ],
+  [
+    "if (!(status >= 200 && status < 300))",
+    "if(status===429)throw Object.assign(new Error('站点限流，停止分页'),{code:'RATE_LIMITED',origin:new URL(args.url).origin,retryAfter:data.retryAfter});\n    if (!(status >= 200 && status < 300))",
+  ],
+  [
+    "const mime = /^data:(image\\/\\w+)/.exec(head)?.[1] || 'image/png';",
+    "const mime = /^data:(image\\/\\w+)/.exec(head)?.[1] || 'image/png';\n        if(!args.savePath && b64.length>256*1024 && args.__lb?.outputDir){const file=path.join(args.__lb.outputDir,'screenshot.'+(mime==='image/jpeg'?'jpeg':'png'));fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file,Buffer.from(b64,'base64'),{mode:0o600});return {content:[{type:'text',text:'截图已保存为受控产物'}],_meta:{'laofu.output':{outputFile:file,truncated:false}}};}",
+  ],
+  [
+    "browserAcknowledged:e.browserAcknowledged===true",
+    "browserAcknowledged:e.browserAcknowledged===true,origin:e.origin,retryAfter:e.retryAfter",
+  ],
+]);
+patch("extension/background.js", [
+  [
+    "let data = await handler(msg.params || {}, tabId, ctx);",
+    "let data = await handler(msg.params || {}, tabId, ctx);\n    if(msg.cmd==='screenshot' && data?.dataUrl?.length>16*1024*1024)throw err('LIMIT_EXCEEDED','截图超过 16 MiB 编码上限；请缩小截图范围');\n    if(msg.cmd==='fetch' && /^429(?:\\s|$)/.test(data?.text||''))throw Object.assign(err('RATE_LIMITED','站点限流，已停止'),{origin:new URL(msg.params.url).origin,retryAfter:data.retryAfter});",
+  ],
+  [
+    "browserAcknowledged:true }, msg.__k);",
+    "browserAcknowledged:true,origin:e.origin,retryAfter:e.retryAfter }, msg.__k);",
+  ],
+  [
+    "body:full.slice(0,maxBody),truncated:",
+    "body:full.slice(0,maxBody),retryAfter:res.headers.get('retry-after'),truncated:",
+  ],
+  [
+    "truncated:result.truncated, originalLength:result.originalLength };",
+    "truncated:result.truncated, originalLength:result.originalLength,retryAfter:result.retryAfter };",
+  ],
+]);
+patch("src/lib/rpc.js", [
+  [
+    "browserAcknowledged:msg.error?.browserAcknowledged===true",
+    "browserAcknowledged:msg.error?.browserAcknowledged===true,origin:msg.error?.origin,retryAfter:msg.error?.retryAfter",
+  ],
+]);
+patch("extension/background.js", [
+  [
+    "/^429(?:\\s|$)/.test(data?.text||'')",
+    "(data?.status===429 || /^429(?:\\s|$)/.test(data?.text||''))",
+  ],
+  [
+    "bytes: bytes.length, status: res.status };",
+    "bytes: bytes.length, status: res.status, retryAfter:res.headers.get('retry-after') };",
+  ],
+  [
+    "return { status: res.status, base64: btoa(s),",
+    "return { status: res.status, retryAfter:res.headers.get('retry-after'), base64: btoa(s),",
+  ],
+  [
+    "bytes: result.bytes, status: result.status };",
+    "bytes: result.bytes, status: result.status, retryAfter:result.retryAfter };",
   ],
 ]);
 // Brand labels are ours; preserve the immutable upstream attribution and source.
-patch("extension/background.js", [["const GROUP_TITLE = '花叔';", `const GROUP_TITLE = '老傅';
+patch("extension/background.js", [
+  [
+    "const GROUP_TITLE = '花叔';",
+    `const GROUP_TITLE = 'laofu-browser';
 // Migrate only groups recorded as this extension's own and still bearing its old label.
 void (async () => {
   const saved = await chrome.storage.local.get(null);
   for (const [key, groupId] of Object.entries(saved)) {
     if (!key.startsWith('agentGroup:') || !Number.isInteger(groupId)) continue;
     const group = await chrome.tabGroups.get(groupId).catch(() => null);
-    if (group?.title === '花叔') await chrome.tabGroups.update(groupId, {title: GROUP_TITLE});
+    if (['花叔', '老傅'].includes(group?.title)) await chrome.tabGroups.update(groupId, {title: GROUP_TITLE});
   }
 })().catch(() => {});
-`]]);
-for (const rel of ["extension/popup.html", "extension/popup.js"]) {
+`,
+  ],
+]);
+for (const rel of [
+  "extension/popup.html",
+  "extension/popup.js",
+  "extension/background.js",
+  "extension/offscreen.html",
+  "extension/mark.js",
+  "extension/cdp.js",
+  "src/cli.js",
+  "src/bridge.js",
+  "src/mcp-server.js",
+  "src/lib/rpc.js",
+]) {
   const f = path.join(out, rel);
   fs.writeFileSync(
     f,
@@ -272,6 +354,22 @@ for (const rel of ["extension/popup.html", "extension/popup.js"]) {
   );
   changed.push(rel);
 }
+// Keep the existing canvas rendering so strict page CSP needs no new permission.
+const avatar = await sharp(path.join(root, "laofu-browser.png"))
+  .resize(64, 64)
+  .png()
+  .toBuffer();
+const markFile = path.join(out, "extension/mark.js");
+const mark = fs.readFileSync(markFile, "utf8");
+if (!/const AVATAR_B64 = '[A-Za-z0-9+/=]+';/.test(mark))
+  throw new Error("Missing control-overlay avatar anchor");
+fs.writeFileSync(
+  markFile,
+  mark.replace(
+    /const AVATAR_B64 = '[A-Za-z0-9+/=]+';/,
+    `const AVATAR_B64 = '${avatar.toString("base64")}';`,
+  ),
+);
 
 {
   const file = path.join(out, "extension/background.js");
@@ -298,8 +396,20 @@ const manifest = JSON.parse(
   fs.readFileSync(path.join(out, "extension/manifest.json"), "utf8"),
 );
 manifest.name = "laofu-browser";
-manifest.description = "老傅的浏览器执行能力；基于 huashu-chrome 1.2.0";
+manifest.description = "老傅的浏览器执行能力";
 manifest.action.default_title = "laofu-browser";
+const icons = {};
+for (const size of [16, 32, 48, 128]) {
+  const rel = `icons/icon${size}.png`;
+  await sharp(path.join(root, "laofu-browser.png"))
+    .resize(size, size, { fit: "contain", background: "#00000000" })
+    .png()
+    .toFile(path.join(out, "extension", rel));
+  icons[size] = rel;
+  changed.push(`extension/${rel}`);
+}
+manifest.icons = icons;
+manifest.action.default_icon = icons;
 delete manifest.key;
 fs.writeFileSync(
   path.join(out, "extension/manifest.json"),

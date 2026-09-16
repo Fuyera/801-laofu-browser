@@ -1,6 +1,6 @@
 {
-  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/sdk-IN5qhg",
-  "external": "/var/folders/y6/74v5c1qd4wbfr9yjmhxx_1rm0000gn/T/laofu-consumers-LLQcZk",
+  "home": "<repo>/workspace/sdk-IN5qhg",
+  "external": "<tmp>/laofu-consumers-LLQcZk",
   "results": [
     {
       "sdk": "typescript",
@@ -20,5 +20,11 @@
     }
   ],
   "scope": "两个独立安装的 SDK 程序通过所有者入口访问真实服务；不作为受限产品隔离或业务产品接入证据",
-  "cliMcpSameTask": true
+  "cliMcpSameTask": true,
+  "publicRedaction": {
+    "at": "2026-09-15T23:29:11.534709+00:00",
+    "fields": "local filesystem prefixes and private environment identifiers only",
+    "originalSha256": "37fc40c3673823ea709437a3c28737168163da350f7749e0d9ddd25a09b1ee31",
+    "originalRetainedLocally": true
+  }
 }

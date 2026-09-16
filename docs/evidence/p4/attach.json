@@ -1,5 +1,5 @@
 {
-  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/attach-HlvuhS",
+  "home": "<repo>/workspace/attach-HlvuhS",
   "environment": {
     "platform": "darwin",
     "arch": "arm64",
@@ -10,5 +10,11 @@
     "扩展尚未加载时worker持续等待，未误报就绪",
     "外部启动的独立Chrome加载配对扩展后，原始命令成功",
     "停止worker保留外部浏览器及页面，不关闭用户浏览器"
-  ]
+  ],
+  "publicRedaction": {
+    "at": "2026-09-15T23:29:11.534709+00:00",
+    "fields": "local filesystem prefixes and private environment identifiers only",
+    "originalSha256": "e7cae336bd4ee1f659320a92d3d118b7b21476c223bf3707123ccda81f68456b",
+    "originalRetainedLocally": true
+  }
 }

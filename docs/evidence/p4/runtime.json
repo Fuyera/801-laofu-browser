@@ -1,5 +1,5 @@
 {
-  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/p4-runtime-tsWHRT",
+  "home": "<repo>/workspace/p4-runtime-tsWHRT",
   "evidenceKind": "synthetic fixtures through real Chromium, engine and HTTP",
   "checks": [
     {
@@ -34,5 +34,11 @@
       "rateHits": 1,
       "cooldownId": "cool_d8d516549dd303d5d1c222fc052b8701"
     }
-  ]
+  ],
+  "publicRedaction": {
+    "at": "2026-09-15T23:29:11.534709+00:00",
+    "fields": "local filesystem prefixes and private environment identifiers only",
+    "originalSha256": "848d8b94381c8e99505f8a1ab84f6c754cea8c4b00088ff04b6eed7d48a8b4ed",
+    "originalRetainedLocally": true
+  }
 }

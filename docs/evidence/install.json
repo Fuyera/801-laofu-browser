@@ -1,5 +1,5 @@
 {
-  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/install-EYtgz6",
+  "home": "<repo>/workspace/install-EYtgz6",
   "environment": {
     "platform": "darwin",
     "arch": "arm64",
@@ -48,5 +48,11 @@
     }
   ],
   "jobId": "tsk_b873f22a85b64b8f88f8afbef1bc130a",
-  "versionFixtures": "同一固定程序的两个合成发行标识，以及故意启动失败的测试程序；未声称已有历史正式版本"
+  "versionFixtures": "同一固定程序的两个合成发行标识，以及故意启动失败的测试程序；未声称已有历史正式版本",
+  "publicRedaction": {
+    "at": "2026-09-15T23:29:11.534709+00:00",
+    "fields": "local filesystem prefixes and private environment identifiers only",
+    "originalSha256": "66da42e3ce8c4678863fc0d0c40403d1a75ecc3945fd54ecc108d94cf6bfad24",
+    "originalRetainedLocally": true
+  }
 }

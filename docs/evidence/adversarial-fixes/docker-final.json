@@ -1,0 +1,35 @@
+{
+  "blocked": [
+    {
+      "host": "172.17.0.2",
+      "port": 18880,
+      "connected": false
+    },
+    {
+      "host": "172.17.0.2",
+      "port": 18881,
+      "connected": false
+    },
+    {
+      "host": "172.27.0.2",
+      "port": 18880,
+      "connected": false
+    },
+    {
+      "host": "172.27.0.2",
+      "port": 18881,
+      "connected": false
+    }
+  ],
+  "at": "2026-09-15T14:48:04.160Z",
+  "id": "AT-P2-19",
+  "kind": "real disposable Docker containers; current src mounted read-only; same topology as deployer",
+  "image": "laofu-browser:adversarial-fixes-20260915",
+  "evidence": {
+    "anonymousPublicConnect": 200,
+    "privateTarget": 403,
+    "blockedControlRoute": 403,
+    "allowedRelayNoCredential": 502
+  },
+  "limits": "TCP CONNECT only to public 1.1.1.1:443; no account or token used. No sniffing or core authorization bypass tested."
+}

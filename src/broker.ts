@@ -154,17 +154,36 @@ export class Broker {
       });
       return;
     }
+    if (msg.type === "handoff_completed") {
+      if (
+        job.state === "waiting_user" &&
+        !job.cancelRequested &&
+        !this.store.get<Profile>("profile", job.profileId)?.quarantined &&
+        ["continued", "completed"].includes(msg.data?.outcome)
+      ) {
+        this.closeViewers(job.id);
+        this.store.transition(job.id, "running");
+      }
+      return;
+    }
+    if (msg.type === "rate_limited") {
+      this.store.recordCooldown(job, msg.data);
+      return;
+    }
     if (msg.type === "result") {
       if (
         msg.error?.code === "RATE_LIMITED" &&
-        job.type === "article.capture@v1"
+        (msg.error.details?.origin || job.input.url || job.input.args?.url)
       ) {
         this.store.recordCooldown(job, {
-          origin: msg.error.details?.origin || new URL(job.input.url).origin,
+          origin:
+            msg.error.details?.origin ||
+            new URL(job.input.url || job.input.args.url).origin,
           retryAfter: msg.error.details?.retryAfter,
         });
       }
       const confirmedStop = msg.stopped === true;
+      this.closeViewers(job.id);
       if (TERMINAL.has(job.state)) {
         this.store.event(job.id, "late_evidence", {
           state: msg.state,
@@ -196,11 +215,18 @@ export class Broker {
         : ["succeeded", "partial", "failed", "cancelled"].includes(msg.state)
           ? msg.state
           : "failed";
-      this.store.transition(job.id, state, {
-        result: msg.result || null,
-        error: msg.error || null,
-        effectState: effect,
-      });
+      try {
+        this.store.finishJob(job.id, state, {
+          result: msg.result || null,
+          error: msg.error || null,
+          effectState: effect,
+        });
+      } catch (e) {
+        this.store.transition(job.id, "failed", {
+          error: problem(e),
+          effectState: effect,
+        });
+      }
       if (confirmedStop) this.store.release(job.profileId, job.id);
       else this.quarantine(job.profileId);
     }
@@ -215,6 +241,10 @@ export class Broker {
     let running = jobs.filter((j) => j.state === "running").length;
     for (const j of jobs) {
       if (TERMINAL.has(j.state) || j.state === "suspended") continue;
+      if (j.state === "queued" && j.cancelRequested) {
+        this.cancel(j);
+        continue;
+      }
       if (
         j.expiresAt < now ||
         (j.state === "queued" &&
@@ -231,16 +261,7 @@ export class Broker {
           });
         } else {
           if (!j.cancelRequested) {
-            this.store.updateJob(j.id, { cancelRequested: true });
-            try {
-              this.send(j.workerId, {
-                type: "cancel",
-                jobId: j.id,
-                fence: j.fence,
-              });
-            } catch {
-              this.quarantine(j.profileId);
-            }
+            this.cancel(j, "deadline");
           }
         }
         continue;
@@ -317,13 +338,22 @@ export class Broker {
       }
     }
   }
-  cancel(job: Job) {
+  cancel(job: Job, reason = "user") {
     if (TERMINAL.has(job.state)) return job;
-    this.store.updateJob(job.id, { cancelRequested: true });
-    if (job.state === "queued")
-      return this.store.transition(job.id, "cancelled", {
-        effectState: "not_started",
-      });
+    const updated = this.store.db.transaction(() => {
+      this.store.updateJob(job.id, { cancelRequested: true });
+      if (!job.cancelRequested)
+        this.store.event(job.id, "cancel_requested", {
+          reason,
+          message: "已停止排队新动作，正在确认在途操作",
+        });
+      return job.state === "queued"
+        ? this.store.transition(job.id, "cancelled", {
+            effectState: "not_started",
+          })
+        : this.store.job(job.id)!;
+    })();
+    if (job.state === "queued") return updated;
     try {
       this.send(job.workerId, {
         type: "cancel",
@@ -333,9 +363,6 @@ export class Broker {
     } catch {
       this.quarantine(job.profileId);
     }
-    this.store.event(job.id, "cancel_requested", {
-      message: "已停止排队新动作，正在确认在途操作",
-    });
     this.closeViewers(job.id);
     return this.store.job(job.id)!;
   }
@@ -347,13 +374,37 @@ export class Broker {
         409,
       );
     this.store.assertNotCooling(job);
+    if (this.store.get<Profile>("profile", job.profileId)?.quarantined)
+      throw new Fault(
+        "RESUME_NOT_ALLOWED",
+        "浏览器已隔离，需先核验旧动作",
+        409,
+      );
+    if (
+      this.workers.get(job.workerId)?.socket.readyState !== 1 ||
+      !this.workers.get(job.workerId)?.ready
+    )
+      throw new Fault("WORKER_OFFLINE", "执行端未连接，未恢复", 503);
     this.closeViewers(job.id);
     this.store.transition(job.id, "running");
-    this.send(job.workerId, {
-      type: "resume",
-      jobId: job.id,
-      fence: job.fence,
-    });
+    try {
+      this.send(job.workerId, {
+        type: "resume",
+        jobId: job.id,
+        fence: job.fence,
+      });
+    } catch {
+      this.store.transition(job.id, "suspended", {
+        effectState: "unknown",
+        error: {
+          code: "RESUME_UNKNOWN",
+          message: "恢复消息发送状态未知，请先核验",
+          retryable: false,
+        },
+      });
+      this.quarantine(job.profileId);
+      throw new Fault("RESUME_UNKNOWN", "恢复消息发送状态未知，请先核验", 503);
+    }
     return this.store.job(job.id)!;
   }
   closeViewers(jobId: string) {

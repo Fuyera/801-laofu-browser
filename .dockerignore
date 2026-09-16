@@ -7,3 +7,8 @@ dist
 releases
 *.sqlite*
 .env*
+.zcode
+*.pem
+*.key
+*.p12
+*.pfx

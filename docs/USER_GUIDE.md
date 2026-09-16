@@ -4,7 +4,7 @@ laofu-browser 帮你在授权浏览器中读取网页、执行操作，并保存
 
 ## 打开现有本机服务
 
-本项目当前开发服务地址为 `http://127.0.0.1:17889`，状态目录是 `workspace/local-state`。在项目根目录获取一次性登录地址：
+按 README 启动后的默认本机服务地址为 `http://127.0.0.1:17889`，状态目录是 `workspace/local-state`。在项目根目录获取一次性登录地址：
 
 ```sh
 bin/laofu-browser console-login --home workspace/local-state
@@ -12,11 +12,11 @@ bin/laofu-browser console-login --home workspace/local-state
 
 打开输出的完整地址。票据 10 分钟有效且只能交换一次；登录后的管理会话有效 8 小时。过期后重新执行命令。地址包含登录票据，不能转发给其他产品或写入公开文档。直接打开服务首页但没有管理会话时，出现登录提示是正常行为。
 
-如果现有服务已停止，使用项目自带 Node 启动服务和本人专用浏览器：
+如果现有服务已停止，使用 Node 22 启动服务和本人专用浏览器：
 
 ```sh
-.runtime/node-v22.23.2-darwin-arm64/bin/node scripts/local.mjs start --home workspace/local-state --browser
-.runtime/node-v22.23.2-darwin-arm64/bin/node scripts/local.mjs status --home workspace/local-state
+node scripts/local.mjs start --home workspace/local-state --browser
+node scripts/local.mjs status --home workspace/local-state
 ```
 
 服务首次运行会初始化专属目录；已有状态目录不需要再次执行 `init`。脚本显示进程运行不代表目标网站可访问：还应在控制台确认浏览器就绪，并按任务结果判断成功。
@@ -34,6 +34,8 @@ bin/laofu-browser console-login --home workspace/local-state
 输出包括正文 Markdown、安全阅读 HTML、原图和 `manifest.json`。Markdown 保留图文顺序并引用包内相对路径。manifest 记录来源、采集时间、图片数量、字节数和哈希，便于核对遗漏。原图不会套用其他产品的发布压缩规则。
 
 “完成”表示本次请求要求在已声明范围内满足。`complete_for_scope` 的范围是当前已授权可见正文；它不保证折叠、付费、分页或站点未展示的内容也已取得。图片全部保存也不代表音频、视频和嵌入内容都已归档。
+
+登录墙、加载页和未替换的占位图不会当作完整成果。图文包完整保存后才出现下载入口，失败时不会显示一个缺少 manifest 的零散包。视频、音频和嵌入卡片会逐项标出未下载状态。来源链接可能经过脱敏；如需排查失败图片，维护者可在执行端保留的 7 天受控来源记录中核对原地址。已交付成果由你主动清理，系统不会自动删除。
 
 ## 遇到等待、缺图或失败
 
@@ -76,12 +78,14 @@ bin/laofu-browser resume tsk_实际ID --home workspace/local-state
 
 `capture` 返回任务 ID，返回排队信息不等于完成。用 `job` 查询状态；待结果中出现产物 ID 后再下载。连接中断时保留原任务 ID 与幂等键查询，不为未知操作生成新键重试。SDK 和 MCP 的接入方法见 [API 文档](API.md)。
 
+任务或产物较多时，用控制台“更早任务／产物”翻页，再用“最新任务／产物”返回首页。MCP `laofu_jobs` 返回 `nextCursor` 时，可以带该 cursor 继续查询。较大的截图返回文件引用，直接下载；小截图仍可在支持图片的宿主中显示。
+
 ## 停止、备份与常见问题
 
 停止当前开发服务和它管理的专用执行端：
 
 ```sh
-.runtime/node-v22.23.2-darwin-arm64/bin/node scripts/local.mjs stop --home workspace/local-state
+node scripts/local.mjs stop --home workspace/local-state
 ```
 
 停止不会删除文章、任务和账号状态；也不等于撤销网页上已执行的操作。先处理正在运行或等待人工的任务。备份、升级、程序回退与可选自启动见 [运行手册](OPERATIONS.md)。当前没有自动注册开机启动。

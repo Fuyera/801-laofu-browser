@@ -12,7 +12,7 @@ import { discoverHosts, installHost } from "./hosts.js";
 import { createServer } from "./server.js";
 import { Worker } from "./worker.js";
 import { BrowserClient } from "./client.js";
-import { mkdir, privateFile } from "./util.js";
+import { mkdir, privateFile, hash, canonical } from "./util.js";
 import { problem, Fault } from "./errors.js";
 import { processLock } from "./lock.js";
 import { egressProxy } from "./network.js";
@@ -346,7 +346,7 @@ async function main() {
       privateFile(cache, JSON.stringify({ id: sessionId }));
     }
     const key = v.key || crypto.randomUUID(),
-      request = {
+      request: any = {
         tool: positionals[1],
         args: JSON.parse(positionals[2] || "{}"),
       };
@@ -355,12 +355,29 @@ async function main() {
       "cli-requests",
       crypto.createHash("sha256").update(key).digest("hex") + ".json",
     );
+    const inputHash = hash(
+      canonical({ sessionId, tool: request.tool, args: request.args }),
+    );
+    const prior = fs.existsSync(pending) ? read(pending) : undefined;
+    if (prior?.inputHash && prior.inputHash !== inputHash)
+      throw new Fault("IDEMPOTENCY_CONFLICT", "同一键对应不同 CLI 请求", 409);
+    if (request.tool === "upload" && request.args.path) {
+      if (prior?.prepared && prior.inputHash === inputHash)
+        Object.assign(request, prior.prepared);
+      else {
+        const artifact = await c.upload(request.args.path);
+        request.inputArtifacts = { path: artifact.id };
+        request.args.path = path.basename(request.args.path);
+      }
+    }
     privateFile(
       pending,
       JSON.stringify({
         key,
         sessionId,
         tool: request.tool,
+        inputHash,
+        prepared: request,
         submittedAt: new Date().toISOString(),
       }),
     );
@@ -368,7 +385,13 @@ async function main() {
       const result = await c.command(sessionId!, request, key);
       privateFile(
         pending,
-        JSON.stringify({ key, sessionId, jobId: result.id }),
+        JSON.stringify({
+          key,
+          sessionId,
+          jobId: result.id,
+          inputHash,
+          prepared: request,
+        }),
       );
       print({ ...result, idempotencyKey: key });
     } catch (e) {

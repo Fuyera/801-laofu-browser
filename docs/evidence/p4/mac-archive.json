@@ -1,1 +1,16 @@
-{"directory":"/Users/laofu/Projects/801-laofu-browser/workspace/p4/unpacked-clean-580a6cf/package-clean-580a6cf","releaseId":"0.1.0-dev.2-macos-arm64","source":{"commit":"580a6cf35e614e697bd802f8cc780ece6675a142","dirty":false},"verifiedFiles":19789,"status":"passed"}
+{
+  "directory": "<repo>/workspace/p4/unpacked-clean-580a6cf/package-clean-580a6cf",
+  "releaseId": "0.1.0-dev.2-macos-arm64",
+  "source": {
+    "commit": "580a6cf35e614e697bd802f8cc780ece6675a142",
+    "dirty": false
+  },
+  "verifiedFiles": 19789,
+  "status": "passed",
+  "publicRedaction": {
+    "at": "2026-09-15T23:29:11.534709+00:00",
+    "fields": "local filesystem prefixes and private environment identifiers only",
+    "originalSha256": "e7d1e81f067d0253af8523396e78bf04979b247e8b5c514a56a10d5413650146",
+    "originalRetainedLocally": true
+  }
+}

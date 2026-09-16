@@ -1,7 +1,7 @@
 {
   "version": "0.1.0-dev.2",
-  "updatedAt": "2026-09-15T02:30:31.264371+00:00",
-  "overallGate": "P4 full matrix 22/22, actual Codex host and clean-commit package/image checks passed; daily Chrome permission/unlock and release freeze pending; P5 paused by user",
+  "updatedAt": "2026-09-15T14:49:31.314595+00:00",
+  "overallGate": "28 confirmed adversarial defects repaired; 50/50 unit/interfaces and 19/19 browser checks; 24 matrix groups covered by original run and explicit environment reruns. Daily Chrome lifecycle and final release freeze pending; P5 paused.",
   "requirements": [
     {
       "requirementId": "B01",
@@ -851,5 +851,12 @@
     }
   ],
   "latestRegression": "docs/evidence/p4/full-interrupted.json",
-  "currentEvidenceIndex": "docs/evidence/p4/index.json"
+  "currentEvidenceIndex": "docs/evidence/p4/index.json",
+  "adversarialFixes": {
+    "confirmed": 28,
+    "review": "docs/ADVERSARIAL_REVIEW.md",
+    "fixes": "docs/ADVERSARIAL_FIXES.md",
+    "evidence": "docs/evidence/adversarial-fixes/index.json",
+    "scope": "Only confirmed portions of A findings. B8/C2/D3 unchanged. No daily deployment, push or final release."
+  }
 }

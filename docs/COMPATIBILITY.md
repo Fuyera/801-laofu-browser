@@ -11,6 +11,10 @@
 |同长度目标文字变化|upstream_defect|原版仅看字符长度会漏掉1→2；本版比较短时间稳定的同一目标文字。只作为页面变化证据，不声称第三方业务已成功|
 |wait超时与断线区分|accepted_difference|保留TIMEOUT/isError，同时携带浏览器明确回执标志；已结束的wait不封锁profile，通信失联保持unknown|
 |批处理和截断|accepted_difference|completed=false、doneCount、截断及效果未知向任务状态传播，不把部分完成包装成成功|
+|已执行部分 act 后中断|accepted_difference|部分执行结果标为 unknown 并隔离，保留步骤回执供核验；受理前明确拒绝不一律当作未知写|
+|flow 中的扩展 reload|accepted_difference|预先拒绝在普通 flow 中组合 reload；独立维护 command 仍保留原能力|
+|大截图|accepted_difference|小于等于 256 KiB base64 的 image content 保留；更大输出变为 artifact，16 MiB 编码上限拒绝超大回执|
+|多页 fetch 和 ask 预算|accepted_difference|分页早退也发出结构化截断；flow 的人工等待预算限制 ask，继续后显式恢复自动控制|
 |文件路径|accepted_difference|HTTP只接受受控artifactId及纯文件名；MCP在受信任调用端上传/下载本地路径。服务不返回或接受任意主机路径|
 |大图片通道|accepted_difference|扩展二进制通道12MiB保留；明确超限的图像GET可转受控原生下载，保存原始字节与哈希。默认文件预算512MiB、图文50MiB、拖放48MiB|
 |下载超时|upstream_defect|请求取消并验证停止结果；无停止确认时保持未知，不把取消请求等同于已停止|

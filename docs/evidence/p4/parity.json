@@ -1,5 +1,5 @@
 {
-  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/parity-ivgTQD",
+  "home": "<repo>/workspace/parity-ivgTQD",
   "environment": {
     "platform": "darwin",
     "arch": "arm64",
@@ -272,5 +272,11 @@
       "status": "passed",
       "difference": "各自原快照引用；目标被移除后均拒绝"
     }
-  ]
+  ],
+  "publicRedaction": {
+    "at": "2026-09-15T23:29:11.534709+00:00",
+    "fields": "local filesystem prefixes and private environment identifiers only",
+    "originalSha256": "55b5836538c4cc56b0835b198e0b5ee2136e13d6138ec7bb38e3aa2b2b7fb9ac",
+    "originalRetainedLocally": true
+  }
 }

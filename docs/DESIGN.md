@@ -287,7 +287,7 @@ Server 支持无头自动执行，以及人工接手所需的有头/虚拟显示
 | 日本公众号原文 | 环境验证；后台登录后仍受阻；用户反复收到操作频繁提示 | 访问受阻状态与停止策略，不能逼用户反复验证 |
 | 远程接手 | 临时 SSH 退出导致断开，服务器浏览器仍在；launchd 管理后恢复连接 | 独立管理隧道，连接与任务生命周期分开 |
 
-证据：[本机采集](/Users/laofu/Projects/101-fuyera-content-engine-v2/workspace/checks/huashu-wechat-20260914/verification.json)、[日本服务器试验](/Users/laofu/Projects/101-fuyera-content-engine-v2/workspace/checks/huashu-tokyo-20260914/verification.md)。用户反馈“操作频繁”是实际反馈，不推断微信内部规则。没有证明任何固定等待时间能解除限制。
+证据：本机采集（本地留档，不随仓库发布）、日本服务器试验（本地留档，不随仓库发布）。用户反馈“操作频繁”是实际反馈，不推断微信内部规则。没有证明任何固定等待时间能解除限制。
 
 ## 11. 验收与发布要求
 

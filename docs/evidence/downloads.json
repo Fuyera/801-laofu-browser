@@ -1,5 +1,5 @@
 {
-  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/download-f0lYkp",
+  "home": "<repo>/workspace/download-f0lYkp",
   "scope": "32MiB慢速流，浏览器原生下载超时和用户取消，确认HTTP流停止且无完整产物；状态保守，未知时需恢复profile",
   "results": [
     {
@@ -18,5 +18,11 @@
       "publishedArtifacts": 0,
       "sameKeyNotReplayed": true
     }
-  ]
+  ],
+  "publicRedaction": {
+    "at": "2026-09-15T23:29:11.534709+00:00",
+    "fields": "local filesystem prefixes and private environment identifiers only",
+    "originalSha256": "fe59976f32154cd03aa4b23b62ebc18ec9b9b78cc42acf399f2f350d6149289d",
+    "originalRetainedLocally": true
+  }
 }

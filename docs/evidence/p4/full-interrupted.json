@@ -1,5 +1,5 @@
 {
-  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/full-regression-rfrcwf",
+  "home": "<repo>/workspace/full-regression-rfrcwf",
   "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
   "results": [
     {
@@ -95,5 +95,11 @@
     "stage": "parity",
     "reason": "Host clamshell sleep interrupted browser execution; pmset confirms sleep 18:18:34–18:33:35 local. No final full-pass claim.",
     "log": "parity.log"
+  },
+  "publicRedaction": {
+    "at": "2026-09-15T23:29:11.534709+00:00",
+    "fields": "local filesystem prefixes and private environment identifiers only",
+    "originalSha256": "c95211286de3da34ea64944d0f9ad52816aaf1b0b36f360d8e8d8fed3ab3dbeb",
+    "originalRetainedLocally": true
   }
 }

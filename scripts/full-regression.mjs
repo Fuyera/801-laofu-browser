@@ -76,6 +76,8 @@ await run("unit", [
     .map((name) => "test/" + name),
 ]);
 await run("contract", ["scripts/export-contract.mjs"]);
+await run("adversarial-browser", ["--import", "tsx", "scripts/adversarial-browser-regression.mjs"], "adversarial-fixes-browser-", "report.json");
+await run("adversarial-docker", ["scripts/adversarial-docker-regression.mjs"]);
 for (const [name, script, prefix, file] of [
   ["smoke", "smoke", "smoke-", "result.json"],
   ["tools", "tool-regression", "tools-", "report.json"],

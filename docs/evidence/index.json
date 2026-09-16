@@ -13,49 +13,57 @@
       "name": "parity",
       "file": "parity.json",
       "source": "workspace/parity-JO1JIc/report.json",
-      "sha256": "3e4428b67ae97a00e0ab6481bdc797aaf7376e7fdf2700b3e4a525b59ac74e6f"
+      "sha256": "e8bb9e080a45d6a3c4546a92036a828013253536028d781f7035f2e3f1026c77",
+      "originalSha256": "3e4428b67ae97a00e0ab6481bdc797aaf7376e7fdf2700b3e4a525b59ac74e6f"
     },
     {
       "name": "article-console",
       "file": "article-console.json",
       "source": "workspace/article-console-RpPRuK/report.json",
-      "sha256": "8ba9bbab9fed99d2461603cbbe7bcd3296b32e6cc3dda71984463ea9e0e1e989"
+      "sha256": "4bb58ed8c8b3556d81edc3a354077626e4e609be681ec4ef4d03cbc89fa51aa7",
+      "originalSha256": "8ba9bbab9fed99d2461603cbbe7bcd3296b32e6cc3dda71984463ea9e0e1e989"
     },
     {
       "name": "faults",
       "file": "faults.json",
       "source": "workspace/faults-U7eEER/report.json",
-      "sha256": "6a467dc4118295403396e0fa8c38c2fc53f786b78655101ca0383bb8320d1167"
+      "sha256": "4c95ffb5f466cccb9ae84d46995cb2756f6ae9a6c45b92dece70433ccfc55ee3",
+      "originalSha256": "6a467dc4118295403396e0fa8c38c2fc53f786b78655101ca0383bb8320d1167"
     },
     {
       "name": "sdk",
       "file": "sdk.json",
       "source": "workspace/sdk-IN5qhg/report.json",
-      "sha256": "37fc40c3673823ea709437a3c28737168163da350f7749e0d9ddd25a09b1ee31"
+      "sha256": "ee8702ae66ff243d09e365e5a48df3ec3992b821e799ca720201045457235686",
+      "originalSha256": "37fc40c3673823ea709437a3c28737168163da350f7749e0d9ddd25a09b1ee31"
     },
     {
       "name": "attach",
       "file": "attach.json",
       "source": "workspace/attach-HrCeqG/report.json",
-      "sha256": "513e2a2369f4a954eab3945dc7bb9a80300124078f536dd468a3f06843df2159"
+      "sha256": "e93f18899da410a20554726d0825fd00cd399fbd2464be468b993152430063f6",
+      "originalSha256": "513e2a2369f4a954eab3945dc7bb9a80300124078f536dd468a3f06843df2159"
     },
     {
       "name": "downloads",
       "file": "downloads.json",
       "source": "workspace/download-f0lYkp/report.json",
-      "sha256": "fe59976f32154cd03aa4b23b62ebc18ec9b9b78cc42acf399f2f350d6149289d"
+      "sha256": "c2882e90a6b5d2ea83a0c2498487f5919678e9283c9df9ab19af4f11c753d5e6",
+      "originalSha256": "fe59976f32154cd03aa4b23b62ebc18ec9b9b78cc42acf399f2f350d6149289d"
     },
     {
       "name": "install",
       "file": "install.json",
       "source": "workspace/install-EYtgz6/report.json",
-      "sha256": "66da42e3ce8c4678863fc0d0c40403d1a75ecc3945fd54ecc108d94cf6bfad24"
+      "sha256": "065e62b1c6d0f83205d5aabc988b6e4e11514852d5d0478d6989be6cddd6ee5c",
+      "originalSha256": "66da42e3ce8c4678863fc0d0c40403d1a75ecc3945fd54ecc108d94cf6bfad24"
     },
     {
       "name": "handoff",
       "file": "handoff.json",
       "source": "workspace/handoff-AgvdzG/report.json",
-      "sha256": "b092dee7a2f5f37bf6ef88839b6737a77a470e1550932db664a0022009bbf8f0"
+      "sha256": "365486b8b7a4b7c408a46e268afb27cd952bde37599e1fae20fb9e7fec2da16d",
+      "originalSha256": "b092dee7a2f5f37bf6ef88839b6737a77a470e1550932db664a0022009bbf8f0"
     },
     {
       "name": "isolation",
@@ -67,7 +75,8 @@
       "name": "performance",
       "file": "performance.json",
       "source": "workspace/performance-H4sCDE/report.json",
-      "sha256": "81ce300177067ea7cdf5a4ae101784c4ea6586732a8b8643d553ac8bcf8276ce"
+      "sha256": "ff8cc3103b323c3451fbdd86f3e5b5185ed276d54a372b5b024faf0b22f77fa5",
+      "originalSha256": "81ce300177067ea7cdf5a4ae101784c4ea6586732a8b8643d553ac8bcf8276ce"
     },
     {
       "name": "capture-verification",
@@ -99,5 +108,9 @@
       "source": "workspace/article-console-RpPRuK/console-mobile.png",
       "sha256": "f3005bbb5047a36c224fb0a806b91ba4015a4f6dff4f5ab33537b86a44256f15"
     }
-  ]
+  ],
+  "publicRedaction": {
+    "at": "2026-09-15T23:29:11.534709+00:00",
+    "note": "sha256 indexes the public report; originalSha256 retains the pre-redaction reference."
+  }
 }

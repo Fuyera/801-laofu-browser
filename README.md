@@ -1,63 +1,89 @@
-# laofu-browser
+# 老傅 Browser（laofu-browser）
 
-老傅的独立浏览器能力服务。当前为 `0.1.0-dev.2` 内部开发版；真实通过项与尚未完成的 P4/P5 门槛见 [验收报告](docs/ACCEPTANCE.md)，不能据此宣布跨系统 v1.0。
+老傅 Browser 是连接 AI 助手与浏览器的**本地浏览器助手**。它让 AI 在你的授权下阅读网页、操作页面、执行浏览器任务，并在需要登录、验证或确认时由你接手。支持 MCP、HTTP API、SDK 和 CLI 接入，提供任务记录、执行状态和结果管理。
 
-提供 huashu-chrome 1.2.0 的23个原始工具，以及图文采集、持久任务、文件产物、独立凭据、人工接手。服务代码均在本工程；没有改造 Fuyera、祈道或000。
+程序由本机服务、浏览器扩展和网页控制台组成，可使用独立的 Chromium，也可连接你已登录的 Chrome。你还可以直接在控制台提交文章链接，将当前可见正文和图片保存为 Markdown、HTML 与 ZIP，查看任务进度，并在需要登录或验证时人工接手。
 
-私有仓库：[Fuyera/801-laofu-browser](https://github.com/Fuyera/801-laofu-browser)，主分支 `main`。
+当前版本为 **`0.1.0-dev.3` 预览版**，面向 **macOS Apple Silicon（arm64）**。源码采用 MIT 许可证；安装包和最终验收记录见 [GitHub Releases](https://github.com/Fuyera/801-laofu-browser/releases)。也可按下方步骤从源码运行。Windows、Linux 桌面和服务器部署暂未验收。
 
-## 文档入口
+项目仓库：[https://github.com/Fuyera/801-laofu-browser](https://github.com/Fuyera/801-laofu-browser)
 
-- [用户指南](docs/USER_GUIDE.md)：登录、采集、下载、人工接手、状态判断与日常问题。
-- [研发指南](docs/DEVELOPMENT.md)：源码环境、架构、测试矩阵、样本准备与证据收口。
-- [接口文档](docs/API.md)：HTTP、TS/Python SDK、MCP 和 CLI 契约。
-- [运行手册](docs/OPERATIONS.md)：固定包安装、升级回退、隔离部署与故障恢复。
-- [验收报告](docs/ACCEPTANCE.md)：实际通过项、环境边界与 P0–P5 缺项。
-- [完整本机测试报告](docs/TEST_REPORT.md)：当前检查矩阵的结果、修正和证据。
+## 可以做什么
 
-干净克隆不含运行时、依赖、浏览器和发行包；首次使用源码请先按研发指南安装依赖并构建。
+- 读取网页正文、快照和页面元素，执行导航、点击、输入、滚动、截图等 23 种浏览器工具。
+- 将当前可见文章保存为 Markdown、安全阅读 HTML、图片与 ZIP，并报告缺图、嵌入媒体和内容范围。
+- 持久保存任务、命令和产物；需要登录或人工处理时暂停，结果不确定的写操作不会自动重放。
+- 通过本地控制台、HTTP API、TypeScript／Python SDK、MCP 或 CLI 使用同一服务。
+- 为应用配置独立身份、权限和浏览器；受限身份的容器隔离需单独完成运行环境验证。
 
-## 当前 Mac 源码运行
+浏览器登录态保留在自己的执行环境。专用 Chromium 与连接已有 Chrome 是两条独立入口。
 
-在本工程运行，包装命令会使用固定 Node 22.23.2：
+## 安装预览包
 
-```sh
-bin/laofu-browser init
-bin/laofu-browser serve
-```
+在 [下载页](https://github.com/Fuyera/801-laofu-browser/releases)选择 macOS arm64 压缩包，同时下载对应 `.sha256` 文件。包内包含 Node、Chromium 和依赖，不需要先安装开发工具。校验、安装与启动命令见[运行手册](docs/OPERATIONS.md#固定mac制品)。这是开发者预览包，尚未做 Apple 签名或公证，也未上架 Chrome 商店。
 
-另一个终端配对本人专用浏览器：
+## 从源码开始
+
+需要 macOS arm64、Git 和 **Node.js 22**（验证版本为 22.23.2）。Python 3.10+ 仅用于 Python SDK；Docker Desktop 仅用于隔离浏览器部署。原生依赖若需要本地编译，还需安装 Xcode Command Line Tools。
 
 ```sh
-bin/laofu-browser pair --name 本人专用浏览器
-bin/laofu-browser worker --config /上一步返回的/worker-配置.json
-bin/laofu-browser console-login
+git clone https://github.com/Fuyera/801-laofu-browser.git
+cd 801-laofu-browser
+npm ci --no-audit --no-fund
+node node_modules/playwright/cli.js install chromium
+npm run build
+node scripts/local.mjs start --home workspace/local-state --browser
+bin/laofu-browser console-login --home workspace/local-state
 ```
 
-最后一个命令输出10分钟有效的一次性控制台地址。本机服务默认 `http://127.0.0.1:17889`；页面和API均需鉴权。不要把输出中的登录票据转给产品调用方。
+打开最后一条命令输出的一次性控制台地址，在“浏览器与设备”确认专用浏览器已就绪，然后创建任务。默认服务仅监听本机 `127.0.0.1:17889`，需要鉴权。登录地址含临时票据，不要公开或转发。
 
-也可使用本机管理器一次启动服务和专用浏览器：
+查看状态与停止：
 
 ```sh
-.runtime/node-v22.23.2-darwin-arm64/bin/node scripts/local.mjs start --browser
-.runtime/node-v22.23.2-darwin-arm64/bin/node scripts/local.mjs status
-.runtime/node-v22.23.2-darwin-arm64/bin/node scripts/local.mjs stop
+node scripts/local.mjs status --home workspace/local-state
+node scripts/local.mjs stop --home workspace/local-state
 ```
 
-本人日常 Chrome 使用 `pair --attach` 后启动执行端，在该 Chrome 的 `chrome://extensions` 开启开发者模式，加载执行端显示的独立扩展目录。等待期间显示浏览器离线；配对成功后自动变为可用。每份扩展只连接自己指定的桥和 profile；不读取或复制已有 Chrome 的 Cookie/密码，不把日常 Chrome 授予产品身份。此人工加载流程需要本机实操确认，详见验收报告。
+停止服务会保留任务、产物和浏览器状态。源码仓库不包含 Node、浏览器、依赖、凭据或发行包；上述构建与浏览器安装不能省略。
 
-## 接口和接入包
+需要使用已登录的日常 Chrome 时，按[连接已有 Chrome](docs/OPERATIONS.md#本人日常chrome)的步骤配对并加载扩展。该入口具有本人浏览器的完整权限，应只用于本人授权的操作。
 
-- [HTTP 契约与示例](docs/API.md)、[OpenAPI](docs/openapi.json)。能力发现：`GET /v1/capabilities`。
-- TypeScript：安装 `releases/laofu-browser-0.1.0-dev.2.tgz`；示例 `examples/consumer.mjs`。
-- Python：安装 `releases/laofu_browser-0.1.0.dev2-py3-none-any.whl`；示例 `examples/consumer.py`。
-- MCP：`bin/laofu-browser mcp-config --profile <profileId>` 生成不含凭据的宿主配置；MCP 服务为 `bin/laofu-browser mcp`。
-- CLI：`bin/laofu-browser help`。同一任务可以从 SDK、CLI、MCP 和控制台查询。
+## 接入 AI 工具与应用
 
-SDK 不自动重试未知写入。提交前保存幂等键，连接断开后用原键查询原命令；`waiting_user`、`suspended`、`partial` 均不表示完成。
+- **MCP**：`bin/laofu-browser mcp-config --profile prf_实际ID --home workspace/local-state` 生成宿主配置；完整接入步骤见[接口文档](docs/API.md)。
+- **HTTP API**：通过 `/v1/capabilities` 查询浏览器与能力；[OpenAPI](docs/openapi.json)列出接口。
+- **CLI**：`bin/laofu-browser help` 查看命令；[用户指南](docs/USER_GUIDE.md)包含采集、查询、下载和人工接手示例。
+- **SDK**：源码在 `sdk/typescript/` 与 `sdk/python/`。本地构建接入包的方法见[研发指南](docs/DEVELOPMENT.md#接入包安装候选与-docker)，示例在 `examples/`；`releases/` 中的本地产物不随 Git 克隆提供。
 
-## 构建与验证
+## 已验证范围与限制
 
-使用 Node22 环境执行 `npm ci && npm run build && npm test`。`npm run verify:baseline` 校验58个原版文件和23工具清单。真实浏览器回归脚本、证据分类与环境限制见 [验收报告](docs/ACCEPTANCE.md)。
+- macOS arm64 的服务、隔离浏览器、安装候选及 SDK 有真实测试记录，详见[测试报告](docs/TEST_REPORT.md)。测试环境、代码和安装包的版本应分别核对。
+- X 的公开主页、单帖、搜索和滚动读取已经实测可用。**列表读取可能漏掉屏幕外帖子，不保证全量无遗漏**；完整性要求较高时应取得帖子链接后逐帖核对。该问题暂缓处理，见[X 验收记录](docs/X_READ_ACCEPTANCE.md)。
+- 网站的登录、验证码和限流可能需要本人处理。图文采集范围为当前授权可见内容，不保证折叠、付费、分页或音视频全部归档。
+- 版本对应的安装与日常 Chrome 验收结果随 Release 提供；当前不承诺 Windows、Linux 桌面或服务器可直接安装使用。
 
-安装、升级、回退、Docker隔离和故障处理见 [运行手册](docs/OPERATIONS.md)。受限入口只有实际隔离报告全部通过才开放；单个执行端只有新启动对应的完整实测证明通过，才能授权产品。
+## 文档与反馈
+
+- [用户指南](docs/USER_GUIDE.md)：采集、成果下载、人工接手和常见问题。
+- [研发指南](docs/DEVELOPMENT.md)：源码构建、架构、SDK 打包和回归。
+- [接口文档](docs/API.md)：HTTP、SDK、MCP 与 CLI。
+- [运行手册](docs/OPERATIONS.md)：安装、备份、恢复及隔离部署。
+- [验收状态](docs/ACCEPTANCE.md)：已通过项与剩余范围。
+
+反馈问题时附上版本、系统、复现步骤和脱敏错误信息。不要提交 Cookie、登录票据、API 密钥、浏览器 profile 或完整个人状态目录。历史测试报告的公开副本已按[证据说明](docs/evidence/README.md)处理本机路径；运行日志和原始账号数据不在仓库中。
+
+## 许可证、上游致谢与修改范围
+
+本项目自有代码采用 [MIT 许可证](LICENSE)，Copyright (c) 2026 Fuyera and laofu-browser contributors。第三方组件继续遵循各自许可证，详见 [NOTICE](NOTICE.md)。
+
+感谢 **花叔（alchaincyf）** 的 **huashu-chrome**。上游仓库：[https://github.com/alchaincyf/huashu-chrome](https://github.com/alchaincyf/huashu-chrome)。本项目基于其 **1.2.0** 浏览器工具、Chrome 扩展与桥接能力开发；保留原始快照、完整 [MIT 许可证](vendor/huashu-chrome-1.2.0/LICENSE)及署名 **Copyright (c) 2026 花叔 (alchaincyf)**。
+
+本项目的修改与新增范围：
+
+- 替换产品名称、图标和对外文案；保留必要的上游版权、来源及兼容标识。
+- 通过生成脚本适配扩展与桥接，包括实例配对、输出状态、下载处理和异常恢复；`vendor/` 原始快照保持不变。
+- 新增独立 HTTP 服务、持久任务、权限与身份隔离、图文产物、人工接手和网页控制台。
+- 新增 TypeScript／Python SDK、CLI／MCP 服务接入，以及安装、诊断、回归和交付验证。
+
+逐项行为差异见[兼容说明](docs/COMPATIBILITY.md)。

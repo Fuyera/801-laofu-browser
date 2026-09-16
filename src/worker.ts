@@ -29,10 +29,12 @@ export class Worker {
   private rejectHuman?: (e: any) => void;
   private viewers = new Map<string, net.Socket>();
   private heartbeat?: NodeJS.Timeout;
+  private retentionTimer?: NodeJS.Timeout;
   private stopping = false;
   private step = 0;
   private running = false;
   private uncertain = false;
+  private rateLimited?: Fault;
   private activeStarted = 0;
   private humanElapsed = 0;
   private reconnectTimer?: NodeJS.Timeout;
@@ -43,8 +45,29 @@ export class Worker {
   constructor(readonly config: WorkerConfig) {
     this.store = new Store(path.join(config.home, "journal"));
     this.browser = new BrowserAdapter(config);
+    this.browser.onRateLimit = (evidence) => {
+      if (!this.active) return;
+      this.rateLimited = new Fault(
+        "RATE_LIMITED",
+        "站点返回限流，已停止后续自动动作",
+        429,
+        false,
+        evidence,
+      );
+      this.send({
+        type: "rate_limited",
+        jobId: this.active.id,
+        fence: this.active.fence,
+        data: evidence,
+      });
+      this.rejectHuman?.(this.rateLimited);
+      void this.browser.control(this.active, true).catch(() => {});
+    };
   }
   async start() {
+    this.maintainRetention();
+    this.retentionTimer = setInterval(() => this.maintainRetention(), 60000);
+    this.retentionTimer.unref();
     await this.browser.start();
     await this.connect();
   }
@@ -216,6 +239,7 @@ export class Worker {
   private check(job: Job) {
     if (this.cancelled)
       throw new Fault("CANCELLED", "用户或连接状态已取消本次执行");
+    if (this.rateLimited) throw this.rateLimited;
     if (
       job.kind === "task" &&
       Date.now() - this.activeStarted - this.humanElapsed >
@@ -237,6 +261,11 @@ export class Worker {
       fence: job.fence,
     });
     if (!prior.fresh) {
+      if (prior.resultExpired)
+        throw new Fault(
+          "RESULT_EXPIRED",
+          "步骤结果已过期或未保留二进制，禁止重放；请查询服务端记录",
+        );
       if (prior.state === "confirmed") return prior.result;
       throw new Fault("EFFECT_UNKNOWN", "已有步骤未收到确认，禁止重复执行");
     }
@@ -256,6 +285,30 @@ export class Worker {
       this.store.journalFinish(key, result);
       received = true;
       const errorCode = result?._meta?.["laofu.error"]?.code;
+      const output = result?._meta?.["laofu.output"];
+      if (
+        tool === "act" &&
+        output?.completed === false &&
+        (output.effectUnknown || output.doneCount > 0)
+      ) {
+        output.effectUnknown = true;
+        this.uncertain = true;
+      }
+      if (errorCode === "RATE_LIMITED") {
+        const evidence = {
+          origin:
+            result._meta["laofu.error"].origin ||
+            (args.url && new URL(args.url).origin),
+          retryAfter: result._meta["laofu.error"].retryAfter || null,
+        };
+        if (evidence.origin)
+          this.send({
+            type: "rate_limited",
+            jobId: job.id,
+            fence: job.fence,
+            data: evidence,
+          });
+      }
       if (
         result?.isError &&
         ["TIMEOUT", "INTERNAL", "NO_EXTENSION"].includes(errorCode) &&
@@ -297,7 +350,19 @@ export class Worker {
   private async ask(job: Job, args: any) {
     let done = false,
       humanStart = 0;
-    const pending = this.browser.call("ask", args, job);
+    const budget = Math.max(
+      1,
+      (job.input.limits?.humanWaitSeconds || 600) * 1000 - this.humanElapsed,
+    );
+    const pending = this.browser.call(
+      "ask",
+      { ...args, timeout: Math.min(Number(args.timeout) || 300000, budget) },
+      job,
+    );
+    const interrupted = new Promise<never>((_, reject) => {
+      this.rejectHuman = reject;
+    });
+    void interrupted.catch(() => {});
     // Attach rejection handling immediately; lifecycle polling must not leave a rejected promise unobserved.
     void pending.then(
       () => {
@@ -332,10 +397,42 @@ export class Worker {
         }
         await new Promise((r) => setTimeout(r, 150));
       }
-      return await pending;
+      const result = await Promise.race([pending, interrupted]);
+      const outcome = (result as any)?._meta?.["laofu.output"]?.outcome;
+      if (["continued", "completed"].includes(outcome)) {
+        this.check(job);
+        await this.browser.control(job, false);
+        this.send({
+          type: "handoff_completed",
+          jobId: job.id,
+          fence: job.fence,
+          data: { outcome },
+        });
+      }
+      return result;
+    } catch (e) {
+      await this.browser.handoff(job, "cancelled").catch(() => {});
+      let timer: NodeJS.Timeout | undefined;
+      try {
+        await Promise.race([
+          pending,
+          new Promise((_, reject) => {
+            timer = setTimeout(
+              () => reject(Error("handoff stop unconfirmed")),
+              3000,
+            );
+          }),
+        ]);
+      } catch {
+        this.uncertain = true;
+      } finally {
+        clearTimeout(timer);
+      }
+      throw e;
     } finally {
       if (humanStart) this.humanElapsed += Date.now() - humanStart;
       this.resolveHuman = undefined;
+      this.rejectHuman = undefined;
       for (const tcp of this.viewers.values()) tcp.destroy();
       this.viewers.clear();
     }
@@ -438,11 +535,13 @@ export class Worker {
     this.cancelled = false;
     this.step = 0;
     this.uncertain = false;
+    this.rateLimited = undefined;
     this.activeStarted = Date.now();
     this.humanElapsed = 0;
+    this.store.pruneJournalPayloads();
+    this.cleanRetainedFiles();
     let commandError: any = null;
     let stopped = true;
-    const dir = mkdir(path.join(this.config.home, "jobs", job.id));
     const prior = this.store.journalStart(job.id, {
       jobId: job.id,
       attempt: job.attempt,
@@ -451,7 +550,7 @@ export class Worker {
     });
     if (!prior.fresh) {
       const result =
-        prior.state === "confirmed"
+        prior.state === "confirmed" && !prior.resultExpired
           ? prior.result
           : {
               type: "result",
@@ -471,7 +570,16 @@ export class Worker {
       this.active = undefined;
       return;
     }
+    const dir = mkdir(path.join(this.config.home, "jobs", job.id));
     try {
+      if (
+        job.type === "browser.flow@v1" &&
+        job.input.steps?.some((s: any) => s.tool === "reload")
+      )
+        throw new Fault(
+          "CAPABILITY_UNAVAILABLE",
+          "reload 只能作为独立维护命令执行",
+        );
       await this.browser.control(job);
       let result: any,
         state = "succeeded";
@@ -500,6 +608,13 @@ export class Worker {
           throw e;
         }
         const artifacts = [];
+        privateFile(
+          path.join(this.config.home, "source-metadata", job.id + ".json"),
+          JSON.stringify({
+            expiresAt: Date.now() + 7 * 86400_000,
+            ...article.sourceMetadata,
+          }),
+        );
         for (const f of article.files) {
           this.check(job);
           artifacts.push(
@@ -520,8 +635,26 @@ export class Worker {
         for (const step of job.input.steps) {
           const out = await this.run(job, step.tool, step.args || {});
           steps.push(out);
-          if (out.isError) {
+          const output = out._meta?.["laofu.output"];
+          if (
+            out.isError ||
+            output?.completed === false ||
+            output?.truncated ||
+            ["cancelled", "timed_out", "disabled"].includes(output?.outcome)
+          ) {
             state = "partial";
+            if (output?.outcome === "cancelled") state = "cancelled";
+            if (["timed_out", "disabled"].includes(output?.outcome)) {
+              state = "failed";
+              commandError = {
+                code:
+                  output.outcome === "timed_out"
+                    ? "HUMAN_TIMEOUT"
+                    : "CAPABILITY_UNAVAILABLE",
+                message: "人工等待未完成，已停止后续步骤",
+                retryable: false,
+              };
+            }
             break;
           }
         }
@@ -553,6 +686,39 @@ export class Worker {
         const args = await this.inputFiles(job, dir);
         const output = await this.run(job, job.type, args);
         const artifacts = [];
+        const outputFile = output._meta?.["laofu.output"]?.outputFile;
+        if (outputFile) {
+          if (
+            path.dirname(path.resolve(outputFile)) !== path.resolve(dir) ||
+            !fs.lstatSync(outputFile).isFile()
+          )
+            throw new Fault(
+              "ARTIFACT_INCOMPLETE",
+              "输出文件不属于当前任务目录",
+            );
+          args.savePath = outputFile;
+          delete output._meta["laofu.output"].outputFile;
+        }
+        for (const [index, content] of (output.content || []).entries()) {
+          if (
+            content.type === "image" &&
+            content.data &&
+            content.data.length > 256 * 1024
+          ) {
+            const mime = content.mimeType || "image/png";
+            const name = `screenshot-${index + 1}.${mime === "image/jpeg" ? "jpeg" : "png"}`;
+            const file = path.join(dir, name);
+            fs.writeFileSync(file, Buffer.from(content.data, "base64"), {
+              mode: 0o600,
+            });
+            const artifact = await this.upload(job, file, name, mime);
+            artifacts.push(artifact);
+            output.content[index] = {
+              type: "text",
+              text: `截图已保存为 artifact:${artifact.id}（${artifact.bytes} bytes）`,
+            };
+          }
+        }
         if (args.savePath && fs.existsSync(args.savePath)) {
           const header = Buffer.alloc(16),
             fd = fs.openSync(args.savePath, "r");
@@ -600,6 +766,12 @@ export class Worker {
               output.content?.find((x: any) => x.text)?.text ||
                 "浏览器工具返回失败",
             ).slice(0, 1000),
+            messageTruncated:
+              String(output.content?.find((x: any) => x.text)?.text || "")
+                .length > 1000,
+            originalMessageLength: String(
+              output.content?.find((x: any) => x.text)?.text || "",
+            ).length,
             retryable: false,
           };
         } else if (output._meta?.["laofu.output"]?.completed === false)
@@ -661,7 +833,8 @@ export class Worker {
           job.type === "wait" &&
           result?._meta?.["laofu.error"]?.browserAcknowledged
             ? "not_started"
-            : state === "failed" ||
+            : this.uncertain ||
+                state === "failed" ||
                 result?._meta?.["laofu.output"]?.effectUnknown
               ? "unknown"
               : "confirmed",
@@ -671,7 +844,6 @@ export class Worker {
       };
       this.store.journalFinish(job.id, response);
       this.send(response);
-      fs.rmSync(dir, { recursive: true, force: true });
     } catch (e) {
       stopped = !this.uncertain;
       this.browser.diagnostic("job_failed", {
@@ -694,11 +866,43 @@ export class Worker {
       this.store.journalUnknown(job.id, response);
       this.send(response);
     } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
       this.running = false;
       this.active = undefined;
       this.resolveHuman = undefined;
       this.rejectHuman = undefined;
     }
+  }
+  private maintainRetention() {
+    try {
+      this.store.pruneJournalPayloads();
+      this.cleanRetainedFiles();
+    } catch (error) {
+      this.browser.diagnostic("retention_failed", { error: String(error) });
+    }
+  }
+  private cleanRetainedFiles(now = Date.now()) {
+    const sources = path.join(this.config.home, "source-metadata");
+    if (fs.existsSync(sources))
+      for (const name of fs.readdirSync(sources)) {
+        if (!/^[a-zA-Z0-9_-]+\.json$/.test(name)) continue;
+        const file = path.join(sources, name);
+        if (!fs.lstatSync(file).isFile()) continue;
+        try {
+          if (JSON.parse(fs.readFileSync(file, "utf8")).expiresAt < now)
+            fs.rmSync(file);
+        } catch {}
+      }
+    const jobs = path.join(this.config.home, "jobs");
+    if (fs.existsSync(jobs))
+      for (const name of fs.readdirSync(jobs)) {
+        if (!/^(tsk|cmd)_[a-f0-9]{32}$/.test(name) || name === this.active?.id)
+          continue;
+        const dir = path.join(jobs, name),
+          stat = fs.lstatSync(dir);
+        if (stat.isDirectory() && stat.mtimeMs < now - 86400_000)
+          fs.rmSync(dir, { recursive: true, force: true });
+      }
   }
   async stop() {
     if (this.stopping) return;
@@ -707,6 +911,7 @@ export class Worker {
     this.cancelled = true;
     this.rejectHuman?.(new Fault("WORKER_STOPPED", "执行端已停止"));
     clearInterval(this.heartbeat);
+    clearInterval(this.retentionTimer);
     this.socket?.close();
     for (const s of this.viewers.values()) s.destroy();
     await this.browser.stop();

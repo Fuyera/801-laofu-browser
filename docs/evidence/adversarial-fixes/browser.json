@@ -1,0 +1,234 @@
+{
+  "at": "2026-09-15T14:42:55.439Z",
+  "home": "<repo>/workspace/adversarial-fixes-browser-fDp8cf",
+  "kind": "real isolated Chromium + current generated extension/MCP + current source; local synthetic fixtures",
+  "checks": [
+    {
+      "id": "AT-P1-01-act",
+      "status": "passed",
+      "observations": {
+        "state": "partial",
+        "effectState": "unknown",
+        "stopped": false,
+        "localEffects": 1
+      }
+    },
+    {
+      "id": "AT-P1-02-login-wall",
+      "status": "passed",
+      "observations": {
+        "waiting": {
+          "reason": "login_required",
+          "code": "AUTH_REQUIRED",
+          "title": "Member access",
+          "url": "http://127.0.0.1:62347/wall",
+          "tabId": 1325409439,
+          "requiredAction": "请在浏览器完成验证或登录；完成后再继续"
+        },
+        "delivered": false
+      }
+    },
+    {
+      "id": "AT-P1-02-loading",
+      "status": "passed",
+      "observations": {
+        "state": "succeeded",
+        "elapsedMs": 6978
+      }
+    },
+    {
+      "id": "AT-P1-03-lazy-image",
+      "status": "passed",
+      "observations": {
+        "state": "succeeded",
+        "width": 120,
+        "scrolls": 25,
+        "realImageFetches": 2
+      }
+    },
+    {
+      "id": "AT-P1-03-persistent-placeholder",
+      "status": "passed",
+      "observations": {
+        "state": "partial",
+        "images": [
+          {
+            "index": 1,
+            "source": "http://127.0.0.1:62347/tiny.png",
+            "alt": "",
+            "width": 1,
+            "height": 1,
+            "bytes": 91,
+            "sha256": "2fe8e6c2a228cc8932b1a02ef77d563dddc0618eb038ea3ea29338b35f37fdc6",
+            "error": "SUSPECTED_PLACEHOLDER",
+            "sourceRedacted": false,
+            "sourceReference": "image:1"
+          }
+        ]
+      }
+    },
+    {
+      "id": "AT-P2-04-fetch-truncation",
+      "status": "passed",
+      "observations": {
+        "state": "partial",
+        "meta": {
+          "laofu.output": {
+            "truncated": true,
+            "originalLength": 750,
+            "nextAction": "use_savePath_or_continue_pagination",
+            "nextPage": 4
+          }
+        }
+      }
+    },
+    {
+      "id": "AT-P2-07-flow-ask-continue",
+      "status": "passed",
+      "observations": {
+        "state": "succeeded",
+        "controlReturned": true
+      }
+    },
+    {
+      "id": "AT-P2-07-flow-ask-cancel",
+      "status": "passed",
+      "observations": {
+        "state": "cancelled",
+        "nextStepExecuted": false
+      }
+    },
+    {
+      "id": "AT-P2-10-media",
+      "status": "passed",
+      "observations": {
+        "state": "succeeded",
+        "items": [
+          {
+            "index": 1,
+            "type": "video",
+            "position": 1,
+            "status": "not_downloaded"
+          },
+          {
+            "index": 2,
+            "type": "audio",
+            "position": 2,
+            "status": "not_downloaded"
+          },
+          {
+            "index": 3,
+            "type": "iframe",
+            "position": 3,
+            "status": "not_downloaded"
+          }
+        ]
+      }
+    },
+    {
+      "id": "AT-P2-14-metadata-binding",
+      "status": "passed",
+      "observations": {
+        "state": "partial",
+        "title": "After revision",
+        "versionConsistent": false,
+        "artifactHashVerified": true
+      }
+    },
+    {
+      "id": "AT-P2-14-short-chunk",
+      "status": "passed",
+      "observations": {
+        "truncatedChunkRejected": true
+      }
+    },
+    {
+      "id": "AT-P2-18-screenshot-small-and-large",
+      "status": "passed",
+      "observations": {
+        "smallInline": true,
+        "largeArtifactBytes": 2118294,
+        "responseBytes": 805
+      }
+    },
+    {
+      "id": "AT-P2-16-source-redaction",
+      "status": "passed",
+      "observations": {
+        "originalRetainedSeparately": true,
+        "publicFilesRedacted": true
+      }
+    },
+    {
+      "id": "AT-P3-10-console-pagination",
+      "status": "passed",
+      "observations": {
+        "tasks": [
+          50,
+          5,
+          50
+        ],
+        "artifacts": [
+          50,
+          5,
+          50
+        ],
+        "totalEach": 55
+      }
+    },
+    {
+      "id": "AT-P2-15-incomplete-upload-hidden",
+      "status": "passed",
+      "observations": {
+        "state": "failed",
+        "visibleArtifacts": 0,
+        "downloadStatus": 409,
+        "stagingCleaned": true
+      }
+    },
+    {
+      "id": "AT-P3-08-human-budget",
+      "status": "passed",
+      "observations": {
+        "state": "failed",
+        "error": {
+          "code": "HUMAN_TIMEOUT",
+          "message": "人工等待未完成，已停止后续步骤",
+          "retryable": false
+        },
+        "elapsedMs": 4942
+      }
+    },
+    {
+      "id": "AT-P3-09-resource-429",
+      "status": "passed",
+      "observations": {
+        "origin": "http://127.0.0.1:62347",
+        "retryAfter": "120",
+        "observedAt": 1789483373117
+      }
+    },
+    {
+      "id": "AT-P3-17-offline",
+      "status": "passed",
+      "observations": {
+        "offlineImageWidth": 120
+      }
+    },
+    {
+      "id": "AT-P2-06-flow-reload-preflight",
+      "status": "passed",
+      "observations": {
+        "state": "failed",
+        "error": "CAPABILITY_UNAVAILABLE",
+        "effectState": "not_started"
+      }
+    }
+  ],
+  "publicRedaction": {
+    "at": "2026-09-15T23:29:11.534709+00:00",
+    "fields": "local filesystem prefixes and private environment identifiers only",
+    "originalSha256": "fa88bb0300fbdda98b90678e4e8ae2605d670b3097783c39d50dd54d00251359",
+    "originalRetainedLocally": true
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/article-console-RpPRuK",
+  "home": "<repo>/workspace/article-console-RpPRuK",
   "results": [
     {
       "case": "historical WeChat offline replay, 5325 source characters, 11 original image hashes, ordered DOM lines",
@@ -34,5 +34,11 @@
       "passed": true
     }
   ],
-  "imageRequests": 16
+  "imageRequests": 16,
+  "publicRedaction": {
+    "at": "2026-09-15T23:29:11.534709+00:00",
+    "fields": "local filesystem prefixes and private environment identifiers only",
+    "originalSha256": "8ba9bbab9fed99d2461603cbbe7bcd3296b32e6cc3dda71984463ea9e0e1e989",
+    "originalRetainedLocally": true
+  }
 }

@@ -4,6 +4,7 @@ import { spawnSync } from "node:child_process";
 const root = path.resolve(import.meta.dirname, ".."),
   out = path.join(root, "sdk/typescript");
 fs.mkdirSync(path.join(out, "dist"), { recursive: true });
+fs.copyFileSync(path.join(root, "LICENSE"), path.join(out, "LICENSE"));
 for (const name of ["client", "errors", "util", "types"])
   for (const ext of [".js", ".d.ts"])
     fs.copyFileSync(
@@ -22,13 +23,13 @@ fs.writeFileSync(
       exports: {
         ".": { types: "./dist/client.d.ts", import: "./dist/client.js" },
       },
-      files: ["dist"],
+      files: ["dist", "LICENSE"],
       engines: { node: ">=22" },
-      license: "UNLICENSED",
+      license: "MIT",
     },
     null,
     2,
-  ),
+  ) + "\n",
 );
 const releases = path.join(root, "releases");
 fs.mkdirSync(releases, { recursive: true });

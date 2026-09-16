@@ -1,6 +1,6 @@
 # 研发指南
 
-适用版本：`0.1.0-dev.2`。仓库：[Fuyera/801-laofu-browser](https://github.com/Fuyera/801-laofu-browser)，私有，主分支 `main`。当前交付与缺项以 [CURRENT_CONTEXT](../CURRENT_CONTEXT.md) 和 [验收报告](ACCEPTANCE.md) 为准；能构建不代表 P4/P5 已通过。
+适用版本：`0.1.0-dev.2`。仓库：[Fuyera/801-laofu-browser](https://github.com/Fuyera/801-laofu-browser)，主分支 `main`。当前交付与缺项以 [CURRENT_CONTEXT](../CURRENT_CONTEXT.md) 和 [验收报告](ACCEPTANCE.md) 为准；能构建不代表 P4/P5 已通过。
 
 ## 代码与契约入口
 
@@ -103,6 +103,8 @@ Python 离线打包需本机已具备 `setuptools>=68` 及 wheel。TS 生成 `re
 Docker 测试默认使用本地 `laofu-browser:0.1.0-dev.2` 镜像；构建入口为 `docker build -t laofu-browser:0.1.0-dev.2 -f deploy/docker/Dockerfile .`，需要安装系统依赖与浏览器的网络条件。`handoff-regression.mjs` 与 `isolated-smoke.mjs` 支持 `LAOFU_TEST_IMAGE` 指定单独的回归镜像；部署器使用 `--image`。报告必须保存实际 image ID、架构和对应代码版本，不能仅凭同名 tag 推断源码一致。Mac Docker 的 Linux arm64 结果不计为日本 Ubuntu x86_64 或 Windows 通过。
 
 ## 证据与收口
+
+自有代码与 SDK 采用根目录 MIT 许可证；修改许可证时同步 `sdk/typescript/LICENSE`、`sdk/python/LICENSE` 及包元信息。Mac 和 Docker 分发须保留根 `LICENSE`、`NOTICE.md` 及上游许可证。公开报告的脱敏与哈希规则见 [证据说明](evidence/README.md)。
 
 原始日志、任务 JSON、Cookie 和 profile 留在受控的 `workspace/`；提交的证据只包含经过检查的报告及控制台截图。固定报告在 `docs/evidence/`，哈希索引为 `index.json`，要求映射为 `docs/traceability.json`。`collect-evidence.mjs RUN_MANIFEST.json OUTPUT_DIRECTORY` 要求显式报告清单、来源、结果与范围，不自动更新需求状态；禁止引用旧现场冒充本轮。
 

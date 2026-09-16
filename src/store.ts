@@ -43,6 +43,15 @@ export class Store {
  CREATE TABLE IF NOT EXISTS notes(scope TEXT NOT NULL,domain TEXT NOT NULL,version INTEGER NOT NULL,body TEXT NOT NULL,PRIMARY KEY(scope,domain,version));
  `);
     this.db.pragma("user_version = 1");
+    // Legacy rows have no timestamp: begin their retention window at migration,
+    // while preserving execution keys and never replaying expired results.
+    this.db
+      .prepare(
+        `INSERT OR IGNORE INTO resources(kind,id,payload)
+      SELECT 'journal-retention',id,? FROM journal
+      WHERE state!='started' AND COALESCE(json_extract(payload,'$.journalPayloadUnavailable'),0)=0`,
+      )
+      .run(JSON.stringify({ savedAt: Date.now() }));
   }
   get<T = any>(kind: string, key: string): T | undefined {
     return parse(
@@ -182,18 +191,24 @@ export class Store {
     return record;
   }
   cooldown(request: { profileId: string; workerId: string; input?: any }) {
-    let origin: string | undefined;
-    try {
-      if (request.input?.url) origin = new URL(request.input.url).origin;
-    } catch {}
+    const origins = new Set<string>();
+    for (const url of [
+      request.input?.url,
+      request.input?.args?.url,
+      ...(request.input?.steps || []).map((s: any) => s.args?.url),
+    ]) {
+      try {
+        if (url) origins.add(new URL(url).origin);
+      } catch {}
+    }
     const egressId =
       this.get<any>("worker", request.workerId)?.egressId || "mac-local-exit";
     return this.list<any>("cooldown").find(
       (c) =>
         !c.releasedAt &&
         (c.until === null || c.until > Date.now()) &&
-        (origin
-          ? c.origin === origin &&
+        (origins.size
+          ? origins.has(c.origin) &&
             (c.egressId === egressId || c.profileId === request.profileId)
           : c.profileId === request.profileId),
     );
@@ -410,6 +425,7 @@ export class Store {
           fresh: false,
           state: row.state,
           result: JSON.parse(row.payload),
+          resultExpired: !!JSON.parse(row.payload)?.journalPayloadUnavailable,
         };
       }
       this.db
@@ -419,14 +435,166 @@ export class Store {
     })();
   }
   journalFinish(key: string, result: any) {
+    let binary = false;
+    const payload = JSON.stringify(result, function (key, value) {
+      if (
+        typeof value === "string" &&
+        (key === "base64" ||
+          (key === "data" && (this?.type === "image" || value.length > 65536)))
+      ) {
+        binary = true;
+        return {
+          omitted: true,
+          bytes: Buffer.byteLength(value || ""),
+          sha256: hash(value || ""),
+        };
+      }
+      return value;
+    });
     this.db
       .prepare("UPDATE journal SET state=?,payload=? WHERE id=?")
-      .run("confirmed", JSON.stringify(result), key);
+      .run(
+        "confirmed",
+        binary
+          ? JSON.stringify({
+              journalPayloadUnavailable: true,
+              reason: "binary_omitted",
+              evidence: JSON.parse(payload),
+            })
+          : payload,
+        key,
+      );
+    this.put("journal-retention", key, { savedAt: Date.now() });
   }
   journalUnknown(key: string, error: any) {
     this.db
       .prepare("UPDATE journal SET state=?,payload=? WHERE id=?")
       .run("unknown", JSON.stringify(error), key);
+    this.put("journal-retention", key, { savedAt: Date.now() });
+  }
+  pruneJournalPayloads(now = Date.now(), ttlMs = 7 * 86400_000) {
+    const rows = this.db
+      .prepare(
+        "SELECT id,payload FROM resources WHERE kind='journal-retention'",
+      )
+      .all() as any[];
+    this.db.transaction(() => {
+      for (const row of rows)
+        if (JSON.parse(row.payload).savedAt + ttlMs < now) {
+          this.db
+            .prepare("UPDATE journal SET payload=? WHERE id=?")
+            .run(
+              JSON.stringify({
+                journalPayloadUnavailable: true,
+                reason: "retention_expired",
+              }),
+              row.id,
+            );
+          this.db
+            .prepare(
+              "DELETE FROM resources WHERE kind='journal-retention' AND id=?",
+            )
+            .run(row.id);
+        }
+    })();
+  }
+  page(
+    p: Product,
+    kind: "jobs" | "artifacts",
+    options: {
+      limit?: number;
+      cursor?: string;
+      includeCommands?: boolean;
+    } = {},
+  ) {
+    const limit = options.limit ?? 50;
+    if (!Number.isInteger(limit) || limit < 1 || limit > 200)
+      throw new Fault("INVALID_ARGUMENT", "分页 limit 必须为 1–200");
+    const before = options.cursor
+      ? Buffer.from(options.cursor, "base64url").toString()
+      : "";
+    if (
+      options.cursor &&
+      (!/^\d+$/.test(before) || !Number.isSafeInteger(Number(before)))
+    )
+      throw new Fault("INVALID_ARGUMENT", "分页 cursor 无效");
+    const clauses = ["1=1"],
+      params: any[] = [];
+    if (p.role !== "owner") {
+      clauses.push("product_id=?");
+      params.push(p.id);
+    }
+    if (kind === "jobs" && !options.includeCommands)
+      clauses.push("kind='task'");
+    if (kind === "artifacts")
+      clauses.push(
+        "COALESCE(json_extract(payload,'$.metadata.publication'),'published')!='staged' AND json_extract(payload,'$.deleted')=0",
+      );
+    if (before) {
+      clauses.push("rowid<?");
+      params.push(Number(before));
+    }
+    const rows = this.db
+      .prepare(
+        `SELECT rowid AS position,payload FROM ${kind} WHERE ${clauses.join(" AND ")} ORDER BY rowid DESC LIMIT ?`,
+      )
+      .all(...params, limit + 1) as any[];
+    const more = rows.length > limit,
+      selected = rows.slice(0, limit);
+    return {
+      items: selected.map(parse),
+      truncated: more,
+      nextCursor: more
+        ? Buffer.from(String(selected.at(-1).position)).toString("base64url")
+        : null,
+    };
+  }
+  finishJob(key: string, state: State, patch: Partial<Job>) {
+    return this.db.transaction(() => {
+      const job = this.job(key)!;
+      if (
+        job.type === "article.capture@v1" &&
+        ["succeeded", "partial"].includes(state)
+      ) {
+        const references = patch.result?.artifacts;
+        const files = this.artifacts().filter(
+          (a) => a.jobId === key && !a.deleted,
+        );
+        if (
+          !patch.result?.manifest ||
+          !Array.isArray(references) ||
+          references.length !== files.length ||
+          new Set(references.map((r: any) => r.id)).size !== files.length ||
+          ![
+            "article.md",
+            "article.html",
+            "manifest.json",
+            "article-with-images.zip",
+          ].every((name) => files.some((a) => a.filename === name)) ||
+          references.some(
+            (r: any) =>
+              !files.some(
+                (a) =>
+                  a.id === r.id &&
+                  a.sha256 === r.sha256 &&
+                  a.productId === job.productId,
+              ),
+          )
+        )
+          throw new Fault(
+            "ARTIFACT_INCOMPLETE",
+            "图文包引用不完整，未发布",
+            409,
+          );
+        for (const a of files) {
+          a.metadata = { ...a.metadata, publication: "published" };
+          this.db
+            .prepare("UPDATE artifacts SET payload=? WHERE id=?")
+            .run(JSON.stringify(a), a.id);
+        }
+      }
+      return this.transition(key, state, patch);
+    })();
   }
   saveArtifact(a: Artifact) {
     this.db

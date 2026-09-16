@@ -1,5 +1,5 @@
 {
-  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/faults-Iomn7Q",
+  "home": "<repo>/workspace/faults-Iomn7Q",
   "results": [
     {
       "case": "service killed after external effect before acknowledgment; original id replay does not resend",
@@ -26,5 +26,11 @@
     1789437919233,
     1789437935145,
     1789437937846
-  ]
+  ],
+  "publicRedaction": {
+    "at": "2026-09-15T23:29:11.534709+00:00",
+    "fields": "local filesystem prefixes and private environment identifiers only",
+    "originalSha256": "265d4f7b8b253c238e47d024a54fa21c85e9a2126ba39b096704ac6df7c530ef",
+    "originalRetainedLocally": true
+  }
 }

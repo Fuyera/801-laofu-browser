@@ -1,5 +1,5 @@
 {
-  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/install-LBOn3J",
+  "home": "<repo>/workspace/install-LBOn3J",
   "environment": {
     "platform": "darwin",
     "arch": "arm64",
@@ -52,5 +52,11 @@
     }
   ],
   "jobId": "tsk_2b40c2175d8c4da1aaa0992b4a07efe8",
-  "versionFixtures": "同一固定程序的两个合成发行标识，以及故意启动失败的测试程序；未声称已有历史正式版本"
+  "versionFixtures": "同一固定程序的两个合成发行标识，以及故意启动失败的测试程序；未声称已有历史正式版本",
+  "publicRedaction": {
+    "at": "2026-09-15T23:29:11.534709+00:00",
+    "fields": "local filesystem prefixes and private environment identifiers only",
+    "originalSha256": "5d01eb1226103939798953dac393793c55f9d309c84f031d0b36df1071139c4f",
+    "originalRetainedLocally": true
+  }
 }

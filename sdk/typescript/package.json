@@ -1,6 +1,6 @@
 {
   "name": "@laofu/browser",
-  "version": "0.1.0-dev.2",
+  "version": "0.1.0-dev.3",
   "type": "module",
   "description": "TypeScript client for laofu-browser",
   "exports": {
@@ -10,10 +10,11 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "LICENSE"
   ],
   "engines": {
     "node": ">=22"
   },
-  "license": "UNLICENSED"
+  "license": "MIT"
 }

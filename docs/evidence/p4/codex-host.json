@@ -1,5 +1,5 @@
 {
-  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/codex-host-tM2ySV",
+  "home": "<repo>/workspace/codex-host-tM2ySV",
   "host": "/Applications/ChatGPT.app/Contents/Resources/codex",
   "scope": "Actual Codex app-server, generated scoped config, ephemeral protocol context, no model turn or persistent user configuration change",
   "checks": [
@@ -15,5 +15,11 @@
       "name": "uninstall removes generated host entry and preserves surrounding configuration",
       "status": "passed"
     }
-  ]
+  ],
+  "publicRedaction": {
+    "at": "2026-09-15T23:29:11.534709+00:00",
+    "fields": "local filesystem prefixes and private environment identifiers only",
+    "originalSha256": "914bf0dbea4a5437e8789caad68daed6ca88c89c56e0fbbbd4f4e290420f0755",
+    "originalRetainedLocally": true
+  }
 }

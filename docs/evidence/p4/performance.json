@@ -1,5 +1,5 @@
 {
-  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/performance-hFgJ7i",
+  "home": "<repo>/workspace/performance-hFgJ7i",
   "environment": {
     "platform": "darwin",
     "arch": "arm64",
@@ -57,5 +57,11 @@
   "peakProcessTreeRssBytes": {
     "min": 1818312704,
     "max": 1840267264
+  },
+  "publicRedaction": {
+    "at": "2026-09-15T23:29:11.534709+00:00",
+    "fields": "local filesystem prefixes and private environment identifiers only",
+    "originalSha256": "b4e74693999b68e5b7526045c2e87cf81c2a590ce065f2ad3493f2e858c5ea9a",
+    "originalRetainedLocally": true
   }
 }

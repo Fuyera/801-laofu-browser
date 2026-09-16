@@ -1,5 +1,5 @@
 {
-  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/performance-H4sCDE",
+  "home": "<repo>/workspace/performance-H4sCDE",
   "environment": {
     "platform": "darwin",
     "arch": "arm64",
@@ -57,5 +57,11 @@
   "peakProcessTreeRssBytes": {
     "min": 2613952512,
     "max": 2947825664
+  },
+  "publicRedaction": {
+    "at": "2026-09-15T23:29:11.534709+00:00",
+    "fields": "local filesystem prefixes and private environment identifiers only",
+    "originalSha256": "81ce300177067ea7cdf5a4ae101784c4ea6586732a8b8643d553ac8bcf8276ce",
+    "originalRetainedLocally": true
   }
 }

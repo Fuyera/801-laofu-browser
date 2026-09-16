@@ -1,5 +1,5 @@
 {
-  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/full-regression-e00XRn",
+  "home": "<repo>/workspace/full-regression-e00XRn",
   "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
   "sourceDirty": true,
   "active": null,
@@ -264,7 +264,7 @@
         "dist/cli.js",
         "init",
         "--home",
-        "/Users/laofu/Projects/801-laofu-browser/workspace/full-regression-e00XRn/performance-state",
+        "<repo>/workspace/full-regression-e00XRn/performance-state",
         "--url",
         "http://127.0.0.1:17989"
       ],
@@ -283,7 +283,7 @@
         "--browser",
         "--headless",
         "--home",
-        "/Users/laofu/Projects/801-laofu-browser/workspace/full-regression-e00XRn/performance-state"
+        "<repo>/workspace/full-regression-e00XRn/performance-state"
       ],
       "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
       "startedAt": "2026-09-15T02:11:03.746Z",
@@ -312,7 +312,7 @@
         "scripts/local.mjs",
         "stop",
         "--home",
-        "/Users/laofu/Projects/801-laofu-browser/workspace/full-regression-e00XRn/performance-state"
+        "<repo>/workspace/full-regression-e00XRn/performance-state"
       ],
       "sourceCommit": "2b2fdad6df4a712cd33f594fd1c9399587199e14",
       "startedAt": "2026-09-15T02:11:11.452Z",
@@ -321,5 +321,11 @@
       "status": "passed",
       "reports": []
     }
-  ]
+  ],
+  "publicRedaction": {
+    "at": "2026-09-15T23:29:11.534709+00:00",
+    "fields": "local filesystem prefixes and private environment identifiers only",
+    "originalSha256": "632498ffb03fe2e79aa5f585cbd627c3d105f12523266670e7e20e7966439bf9",
+    "originalRetainedLocally": true
+  }
 }

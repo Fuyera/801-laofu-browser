@@ -1,0 +1,80 @@
+{
+  "collectedAt": "2026-09-15T14:48:17.324Z",
+  "sourceCommit": "592b5c97530c3c716909fb3cda66bf6f5dceece7",
+  "reports": [
+    {
+      "name": "summary",
+      "source": "workspace/adversarial-fixes-summary.json",
+      "status": "passed",
+      "scope": "Initial matrix plus explicitly scoped reruns and final source hashes",
+      "file": "summary.json",
+      "sha256": "eb3a36a0451090253c7f368a7cb27f3cc26479c835bb00c656725d42a1ae73d4"
+    },
+    {
+      "name": "full-initial",
+      "source": "workspace/full-regression-yAmF0R/report.json",
+      "status": "partial",
+      "scope": "Original 22/24 matrix; environment failures retained",
+      "file": "full-initial.json",
+      "sha256": "5c7e4d49e1b172e7895e90e6635cfc0a7c51d3268b04ebf781f74074dda7a224",
+      "originalSha256": "e3469bd7bf5f5b17c304d4f2b24c6bf3760457a0cd60a1b68f3c8907371047b9"
+    },
+    {
+      "name": "browser",
+      "source": "workspace/adversarial-fixes-browser-fDp8cf/report.json",
+      "status": "passed",
+      "scope": "19 isolated browser scenarios on final source",
+      "file": "browser.json",
+      "sha256": "77b3b7abb19702356eeb83a707c911ca1ec4d6e4a36addc0877ceac30642909a",
+      "originalSha256": "fa88bb0300fbdda98b90678e4e8ae2605d670b3097783c39d50dd54d00251359"
+    },
+    {
+      "name": "sdk-rerun",
+      "source": "workspace/sdk-mUR09H/report.json",
+      "status": "passed",
+      "scope": "Python 3.11.15; external installed TS and Python SDK",
+      "file": "sdk-rerun.json",
+      "sha256": "88183e5c28e785fcdae5b7934b9aabd524fe43c6483f01d798ea627254a5919a",
+      "originalSha256": "d52d861c0e74db6cf3469c6f0de02e4cadbec306870b249b4208cf974e8de413"
+    },
+    {
+      "name": "isolated-final",
+      "source": "workspace/p4-isolated-MYiA0d/report.json",
+      "status": "passed",
+      "scope": "Final image; two identities, public DNS, sandbox and noVNC",
+      "file": "isolated-final.json",
+      "sha256": "7f6e337851101f50dedd0dfdb9368edc85c76f212001b1c30f666e37df1c34ef",
+      "originalSha256": "f1360b0cedbbf5fe15a7b660634abeb6360cd912909dcdb58822202d4099941c"
+    },
+    {
+      "name": "handoff-final",
+      "source": "workspace/handoff-O83Y5Z/report.json",
+      "status": "passed",
+      "scope": "Final readiness guard; live handoff and ask",
+      "file": "handoff-final.json",
+      "sha256": "fdf32afdce891068973fa3761612d8531a09629bebaf7d627d7eaf41203a28d5",
+      "originalSha256": "26d4f96e12acb17f4cf85cb8c077f113be91e807baf5b260182a46b7d9e0b926"
+    },
+    {
+      "name": "parity",
+      "source": "workspace/parity-ySCiTW/report.json",
+      "status": "passed",
+      "scope": "43 representative upstream parity scenarios",
+      "file": "parity.json",
+      "sha256": "bf8e20fa535e41c2f82dbdf36e0b22af6284567c50be56295c3f6acb7fa01e8a",
+      "originalSha256": "666126d52983c362527c00ae162354e75e7b4074ee2cb06e1f74eb84391cef4b"
+    },
+    {
+      "name": "docker-final",
+      "source": "workspace/adversarial-fixes-docker.json",
+      "status": "passed",
+      "scope": "Final source and image: default bridge cannot connect to either gateway port via either interface; private network retains public access",
+      "file": "docker-final.json",
+      "sha256": "e25b9cc8ea666aa0712067962ef0b8ced0eaf6977b85b79e16cfb78ecc240d3c"
+    }
+  ],
+  "publicRedaction": {
+    "at": "2026-09-15T23:29:11.534709+00:00",
+    "note": "sha256 indexes the public report; originalSha256 retains the pre-redaction reference."
+  }
+}

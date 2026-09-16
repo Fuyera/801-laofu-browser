@@ -41,6 +41,11 @@ export class BrowserAdapter {
   readonly port: number;
   readonly pairing: string;
   browserVersion = "unknown";
+  onRateLimit?: (evidence: {
+    origin: string;
+    retryAfter: string | null;
+    observedAt: number;
+  }) => void;
   private rateResponses = new Map<
     string,
     { origin: string; retryAfter: string | null; observedAt: number }
@@ -157,17 +162,14 @@ export class BrowserAdapter {
         (await this.context.pages()[0]?.evaluate(() => navigator.userAgent)) ||
         "unknown";
       this.context.on("response", (response) => {
-        if (
-          response.status() !== 429 ||
-          !response.request().isNavigationRequest()
-        )
-          return;
+        if (response.status() !== 429) return;
         const origin = new URL(response.url()).origin;
         this.rateResponses.set(origin, {
           origin,
           retryAfter: response.headers()["retry-after"] || null,
           observedAt: Date.now(),
         });
+        this.onRateLimit?.(this.rateResponses.get(origin)!);
       });
       const setup = await this.context.newPage();
       try {
@@ -281,6 +283,7 @@ export class BrowserAdapter {
       __lb: {
         jobId: job.id,
         fence: job.fence,
+        outputDir: path.join(this.config.home, "jobs", job.id),
         maxBytes:
           job.kind === "task"
             ? job.input.limits?.maxBytes || 52428800

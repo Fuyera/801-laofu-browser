@@ -1,5 +1,5 @@
 {
-  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/p4-isolated-4a55Pp",
+  "home": "<repo>/workspace/p4-isolated-4a55Pp",
   "image": "laofu-browser:0.1.0-dev.2-p4-580a6cf",
   "publicDns": "8.8.8.8,8.8.4.4",
   "checks": [
@@ -67,5 +67,11 @@
       "name": "account mismatch publishes no content; identity revocation cancels its task and invalidates old ticket without revoking peer",
       "status": "passed"
     }
-  ]
+  ],
+  "publicRedaction": {
+    "at": "2026-09-15T23:29:11.534709+00:00",
+    "fields": "local filesystem prefixes and private environment identifiers only",
+    "originalSha256": "b85829b4047be2b5bf8880e51b2d45cb066fdcc444bbbb6ef5c05db5b0adb1c9",
+    "originalRetainedLocally": true
+  }
 }

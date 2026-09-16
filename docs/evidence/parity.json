@@ -1,5 +1,5 @@
 {
-  "home": "/Users/laofu/Projects/801-laofu-browser/workspace/parity-JO1JIc",
+  "home": "<repo>/workspace/parity-JO1JIc",
   "environment": {
     "platform": "darwin",
     "arch": "arm64",
@@ -164,5 +164,11 @@
       "status": "passed",
       "difference": null
     }
-  ]
+  ],
+  "publicRedaction": {
+    "at": "2026-09-15T23:29:11.534709+00:00",
+    "fields": "local filesystem prefixes and private environment identifiers only",
+    "originalSha256": "3e4428b67ae97a00e0ab6481bdc797aaf7376e7fdf2700b3e4a525b59ac74e6f",
+    "originalRetainedLocally": true
+  }
 }

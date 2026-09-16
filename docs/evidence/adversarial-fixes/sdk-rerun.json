@@ -1,0 +1,30 @@
+{
+  "home": "<repo>/workspace/sdk-mUR09H",
+  "external": "<tmp>/laofu-consumers-w2sr1G",
+  "results": [
+    {
+      "sdk": "typescript",
+      "capture": "tsk_e676a46cf24f495eb00112684b59bbbf",
+      "resumed": "tsk_73b995a67c484ba894090303a4ca0c19",
+      "cancelled": "tsk_280874573fec49e5a2e33fe6b743828d",
+      "upload": "art_e333e11cf22543f2b96f7006fbddbd84",
+      "state": "succeeded"
+    },
+    {
+      "sdk": "python",
+      "capture": "tsk_e2dee457bb744d2fa372c1cac65de174",
+      "resumed": "tsk_24884064193542bcb18085fbb4c5f697",
+      "cancelled": "tsk_cd38ae2d86b5436d8d1c9f5d0b3da24e",
+      "upload": "art_51a82d050a0a4872abc84813095c8c0e",
+      "state": "succeeded"
+    }
+  ],
+  "scope": "两个独立安装的 SDK 程序通过所有者入口访问真实服务；不作为受限产品隔离或业务产品接入证据",
+  "cliMcpSameTask": true,
+  "publicRedaction": {
+    "at": "2026-09-15T23:29:11.534709+00:00",
+    "fields": "local filesystem prefixes and private environment identifiers only",
+    "originalSha256": "d52d861c0e74db6cf3469c6f0de02e4cadbec306870b249b4208cf974e8de413",
+    "originalRetainedLocally": true
+  }
+}

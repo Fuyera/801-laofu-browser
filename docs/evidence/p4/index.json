@@ -8,7 +8,8 @@
       "scope": "22/22 sequential checks; parity in this matrix was 40 cases",
       "status": "passed",
       "file": "full.json",
-      "sha256": "632498ffb03fe2e79aa5f585cbd627c3d105f12523266670e7e20e7966439bf9"
+      "sha256": "0a0693249bade2ce7d6980b7100eb87aab62b0e332603c2b6ef420f03d679bb8",
+      "originalSha256": "632498ffb03fe2e79aa5f585cbd627c3d105f12523266670e7e20e7966439bf9"
     },
     {
       "name": "unit",
@@ -32,7 +33,8 @@
       "scope": "8 groups with two real containers, public sites, packaged SDKs, and explicitly synthetic account fixtures",
       "status": "passed",
       "file": "isolated.json",
-      "sha256": "8b95f677b1c3a6dc89ec3a3092877d4c26989b4e3320e469cb0655d9f64cf0ab"
+      "sha256": "e0979695a8f29f314c6ec169dab6d338acf6704025f6ff2a31c3bab63fe6702c",
+      "originalSha256": "8b95f677b1c3a6dc89ec3a3092877d4c26989b4e3320e469cb0655d9f64cf0ab"
     },
     {
       "name": "runtime",
@@ -40,7 +42,8 @@
       "scope": "7 groups including doctor, 30 captures, SSE reconnect/revocation, download deletion and real Retry-After restart",
       "status": "passed",
       "file": "runtime.json",
-      "sha256": "848d8b94381c8e99505f8a1ab84f6c754cea8c4b00088ff04b6eed7d48a8b4ed"
+      "sha256": "0df66331bcd1bdf158e8b85ded177abfdf8f6e944dab304cef64e7fc3d149b42",
+      "originalSha256": "848d8b94381c8e99505f8a1ab84f6c754cea8c4b00088ff04b6eed7d48a8b4ed"
     },
     {
       "name": "parity",
@@ -48,7 +51,8 @@
       "scope": "43 original/adapter cases; targeted rerun after adding 3 CSP cases",
       "status": "passed",
       "file": "parity.json",
-      "sha256": "55b5836538c4cc56b0835b198e0b5ee2136e13d6138ec7bb38e3aa2b2b7fb9ac"
+      "sha256": "0843d5080f0ca61c34cff3d2c1c8b2b3535557576b7541a80686c17cb12256ea",
+      "originalSha256": "55b5836538c4cc56b0835b198e0b5ee2136e13d6138ec7bb38e3aa2b2b7fb9ac"
     },
     {
       "name": "compatibility-edge",
@@ -56,7 +60,8 @@
       "scope": "6 real Chromium groups; synthetic pages, concurrent debugger extension and explicit disabled L2",
       "status": "passed",
       "file": "compatibility-edge.json",
-      "sha256": "ff0494597688b913b5e8b4443af093567d749d0f07a4e9fc39ed32d19ce82227"
+      "sha256": "5e47451bb5f15d205e5ed17fe46e3d3f7123c8cb4abd561077d91a4740403441",
+      "originalSha256": "ff0494597688b913b5e8b4443af093567d749d0f07a4e9fc39ed32d19ce82227"
     },
     {
       "name": "article",
@@ -64,7 +69,8 @@
       "scope": "7 synthetic article and console groups; no fresh WeChat capture",
       "status": "passed",
       "file": "article.json",
-      "sha256": "807a548fe2f783ce7da0d3726740289b13a8c44624791bf314c100cac5a14686"
+      "sha256": "96ea8d8b7b16fff7f517e429b284af5c0771d5cf33563a13c6f267d631e1646f",
+      "originalSha256": "807a548fe2f783ce7da0d3726740289b13a8c44624791bf314c100cac5a14686"
     },
     {
       "name": "install",
@@ -72,7 +78,8 @@
       "scope": "11 candidate installation groups including legal same-ID conflict and synthetic version recovery",
       "status": "passed",
       "file": "install.json",
-      "sha256": "57e2e1244a173ef65ba0cd40e906d9ba42474a2a55ee9fd87d735e4db2a793ad"
+      "sha256": "e68263519b916d6972701b6cfe0f0e502696de2125e389a1eeb02d6b618a04db",
+      "originalSha256": "57e2e1244a173ef65ba0cd40e906d9ba42474a2a55ee9fd87d735e4db2a793ad"
     },
     {
       "name": "sdk",
@@ -80,7 +87,8 @@
       "scope": "Installed TS/Python SDKs against actual browser service",
       "status": "passed",
       "file": "sdk.json",
-      "sha256": "8285005cae9c4968a3d7f74f339e535d49ddcc51de434c4ab8407d1c098cfc0c"
+      "sha256": "d3444b2ee48795c47601c88bb0cb89bb95d44aaa7efd1b44083b2fe534f293a6",
+      "originalSha256": "8285005cae9c4968a3d7f74f339e535d49ddcc51de434c4ab8407d1c098cfc0c"
     },
     {
       "name": "codex-host",
@@ -88,7 +96,8 @@
       "scope": "3 actual installed Codex app-server groups, scoped config, ephemeral protocol, no model turn",
       "status": "passed",
       "file": "codex-host.json",
-      "sha256": "914bf0dbea4a5437e8789caad68daed6ca88c89c56e0fbbbd4f4e290420f0755"
+      "sha256": "915218e98ba9789e563d58fcf7fc66f80db04da40e7b8885ddc96152b36e239f",
+      "originalSha256": "914bf0dbea4a5437e8789caad68daed6ca88c89c56e0fbbbd4f4e290420f0755"
     },
     {
       "name": "handoff",
@@ -96,7 +105,8 @@
       "scope": "2 actual noVNC groups",
       "status": "passed",
       "file": "handoff.json",
-      "sha256": "71fc036397934f6ec0af1fe016a521ee7a5d89d1314a6aa3595150a6631b2fbf"
+      "sha256": "f8c98827b4e17a4d57c91c055061d1bed6415f4f951032cae90dfac47034e32d",
+      "originalSha256": "71fc036397934f6ec0af1fe016a521ee7a5d89d1314a6aa3595150a6631b2fbf"
     },
     {
       "name": "downloads",
@@ -104,7 +114,8 @@
       "scope": "2 actual interrupted-download groups",
       "status": "passed",
       "file": "downloads.json",
-      "sha256": "fcff3dbbe7fbbd4802f70816c4dea6d9353b0287f960c0d410dc5aad279c1689"
+      "sha256": "4451b2e01bcd9b47205127b5f5defb689a85c12d2845196283e33748f8cd8429",
+      "originalSha256": "fcff3dbbe7fbbd4802f70816c4dea6d9353b0287f960c0d410dc5aad279c1689"
     },
     {
       "name": "faults",
@@ -112,7 +123,8 @@
       "scope": "4 interrupted-command groups; no unknown write replay",
       "status": "passed",
       "file": "faults.json",
-      "sha256": "265d4f7b8b253c238e47d024a54fa21c85e9a2126ba39b096704ac6df7c530ef"
+      "sha256": "e897badce4da5daa24371cd0f17ecfe64a30cc052f5ae8bc194d776a62f9a678",
+      "originalSha256": "265d4f7b8b253c238e47d024a54fa21c85e9a2126ba39b096704ac6df7c530ef"
     },
     {
       "name": "attach",
@@ -120,7 +132,8 @@
       "scope": "External test Chromium; does not replace daily Chrome acceptance",
       "status": "passed",
       "file": "attach.json",
-      "sha256": "e7cae336bd4ee1f659320a92d3d118b7b21476c223bf3707123ccda81f68456b"
+      "sha256": "491d2783494729cfe666d8887672c54d1612786dbc49a95a2ba3245578aecf57",
+      "originalSha256": "e7cae336bd4ee1f659320a92d3d118b7b21476c223bf3707123ccda81f68456b"
     },
     {
       "name": "performance",
@@ -128,7 +141,8 @@
       "scope": "3 local 180-paragraph samples; no public-site SLO",
       "status": "passed",
       "file": "performance.json",
-      "sha256": "b4e74693999b68e5b7526045c2e87cf81c2a590ce065f2ad3493f2e858c5ea9a"
+      "sha256": "bbd16b25319e35d07d42b81bdce73d50da50090060bcfd6f886783dc65f3eac7",
+      "originalSha256": "b4e74693999b68e5b7526045c2e87cf81c2a590ce065f2ad3493f2e858c5ea9a"
     },
     {
       "name": "full-interrupted",
@@ -136,7 +150,8 @@
       "scope": "Historical interruption by Mac clamshell sleep; superseded by full pass",
       "status": "partial",
       "file": "full-interrupted.json",
-      "sha256": "c95211286de3da34ea64944d0f9ad52816aaf1b0b36f360d8e8d8fed3ab3dbeb"
+      "sha256": "ab667b3a980e4d780d6177c85ce85c4c26dbdd28befb12fa97a2184a8832046c",
+      "originalSha256": "c95211286de3da34ea64944d0f9ad52816aaf1b0b36f360d8e8d8fed3ab3dbeb"
     },
     {
       "name": "clean-install",
@@ -145,7 +160,8 @@
       "status": "passed",
       "sourceCommit": "580a6cf35e614e697bd802f8cc780ece6675a142",
       "file": "clean-install.json",
-      "sha256": "5d01eb1226103939798953dac393793c55f9d309c84f031d0b36df1071139c4f"
+      "sha256": "061a03eb87a3fe5c083208842b8f246a6e32a7f898a9b2d5ac6932c0a915b54b",
+      "originalSha256": "5d01eb1226103939798953dac393793c55f9d309c84f031d0b36df1071139c4f"
     },
     {
       "name": "clean-isolated",
@@ -154,7 +170,8 @@
       "status": "passed",
       "sourceCommit": "580a6cf35e614e697bd802f8cc780ece6675a142",
       "file": "clean-isolated.json",
-      "sha256": "b85829b4047be2b5bf8880e51b2d45cb066fdcc444bbbb6ef5c05db5b0adb1c9"
+      "sha256": "5969b356cf050f01780722211b83c4d4015c5b77f76997cb78a073bc78558b3d",
+      "originalSha256": "b85829b4047be2b5bf8880e51b2d45cb066fdcc444bbbb6ef5c05db5b0adb1c9"
     },
     {
       "name": "mac-archive",
@@ -163,7 +180,8 @@
       "status": "passed",
       "sourceCommit": "580a6cf35e614e697bd802f8cc780ece6675a142",
       "file": "mac-archive.json",
-      "sha256": "e7d1e81f067d0253af8523396e78bf04979b247e8b5c514a56a10d5413650146"
+      "sha256": "7f8c2584b4100f6f161a7897cd7548f1ad17c68524581a9dbccb585cff064b1c",
+      "originalSha256": "e7d1e81f067d0253af8523396e78bf04979b247e8b5c514a56a10d5413650146"
     },
     {
       "name": "docker-archive",
@@ -183,5 +201,9 @@
       "file": "image-version.json",
       "sha256": "957a02f3b5381c7806e81b344ddb9ddc5cc9c00480fbf8abb35de88599da209e"
     }
-  ]
+  ],
+  "publicRedaction": {
+    "at": "2026-09-15T23:29:11.534709+00:00",
+    "note": "sha256 indexes the public report; originalSha256 retains the pre-redaction reference."
+  }
 }

@@ -1,12 +1,19 @@
 # 安装、隔离部署和故障处理
 
-当前内部开发版先交付macOS arm64。Ubuntu24.04 x86_64、Windows11 x86_64尚未实际验收，不能把Mac Docker内的Linux arm64结果算成这些目标系统通过。
+当前预览版面向 macOS arm64，固定包与版本对应的验收记录见 [GitHub Releases](https://github.com/Fuyera/801-laofu-browser/releases)。Ubuntu24.04 x86_64、Windows11 x86_64尚未实际验收，不能把Mac Docker内的Linux arm64结果算成这些目标系统通过。
 
 日常登录、采集和人工接手见 [用户指南](USER_GUIDE.md)，源码与测试环境见 [研发指南](DEVELOPMENT.md)。当前 [测试报告](TEST_REPORT.md)记录完整矩阵 22/22、两隔离身份与实际 Codex 宿主通过；干净来源候选也已通过安装/隔离/压缩包校验；日常 Chrome 人工入口及最终冻结仍待收口。
 
 ## 固定Mac制品
 
-`releases/laofu-browser-0.1.0-dev.2-macos-arm64.tar.gz` 包含源码、锁文件、生成扩展、服务、控制台、Node22.23.2、Chromium及依赖。旁边的sha256校验包完整性；它不等于第三方签名。RELEASE.json保存来源提交、工作区是否有未提交改动、逐文件哈希及平台/数据库范围。包外DELIVERY.json记录各压缩包的构建提交、哈希、Docker镜像身份及验证结果；固定包不允许同发行标识替换内容；重建测试只写入候选目录。包不包含本机账号、浏览器profile或测试运行凭据。
+`laofu-browser-0.1.0-dev.3-macos-arm64.tar.gz` 包含源码、锁文件、生成扩展、服务、控制台、Node22.23.2、Chromium及依赖。旁边的sha256校验包完整性；它不等于第三方签名。RELEASE.json保存来源提交、工作区是否有未提交改动、逐文件哈希及平台/数据库范围。包外DELIVERY.json记录各压缩包的构建提交、哈希、Docker镜像身份及验证结果；固定包不允许同发行标识替换内容；重建测试只写入候选目录。包不包含本机账号、浏览器profile或测试运行凭据。
+
+先在下载目录校验与解压：
+
+```sh
+shasum -a 256 -c laofu-browser-0.1.0-dev.3-macos-arm64.tar.gz.sha256
+tar -xzf laofu-browser-0.1.0-dev.3-macos-arm64.tar.gz
+```
 
 解压后可直接运行`bin/laofu-browser`；不需要全局安装npm包。版本管理器用固定Node运行：
 
@@ -38,6 +45,10 @@
 
 先在Mac Docker Desktop构建`deploy/docker/Dockerfile`指定的自建镜像。运行用户node、capabilities全部删除、no-new-privileges、独立持久卷、profile、Xvfb与loopback VNC；seccomp开放浏览器用户namespace所需系统调用，不添加主机capability、不使用--no-sandbox。网关是该实例唯一出站通道，目标DNS解析后固定连接公共IP，阻止私网、localhost、metadata及保留地址；网关到核心仅放行带独立执行端凭据的worker接口。
 
+2026-09-15 修复后，deployer 为网关指定私有 `eth0`，18880/18881 仅绑定该接口地址；默认 bridge 邻居无法访问，控制接口仍由核心校验执行端凭据。接口缺失时拒绝启动，独立启动未指定接口时只绑定 loopback。更新代码本身不会改变已运行网关，采用新版本部署时须通过原部署器重建网关；不能只更新 worker 镜像就声称此修复已生效。本轮仅测试临时容器，未重建日常环境。
+
+执行端 journal 正文与 source-metadata 保留 7 天；清理保留幂等摘要和执行状态，不重放过期／未知写动作。Worker 每次完成（含失败）清理自己的 jobs 临时目录；启动和每分钟回收 24 小时以上的陈旧目录。服务端每分钟回收终态未发布包及陈旧 `.partial`，不删除仍在上传的文件，不自动删除已交付产物。磁盘／产品配额仍是硬限制，清理机制不能替代额度设置或备份。
+
 ```sh
 node deploy/isolated.mjs create --home /服务状态目录 --name 产品A浏览器
 node deploy/isolated.mjs verify --home /服务状态目录 --id wrk_...
@@ -62,6 +73,6 @@ create默认不授予产品调用。verify必须检查非root、实际Chrome san
 
 ## 日本与Windows（已暂停）
 
-日本部署必须使用独立目录/用户/端口，不覆盖`/opt/huashu-pilot`及既有服务。用户恢复 P5 后再核对Ubuntu24.04 x86_64资源、网络、沙箱和远程接手，配置执行端`location=server`；Cookie留在执行端，不共享SQLite文件。
+日本部署必须使用独立目录/用户/端口，不覆盖既有试验目录及服务。用户恢复 P5 后再核对Ubuntu24.04 x86_64资源、网络、沙箱和远程接手，配置执行端`location=server`；Cookie留在执行端，不共享SQLite文件。
 
 Windows提供源码准备和登录会话自启动配置生成器，需在Windows11 x86_64本机安装固定Node、构建原生依赖并运行同组真实浏览器测试。当前缺少该测试环境，不能用交叉构建或Mac上的结果代替。`deploy/windows/prepare.ps1`与`deploy/linux/prepare.sh`只是准备入口，不是通过证明。

@@ -1,0 +1,587 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-09-15T22:55:05.136Z",
+  "finishedAt": "2026-09-15T23:04:50.963Z",
+  "status": "basic_reading_verified_list_completeness_not_passed",
+  "environment": {
+    "browser": "daily logged-in Chrome",
+    "transport": "BrowserClient -> local laofu-browser API -> paired extension",
+    "apiVersion": "v1",
+    "build": {
+      "version": "0.1.0-dev.2",
+      "commit": "592b5c97530c3c716909fb3cda66bf6f5dceece7",
+      "dirty": true,
+      "builtAt": "2026-09-15T08:58:26.708Z"
+    },
+    "includesLatestAdversarialFixes": false,
+    "profileId": "prf_1a92c8871ae54ac99427d63e745502cc"
+  },
+  "scope": {
+    "readOnly": true,
+    "accounts": [
+      "OpenAI"
+    ],
+    "site": "https://x.com",
+    "notTested": [
+      "VPS",
+      "logged-out reading",
+      "full history",
+      "all replies",
+      "image/video download",
+      "capture task export",
+      "latest fixed candidate",
+      "write actions"
+    ]
+  },
+  "profileScroll": {
+    "url": "https://x.com/OpenAI",
+    "before": [
+      "https://x.com/OpenAI/status/2095595741528125780",
+      "https://x.com/OpenAI/status/2098118191029624911",
+      "https://x.com/OpenAI/status/2098118232133792050",
+      "https://x.com/OpenAI/status/2097786616311840853",
+      "https://x.com/OpenAI/status/2097741659509584091",
+      "https://x.com/OpenAI/status/2097523484629090408"
+    ],
+    "after": [
+      "https://x.com/OpenAI/status/2092300846675505602",
+      "https://x.com/OpenAI/status/2092300848483143735",
+      "https://x.com/OpenAI/status/2090885187634905500",
+      "https://x.com/OpenAI/status/2090885188897460249",
+      "https://x.com/OpenAI/status/2090165328290701800",
+      "https://x.com/OpenAI/status/2090165329867743501",
+      "https://x.com/OpenAI/status/2089777845187031262",
+      "https://x.com/OpenAI/status/2089777846583763370",
+      "https://x.com/OpenAI/status/2087996496088297746",
+      "https://x.com/OpenAI/status/2087996497908609389",
+      "https://x.com/OpenAI/status/2087947721936359705",
+      "https://x.com/OpenAI/status/2087947724725665908"
+    ],
+    "newPostIds": [
+      "https://x.com/OpenAI/status/2092300846675505602",
+      "https://x.com/OpenAI/status/2092300848483143735",
+      "https://x.com/OpenAI/status/2090885187634905500",
+      "https://x.com/OpenAI/status/2090885188897460249",
+      "https://x.com/OpenAI/status/2090165328290701800",
+      "https://x.com/OpenAI/status/2090165329867743501",
+      "https://x.com/OpenAI/status/2089777845187031262",
+      "https://x.com/OpenAI/status/2089777846583763370",
+      "https://x.com/OpenAI/status/2087996496088297746",
+      "https://x.com/OpenAI/status/2087996497908609389",
+      "https://x.com/OpenAI/status/2087947721936359705",
+      "https://x.com/OpenAI/status/2087947724725665908"
+    ],
+    "commandFile": "6-scroll.json",
+    "effectState": "confirmed",
+    "state": "partial",
+    "reason": "snapshot output truncated; subsequent DOM/read_text verified new posts"
+  },
+  "searchScroll": {
+    "before": [
+      "https://x.com/OpenAI/status/2098118249582035348",
+      "https://x.com/OpenAI/status/2098118248202215776",
+      "https://x.com/OpenAI/status/2098118232133792050",
+      "https://x.com/OpenAI/status/2098118191029624911",
+      "https://x.com/OpenAI/status/2097786616311840853",
+      "https://x.com/OpenAI/status/2097741659509584091"
+    ],
+    "after": [
+      "https://x.com/OpenAI/status/2097374643518640382",
+      "https://x.com/OpenAI/status/2097374640582668336",
+      "https://x.com/OpenAI/status/2096133504417616165",
+      "https://x.com/OpenAI/status/2095998532692140283",
+      "https://x.com/OpenAI/status/2095968413646737608"
+    ],
+    "added": [
+      "https://x.com/OpenAI/status/2097374643518640382",
+      "https://x.com/OpenAI/status/2097374640582668336",
+      "https://x.com/OpenAI/status/2096133504417616165",
+      "https://x.com/OpenAI/status/2095998532692140283",
+      "https://x.com/OpenAI/status/2095968413646737608"
+    ]
+  },
+  "audits": [
+    {
+      "url": "https://x.com/OpenAI/status/2097786616311840853",
+      "format": "text",
+      "commandId": "cmd_735c0650366f4d48a0a853d3fa7f1a95",
+      "state": "succeeded",
+      "truncated": false,
+      "outputCharacters": 2042,
+      "domPosts": 8,
+      "textPosts": 7,
+      "matchedTextPosts": 5,
+      "viewportTextPosts": 2,
+      "matchedViewportTextPosts": 2,
+      "primaryPost": {
+        "url": "https://x.com/OpenAI/status/2097786616311840853",
+        "rawCharacters": 447,
+        "cleanCharacters": 428,
+        "cleanTextHash": "ee7efefa628e8d6842fa89ffdbd043c899a18675542708a4a39dfc21838218e9",
+        "hiddenAncestor": false,
+        "inMain": true,
+        "showMore": false,
+        "viewport": true,
+        "matched": true,
+        "linkCount": 1
+      },
+      "unmatchedPublicPostIds": [
+        "https://x.com/PhiloGroves/status/2097793216519012494",
+        "https://x.com/amyalkon/status/2098810990653755687"
+      ]
+    },
+    {
+      "url": "https://x.com/search?q=from%3AOpenAI&src=typed_query&f=live",
+      "format": "text",
+      "commandId": "cmd_f522be24da524f68b787cf33536cd19d",
+      "state": "succeeded",
+      "truncated": false,
+      "outputCharacters": 2499,
+      "domPosts": 6,
+      "textPosts": 6,
+      "matchedTextPosts": 6,
+      "viewportTextPosts": 2,
+      "matchedViewportTextPosts": 2,
+      "primaryPost": null,
+      "unmatchedPublicPostIds": []
+    },
+    {
+      "url": "https://x.com/search?q=from%3AOpenAI&src=typed_query&f=live",
+      "format": "text",
+      "commandId": "cmd_cccf4b1e9e8f4bd1bb337b9947824933",
+      "state": "succeeded",
+      "truncated": false,
+      "outputCharacters": 3700,
+      "domPosts": 12,
+      "textPosts": 12,
+      "matchedTextPosts": 11,
+      "viewportTextPosts": 5,
+      "matchedViewportTextPosts": 5,
+      "primaryPost": null,
+      "unmatchedPublicPostIds": [
+        "https://x.com/OpenAI/status/2097374646148481532"
+      ]
+    },
+    {
+      "url": "https://x.com/search?q=from%3AOpenAI&src=typed_query&f=live",
+      "format": "text",
+      "commandId": "cmd_6a22743c40b743fca0a899c3d50d1878",
+      "state": "succeeded",
+      "truncated": false,
+      "outputCharacters": 3700,
+      "domPosts": 12,
+      "textPosts": 12,
+      "matchedTextPosts": 11,
+      "viewportTextPosts": 5,
+      "matchedViewportTextPosts": 5,
+      "primaryPost": null,
+      "unmatchedPublicPostIds": [
+        "https://x.com/OpenAI/status/2097374646148481532"
+      ]
+    },
+    {
+      "url": "https://x.com/search?q=from%3AOpenAI&src=typed_query&f=live",
+      "format": "markdown",
+      "commandId": "cmd_9cbc3b9a24eb431398517495b66186fc",
+      "state": "succeeded",
+      "truncated": false,
+      "outputCharacters": 3855,
+      "domPosts": 12,
+      "textPosts": 12,
+      "matchedTextPosts": 11,
+      "viewportTextPosts": 5,
+      "matchedViewportTextPosts": 5,
+      "primaryPost": null,
+      "unmatchedPublicPostIds": [
+        "https://x.com/OpenAI/status/2097374646148481532"
+      ]
+    },
+    {
+      "url": "https://x.com/OpenAI/status/2097374646148481532",
+      "format": "text",
+      "commandId": "cmd_097ec834d5b841f89862e516d2aa38cd",
+      "state": "succeeded",
+      "truncated": false,
+      "outputCharacters": 3226,
+      "domPosts": 10,
+      "textPosts": 10,
+      "matchedTextPosts": 9,
+      "viewportTextPosts": 3,
+      "matchedViewportTextPosts": 3,
+      "primaryPost": {
+        "url": "https://x.com/OpenAI/status/2097374646148481532",
+        "rawCharacters": 356,
+        "cleanCharacters": 299,
+        "cleanTextHash": "32087a13d0e88158b5e8f8918f5e563c4289893e17dba4a342f531634b3be7db",
+        "hiddenAncestor": false,
+        "inMain": true,
+        "inExtractedMain": true,
+        "excludedAncestor": null,
+        "showMore": false,
+        "viewport": true,
+        "matched": true,
+        "linkCount": 1
+      },
+      "unmatchedPublicPostIds": [
+        "https://x.com/ThemisCM/status/2097388799755997423"
+      ]
+    }
+  ],
+  "finding": {
+    "id": "X-READ-01",
+    "status": "reproduced_on_installed_runtime_root_cause_open",
+    "url": "https://x.com/search?q=from%3AOpenAI&src=typed_query&f=live",
+    "missingPost": "https://x.com/OpenAI/status/2097374646148481532",
+    "domPostCount": 12,
+    "readTextMatchedCount": 11,
+    "repeatedTextReads": 2,
+    "markdownReproduced": true,
+    "reportedTruncated": false,
+    "missingPostOutsideViewport": true,
+    "sameEvalMainCloneContainsPost": true,
+    "detailReadPassed": true,
+    "latestCandidateReproduction": false
+  },
+  "cleanup": {
+    "testTabClosed": true,
+    "testSessionDeleted": true,
+    "dailyBrowserPreserved": true
+  },
+  "rawEvidence": {
+    "localOnlyDirectory": "workspace/x-read-live",
+    "containsPageText": true,
+    "committed": false
+  },
+  "commands": [
+    {
+      "id": "cmd_78d9181d42f14b97973f51ce23df3e5d",
+      "tool": "tabs",
+      "state": "succeeded",
+      "effectState": "confirmed",
+      "file": "1-tabs.json",
+      "at": "2026-09-15T22:55:06.185Z",
+      "sha256": "84af9c7df89949b8b6d8bfc7946e3576dd5d7f2e2d4577d63f323543c6353f42",
+      "truncated": false,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_c2c346ace9984ce2ad9728319144e5e6",
+      "tool": "eval",
+      "state": "succeeded",
+      "effectState": "confirmed",
+      "file": "2-eval.json",
+      "at": "2026-09-15T22:55:19.075Z",
+      "sha256": "2d2c6078596e72cfb9526214d6a9d59b893e962185c35c6359919f3500c4b7de",
+      "truncated": false,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_a4e59c2f86d846e7a1f273add9e64247",
+      "tool": "eval",
+      "state": "succeeded",
+      "effectState": "confirmed",
+      "file": "3-eval.json",
+      "at": "2026-09-15T22:55:36.476Z",
+      "sha256": "591bd3fecdab8ca9be9640151ee2a5dda4418d147431ad3b5e3945b48066a7c4",
+      "truncated": false,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_38cc12d535ab4b6795e00b08f31bff93",
+      "tool": "read_text",
+      "state": "succeeded",
+      "effectState": "confirmed",
+      "file": "4-read_text.json",
+      "at": "2026-09-15T22:55:36.996Z",
+      "sha256": "04422d4159c8e39312e0d7f26ee0e83421518f3b024fd7078b35183236a241cd",
+      "truncated": false,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_75480d5fc33a4067b0e7eca40910a078",
+      "tool": "snapshot",
+      "state": "partial",
+      "effectState": "confirmed",
+      "file": "5-snapshot.json",
+      "at": "2026-09-15T22:55:37.562Z",
+      "sha256": "bc577bc02fbdcbb4163a935d88c2646864b9c7f5b22b01fcd4afbb8fa7ca07f7",
+      "truncated": true,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_4d11444a6e25484b85aa7554a79a4f05",
+      "tool": "scroll",
+      "state": "partial",
+      "effectState": "confirmed",
+      "file": "6-scroll.json",
+      "at": "2026-09-15T22:55:38.136Z",
+      "sha256": "d2347d3ea9f14a50e4d9571c1b234e70d57d1b938290d5b27a0b03dadc48507d",
+      "truncated": true,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_b9aca782f60b4224b7346a4f953c9685",
+      "tool": "eval",
+      "state": "succeeded",
+      "effectState": "confirmed",
+      "file": "7-eval.json",
+      "at": "2026-09-15T22:59:23.380Z",
+      "sha256": "d8c190dbb72d0b30bad556e70af2af479f14a8cad1c75dd7c354e087bc7370ca",
+      "truncated": false,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_79668c09cee74c34ab94ed2ec99990b6",
+      "tool": "eval",
+      "state": "succeeded",
+      "effectState": "confirmed",
+      "file": "8-eval.json",
+      "at": "2026-09-15T22:59:37.219Z",
+      "sha256": "ec8da9a5ed239d04188b0c4ff4ae3b0a72772e300d6026e099ae7a20d82a130f",
+      "truncated": false,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_c96e94bd72bd4cfa92e604f2d2021aa9",
+      "tool": "read_text",
+      "state": "succeeded",
+      "effectState": "confirmed",
+      "file": "9-read_text.json",
+      "at": "2026-09-15T22:59:37.738Z",
+      "sha256": "296007a5e1e50a2e622a7e8a8d033f6c4283fe21f124db134e327fbf26527ce9",
+      "truncated": false,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_6ae628efd84148bcb99eccfff4f7f908",
+      "tool": "navigate",
+      "state": "succeeded",
+      "effectState": "confirmed",
+      "file": "10-navigate.json",
+      "at": "2026-09-15T22:59:54.733Z",
+      "sha256": "13508ca08ac2db1a08d8ab64e3f0a1f40cab27165df84270c965fe6aa355a5e5",
+      "truncated": false,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_ca79d554c59244d5a2431ab9aab7fbfa",
+      "tool": "eval",
+      "state": "succeeded",
+      "effectState": "confirmed",
+      "file": "11-eval.json",
+      "at": "2026-09-15T23:00:07.647Z",
+      "sha256": "c96180dd28e07e7c7eb6a74723d3cb7d8df4222292f1897bd1a516a3b65d7a02",
+      "truncated": false,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_ebd8442a6c8541dcb19839118cc4e8af",
+      "tool": "read_text",
+      "state": "succeeded",
+      "effectState": "confirmed",
+      "file": "12-read_text.json",
+      "at": "2026-09-15T23:00:08.163Z",
+      "sha256": "ca4d58132e576dceed991d8d6e5dd00309083393ce614f455379d817bccb8cbb",
+      "truncated": false,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_a70ea6d8cc3e428589b1e5f5fcc2eab7",
+      "tool": "eval",
+      "state": "succeeded",
+      "effectState": "confirmed",
+      "file": "13-eval.json",
+      "at": "2026-09-15T23:01:27.563Z",
+      "sha256": "a42b5f3ec89490805d2cdcf07fcbc6b1ebcb9fc64b6e840422620fe537590a86",
+      "truncated": false,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_735c0650366f4d48a0a853d3fa7f1a95",
+      "tool": "read_text",
+      "state": "succeeded",
+      "effectState": "confirmed",
+      "file": "14-read_text.json",
+      "at": "2026-09-15T23:01:28.082Z",
+      "sha256": "5b1101f2f5317b4a94f9e9649541bf5ed67d9a454b3396ee04e63acc5299810a",
+      "truncated": false,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_0b5fa7e40bf042328a03beb8fa0dcede",
+      "tool": "navigate",
+      "state": "succeeded",
+      "effectState": "confirmed",
+      "file": "15-navigate.json",
+      "at": "2026-09-15T23:01:53.421Z",
+      "sha256": "6777b7f3ec8cf065e47bb1e9b30ead4258b4f0c736f0d7b734ab3d43d8fe2b47",
+      "truncated": false,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_8742c4d6afc24c45b7e505f4ca4d4633",
+      "tool": "eval",
+      "state": "succeeded",
+      "effectState": "confirmed",
+      "file": "16-eval.json",
+      "at": "2026-09-15T23:02:06.871Z",
+      "sha256": "b5113dd193257d511edc27af473651e844efce709728dc0945461784030a970b",
+      "truncated": false,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_f522be24da524f68b787cf33536cd19d",
+      "tool": "read_text",
+      "state": "succeeded",
+      "effectState": "confirmed",
+      "file": "17-read_text.json",
+      "at": "2026-09-15T23:02:07.386Z",
+      "sha256": "4be2017f27aae0898e9f4b4e4f0e55970ae9edc60c307f22fe38518316c274d1",
+      "truncated": false,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_a42e51141d9b483b8c6d967924164706",
+      "tool": "eval",
+      "state": "succeeded",
+      "effectState": "confirmed",
+      "file": "18-eval.json",
+      "at": "2026-09-15T23:02:26.953Z",
+      "sha256": "2f9b351290ba3a70ba1c3f4fa998c42756f14bdd2624ec8994b7240a145904bf",
+      "truncated": false,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_afb5709b038f4fb194c56129aa12d908",
+      "tool": "scroll",
+      "state": "partial",
+      "effectState": "confirmed",
+      "file": "19-scroll.json",
+      "at": "2026-09-15T23:02:27.468Z",
+      "sha256": "44376dc303a0f9126233c41c11f4a1c9aa120206cb901b64a0f2d860b2921214",
+      "truncated": true,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_8a6272b7c7394694bf50673bf5f30b4f",
+      "tool": "eval",
+      "state": "succeeded",
+      "effectState": "confirmed",
+      "file": "20-eval.json",
+      "at": "2026-09-15T23:02:27.980Z",
+      "sha256": "12bb0451723f478313f6445cd796816bfd204b17d37f37dcd3ac59ce68dec38e",
+      "truncated": false,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_59f5b376ea4e49b0b3be1a0e5a642b6c",
+      "tool": "eval",
+      "state": "succeeded",
+      "effectState": "confirmed",
+      "file": "21-eval.json",
+      "at": "2026-09-15T23:02:49.983Z",
+      "sha256": "6a4afdfb60727e49c6fa75f4a062297729f826beb522fef2b499b99d1ceeb85b",
+      "truncated": false,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_cccf4b1e9e8f4bd1bb337b9947824933",
+      "tool": "read_text",
+      "state": "succeeded",
+      "effectState": "confirmed",
+      "file": "22-read_text.json",
+      "at": "2026-09-15T23:02:50.498Z",
+      "sha256": "b9e678958f3d79c3a72416dae25d71deb567a721300da333ecfd12593c510233",
+      "truncated": false,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_f3bd270c169d459bb348ece3b645b222",
+      "tool": "eval",
+      "state": "succeeded",
+      "effectState": "confirmed",
+      "file": "23-eval.json",
+      "at": "2026-09-15T23:03:16.119Z",
+      "sha256": "683ea51463a46e9363232645984b6665dfd3e9c6f4bf101dcbc7da47f7627389",
+      "truncated": false,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_6a22743c40b743fca0a899c3d50d1878",
+      "tool": "read_text",
+      "state": "succeeded",
+      "effectState": "confirmed",
+      "file": "24-read_text.json",
+      "at": "2026-09-15T23:03:16.632Z",
+      "sha256": "df2f963f5cf3b1cb1787d2c0f8498becd01953e0540975417fd5c0798cd1ba05",
+      "truncated": false,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_bd11417e83c0453590bc849a584c28fd",
+      "tool": "eval",
+      "state": "succeeded",
+      "effectState": "confirmed",
+      "file": "25-eval.json",
+      "at": "2026-09-15T23:03:53.704Z",
+      "sha256": "9d70a8e03cfcf2ae20f3308f2b430f9aced12af075e78f2f9aa7a1f8fa51f1b2",
+      "truncated": false,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_9cbc3b9a24eb431398517495b66186fc",
+      "tool": "read_text",
+      "state": "succeeded",
+      "effectState": "confirmed",
+      "file": "26-read_text.json",
+      "at": "2026-09-15T23:03:54.222Z",
+      "sha256": "79d92dbde90a20ac1dde6c471fa35dc3ebd2d6eb5df386f39f0d64643a6e6eea",
+      "truncated": false,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_b7b9f8bbc19142b79242b3cf9a54d387",
+      "tool": "navigate",
+      "state": "succeeded",
+      "effectState": "confirmed",
+      "file": "27-navigate.json",
+      "at": "2026-09-15T23:04:15.392Z",
+      "sha256": "91c81a74325d4af18b9d6fe37e6cccc89b2b2ac21c02f77fdb8d4d3b738f590b",
+      "truncated": false,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_278b300293ab4f77a5d380fad51c5a15",
+      "tool": "eval",
+      "state": "succeeded",
+      "effectState": "confirmed",
+      "file": "28-eval.json",
+      "at": "2026-09-15T23:04:28.892Z",
+      "sha256": "ec5783ba77835304fd5a60a57f410d3539dffbb1f2f0d900b2d3a4d0fc9786d1",
+      "truncated": false,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_097ec834d5b841f89862e516d2aa38cd",
+      "tool": "read_text",
+      "state": "succeeded",
+      "effectState": "confirmed",
+      "file": "29-read_text.json",
+      "at": "2026-09-15T23:04:29.410Z",
+      "sha256": "f6f7e74d348d97fccc70683266eb7c29f9a23dec42eb9b4df412da1e581f8789",
+      "truncated": false,
+      "errorCode": null
+    },
+    {
+      "id": "cmd_28a4bae4f39d4a1fbfb4977f0a56f493",
+      "tool": "tabs",
+      "state": "succeeded",
+      "effectState": "confirmed",
+      "file": "30-tabs.json",
+      "at": "2026-09-15T23:04:50.961Z",
+      "sha256": "719765ec71e35fa4bd6321d0d8a5be9c2c95bb182d2132b9f07f3c679ad1cae7",
+      "truncated": false,
+      "errorCode": null
+    }
+  ]
+}

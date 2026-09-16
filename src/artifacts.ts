@@ -6,6 +6,7 @@ import { Store } from "./store.js";
 import { Fault } from "./errors.js";
 import { filename, id, mkdir } from "./util.js";
 import type { Artifact, Product } from "./types.js";
+import { TERMINAL } from "./types.js";
 import { PRODUCT_LIMITS } from "./types.js";
 export class Artifacts {
   readonly directory: string;
@@ -188,7 +189,25 @@ export class Artifacts {
     const a = this.store.artifact(key);
     if (!a || a.deleted || (p.role !== "owner" && a.productId !== p.id))
       throw new Fault("FORBIDDEN", "无权访问此资源", 403);
+    if (a.metadata?.publication === "staged")
+      throw new Fault("ARTIFACT_INCOMPLETE", "图文包尚未原子发布", 409);
     return a;
+  }
+  sweep(now = Date.now()) {
+    for (const a of this.store.artifacts()) {
+      const abandoned =
+        a.metadata?.publication === "staged" &&
+        a.jobId &&
+        TERMINAL.has(this.store.job(a.jobId)?.state!);
+      if (!a.deleted && abandoned) this.purge(a.id);
+    }
+    for (const name of fs.readdirSync(this.directory)) {
+      if (!/^art_[a-f0-9]{32}\.partial$/.test(name) || this.inflight.has(name))
+        continue;
+      const file = path.join(this.directory, name),
+        stat = fs.lstatSync(file);
+      if (stat.isFile() && stat.mtimeMs < now - 86400_000) fs.rmSync(file);
+    }
   }
   download(p: Product, key: string) {
     this.owned(p, key);
@@ -216,12 +235,15 @@ export class Artifacts {
   }
   remove(p: Product, key: string) {
     const a = this.owned(p, key);
+    this.purge(key);
+    return { id: a.id, deleted: true };
+  }
+  private purge(key: string) {
     this.store.deleteArtifact(key);
     for (const transfer of this.downloads.get(key) || [])
       transfer.stream.destroy(
         new Fault("ARTIFACT_DELETED", "产物已删除，下载已停止", 410),
       );
     fs.rmSync(this.path(key), { force: true });
-    return { id: a.id, deleted: true };
   }
 }

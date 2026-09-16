@@ -9,6 +9,11 @@ workspace/
 __pycache__/
 *.egg-info/
 .DS_Store
+.zcode/
+*.pem
+*.key
+*.p12
+*.pfx
 
 releases/
 **/__pycache__/
