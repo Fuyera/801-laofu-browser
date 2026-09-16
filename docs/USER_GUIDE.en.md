@@ -4,6 +4,8 @@
 
 laofu-browser reads pages, performs operations in authorized browsers, and saves viewable/downloadable task results. This guide was written for the `0.1.0-dev.2` Mac development candidate and its dedicated owner browser/test scenarios. See [acceptance](ACCEPTANCE.en.md) for current restricted-product access, daily Chrome installation, and cross-system status.
 
+The source-build console now supports Chinese and English: use **简体中文 / English** on the login page or sidebar. The first visit follows your preferred browser language; later visits remember your selection on the same browser and service origin. Switching preserves the current section, task selection, and unsent input. Dates and interface/error summaries follow the language. Article text, names, notes, API identifiers, and expandable original diagnostics retain their original content. The fixed dev.3 package predates this UI update; build current source to use it.
+
 ## Open an existing local service
 
 The README startup defaults to `http://127.0.0.1:17889` with state in `workspace/local-state`. From the project root, obtain a one-time login URL:

@@ -1,6 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
 import "./style.css";
+import {
+  LanguageProvider,
+  LanguageSwitch,
+  useLanguage,
+  ErrorMessage,
+} from "./i18n";
+const eventLabels: Record<string, string> = {
+  accepted: "已受理",
+  progress: "进度更新",
+  state: "状态更新",
+  waiting_user: "等待你接手",
+  late_evidence: "补充执行证据",
+};
 const labels: any = {
   queued: "排队中",
   running: "执行中",
@@ -22,13 +35,17 @@ async function api(route: string, method = "GET", body?: any, key?: string) {
     ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
   });
   const data = await r.json();
-  if (!r.ok) throw new Error(data.error?.message || "服务请求失败");
+  if (!r.ok)
+    throw Object.assign(new Error(data.error?.message || "服务请求失败"), {
+      code: data.error?.code,
+    });
   return data;
 }
 function Handoff({ job, onClose }: { job: any; onClose: () => void }) {
+  const { t } = useLanguage();
   const target = useRef<HTMLDivElement>(null),
     connection = useRef<any>(null);
-  const [error, setError] = useState(""),
+  const [error, setError] = useState<any>(""),
     [handoff, setHandoff] = useState<any>();
   useEffect(() => {
     let stopped = false;
@@ -51,7 +68,7 @@ function Handoff({ job, onClose }: { job: any; onClose: () => void }) {
             setError("接手连接已断开。任务保留原状态，可关闭后重新连接。");
         });
       } catch (e: any) {
-        setError(e.message);
+        setError(e);
       }
     })();
     return () => {
@@ -69,22 +86,29 @@ function Handoff({ job, onClose }: { job: any; onClose: () => void }) {
       <div className="handoff">
         <header>
           <div>
-            <h2>接手浏览器</h2>
-            <p>自动执行已暂停。完成页面操作后，关闭窗口并选择“继续任务”。</p>
+            <h2>{t("接手浏览器")}</h2>
+            <p>
+              {t("自动执行已暂停。完成页面操作后，关闭窗口并选择“继续任务”。")}
+            </p>
           </div>
-          <button onClick={() => void close()}>关闭接手</button>
+          <button onClick={() => void close()}>{t("关闭接手")}</button>
         </header>
-        {error && <p role="alert">{error}</p>}
+        {error && (
+          <div role="alert">
+            <ErrorMessage error={error} />
+          </div>
+        )}
         <div ref={target} className="remote" />
       </div>
     </div>
   );
 }
 function App() {
+  const { locale, t } = useLanguage();
   const [me, setMe] = useState<any>(null),
     [loading, setLoading] = useState(true),
     [login, setLogin] = useState(""),
-    [error, setError] = useState(""),
+    [error, setError] = useState<any>(""),
     [section, setSection] = useState("任务"),
     [profiles, setProfiles] = useState<any[]>([]),
     [profile, setProfile] = useState(""),
@@ -144,7 +168,7 @@ function App() {
       await fn();
       await refresh();
     } catch (e: any) {
-      setError(e.message);
+      setError(e);
     } finally {
       setBusy(false);
     }
@@ -158,7 +182,7 @@ function App() {
         try {
           await api("/admin/bootstrap", "POST", { token });
         } catch (e: any) {
-          setError(e.message);
+          setError(e);
         }
       }
       try {
@@ -171,9 +195,9 @@ function App() {
   }, []);
   useEffect(() => {
     if (!me) return;
-    void refresh().catch((e) => setError(e.message));
+    void refresh().catch((e) => setError(e));
     const timer = setInterval(
-      () => void refresh().catch((e) => setError(e.message)),
+      () => void refresh().catch((e) => setError(e)),
       2500,
     );
     return () => clearInterval(timer);
@@ -200,18 +224,22 @@ function App() {
   if (loading)
     return (
       <main className="login">
-        <p>连接本机服务…</p>
+        <LanguageSwitch />
+        <p>{t("连接本机服务…")}</p>
       </main>
     );
   if (!me)
     return (
       <main className="login">
+        <LanguageSwitch />
         <span className="wordmark">
           laofu<span>/</span>browser
         </span>
-        <h1>把网页带回你的工作流</h1>
+        <h1>{t("把网页带回你的工作流")}</h1>
         <p>
-          输入本机生成的一次性登录票据，进入管理控制台。票据有效期为 10 分钟。
+          {t(
+            "输入本机生成的一次性登录票据，进入管理控制台。票据有效期为 10 分钟。",
+          )}
         </p>
         <form
           onSubmit={(e) => {
@@ -224,7 +252,7 @@ function App() {
           }}
         >
           <label>
-            一次性票据
+            {t("一次性票据")}
             <input
               type="password"
               autoComplete="off"
@@ -234,19 +262,20 @@ function App() {
             />
           </label>
           <button className="primary" disabled={busy}>
-            进入控制台
+            {t("进入控制台")}
           </button>
         </form>
         {error && (
-          <p role="alert" className="error">
-            {error}
-          </p>
+          <div role="alert" className="error">
+            <ErrorMessage error={error} />
+          </div>
         )}
         <details>
-          <summary>如何获取票据</summary>
+          <summary>{t("如何获取票据")}</summary>
           <p>
-            在已安装目录运行 <code>laofu-browser console-login</code>
-            ，打开返回的本机链接。
+            {t("在已安装目录运行")}
+            <code>laofu-browser console-login</code>
+            {t("，打开返回的本机链接。")}
           </p>
         </details>
       </main>
@@ -257,15 +286,16 @@ function App() {
         <a className="wordmark" href="#">
           laofu<span>/</span>browser
         </a>
-        <p className="aside-caption">浏览器能力控制台</p>
+        <LanguageSwitch />
+        <p className="aside-caption">{t("浏览器能力控制台")}</p>
         <nav>
           {sections.map((s) => (
             <button
               aria-current={section === s ? "page" : undefined}
-              key={s}
+              key={t(s)}
               onClick={() => setSection(s)}
             >
-              {s}
+              {t(s)}
               {s === "任务" &&
                 tasks.some((t) => t.state === "waiting_user") && (
                   <span className="attention">
@@ -277,10 +307,10 @@ function App() {
         </nav>
         <div className="connection">
           <span className="dot" />
-          本机服务已连接
+          {t("本机服务已连接")}
           <p>
             {profiles.filter((p) => p.ready && !p.quarantined).length}{" "}
-            个可用浏览器
+            {t("个可用浏览器")}
           </p>
           <button
             onClick={() =>
@@ -290,22 +320,22 @@ function App() {
               })
             }
           >
-            退出管理会话
+            {t("退出管理会话")}
           </button>
         </div>
       </aside>
       <main>
         <header className="page-head">
           <div>
-            <p className="eyebrow">LAOFU BROWSER / 内部开发版</p>
-            <h1>{section}</h1>
+            <p className="eyebrow">{t("LAOFU BROWSER / 内部开发版")}</p>
+            <h1>{t(section)}</h1>
           </div>
           <span className="owner">{me.product.name}</span>
         </header>
         {error && (
           <div className="error" role="alert">
-            {error}
-            <button onClick={() => setError("")}>收起</button>
+            {<ErrorMessage error={error} />}
+            <button onClick={() => setError("")}>{t("收起")}</button>
           </div>
         )}
         {section === "任务" && (
@@ -331,17 +361,17 @@ function App() {
               }}
             >
               <label>
-                文章链接
+                {t("文章链接")}
                 <input
                   type="url"
-                  placeholder="粘贴公众号或网页链接"
+                  placeholder={t("粘贴公众号或网页链接")}
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   required
                 />
               </label>
               <label>
-                执行浏览器
+                {t("执行浏览器")}
                 <select
                   value={profile}
                   onChange={(e) => setProfile(e.target.value)}
@@ -349,20 +379,21 @@ function App() {
                   {profiles.map((p) => (
                     <option key={p.id} value={p.id}>
                       {p.name}
-                      {p.ready ? "" : " · 离线"}
-                      {p.quarantined ? " · 已隔离" : ""}
+                      {p.ready ? "" : t(" · 离线")}
+                      {p.quarantined ? t(" · 已隔离") : ""}
                     </option>
                   ))}
                 </select>
               </label>
               <button className="primary" disabled={busy || !profile}>
-                采集图文
+                {t("采集图文")}
               </button>
             </form>
             <div className="workbench">
               <section className="task-list">
                 <h2>
-                  最近任务 <span>{tasks.length}</span>
+                  {t("最近任务")}
+                  <span>{tasks.length}</span>
                 </h2>
                 {(taskCursor || nextTaskCursor) && (
                   <div>
@@ -370,41 +401,45 @@ function App() {
                       disabled={!taskCursor}
                       onClick={() => setTaskCursor("")}
                     >
-                      最新任务
+                      {t("最新任务")}
                     </button>
                     <button
                       disabled={!nextTaskCursor}
                       onClick={() => setTaskCursor(nextTaskCursor)}
                     >
-                      更早任务
+                      {t("更早任务")}
                     </button>
                   </div>
                 )}
                 {!tasks.length && (
                   <div className="empty">
-                    <h3>先保存一篇文章</h3>
+                    <h3>{t("先保存一篇文章")}</h3>
                     <p>
-                      提交链接后，可以在这里看进度、处理验证，再下载图文包。
+                      {t(
+                        "提交链接后，可以在这里看进度、处理验证，再下载图文包。",
+                      )}
                     </p>
                   </div>
                 )}
-                {tasks.map((t) => (
+                {tasks.map((task) => (
                   <button
-                    key={t.id}
+                    key={task.id}
                     className={
-                      "task-row " + (selected === t.id ? "selected" : "")
+                      "task-row " + (selected === task.id ? "selected" : "")
                     }
-                    onClick={() => setSelected(t.id)}
+                    onClick={() => setSelected(task.id)}
                   >
-                    <span className={"state " + t.state}>
-                      {labels[t.state]}
+                    <span className={"state " + task.state}>
+                      {t(labels[task.state] || task.state)}
                     </span>
                     <strong>
-                      {t.result?.manifest?.title || t.input.url || t.type}
+                      {task.result?.manifest?.title ||
+                        task.input.url ||
+                        task.type}
                     </strong>
                     <small>
-                      {new Date(t.createdAt).toLocaleString("zh-CN")} ·{" "}
-                      {t.id.slice(-8)}
+                      {new Date(task.createdAt).toLocaleString(locale)} ·{" "}
+                      {task.id.slice(-8)}
                     </small>
                   </button>
                 ))}
@@ -414,31 +449,35 @@ function App() {
                   <>
                     <div className="detail-title">
                       <span className={"state " + current.state}>
-                        {labels[current.state]}
+                        {t(labels[current.state] || current.state)}
                       </span>
-                      <h2>{current.result?.manifest?.title || "图文采集"}</h2>
+                      <h2>
+                        {current.result?.manifest?.title || t("图文采集")}
+                      </h2>
                     </div>
                     <p className="source">{current.input.url}</p>
                     {current.error && (
-                      <p className="error">
-                        {current.error.message}{" "}
-                        <code>{current.error.code}</code>
-                      </p>
+                      <div className="error">
+                        <ErrorMessage error={current.error} />
+                      </div>
                     )}
                     {current.effectState === "unknown" && (
                       <p className="notice">
-                        存在尚未确认的执行效果。请核对浏览器；任务不会自动重放。
+                        {t(
+                          "存在尚未确认的执行效果。请核对浏览器；任务不会自动重放。",
+                        )}
                       </p>
                     )}
                     {current.state === "waiting_user" && (
                       <div className="notice">
-                        <h3>需要你完成页面操作</h3>
+                        <h3>{t("需要你完成页面操作")}</h3>
                         <p>
-                          如果浏览器在当前
-                          Mac，直接在该浏览器完成；远程浏览器可打开接手窗口。
+                          {t(
+                            "如果浏览器在当前 Mac，直接在该浏览器完成；远程浏览器可打开接手窗口。",
+                          )}
                         </p>
                         <button onClick={() => setHandoff(current)}>
-                          打开接手窗口
+                          {t("打开接手窗口")}
                         </button>{" "}
                         <button
                           className="primary"
@@ -449,7 +488,7 @@ function App() {
                             )
                           }
                         >
-                          已完成，继续任务
+                          {t("已完成，继续任务")}
                         </button>
                       </div>
                     )}
@@ -467,7 +506,9 @@ function App() {
                           )
                         }
                       >
-                        {current.cancelRequested ? "正在停止…" : "取消任务"}
+                        {current.cancelRequested
+                          ? t("正在停止…")
+                          : t("取消任务")}
                       </button>
                     )}
                     {current.result?.manifest && (
@@ -479,27 +520,27 @@ function App() {
                                 .downloadedImages
                             }
                           </strong>
-                          <span>已下载图片</span>
+                          <span>{t("已下载图片")}</span>
                         </div>
                         <div>
                           <strong>
                             {current.result.manifest.mediaCoverage.failedImages}
                           </strong>
-                          <span>未取得图片</span>
+                          <span>{t("未取得图片")}</span>
                         </div>
                         <div>
                           <strong>
                             {current.result.manifest.versionConsistent
-                              ? "一致"
-                              : "待核对"}
+                              ? t("一致")
+                              : t("待核对")}
                           </strong>
-                          <span>提取期间正文</span>
+                          <span>{t("提取期间正文")}</span>
                         </div>
                       </div>
                     )}
                     {current.artifacts?.length > 0 && (
                       <>
-                        <h3>图文成果</h3>
+                        <h3>{t("图文成果")}</h3>
                         <div className="files">
                           {current.artifacts.map((a: any) => (
                             <a
@@ -514,29 +555,38 @@ function App() {
                         </div>
                       </>
                     )}
-                    <h3>执行记录</h3>
+                    <h3>{t("执行记录")}</h3>
                     <ol className="timeline">
                       {events.map((e) => (
                         <li key={e.id}>
                           <time>
-                            {new Date(e.createdAt).toLocaleTimeString("zh-CN")}
+                            {new Date(e.createdAt).toLocaleTimeString(locale)}
                           </time>
                           <span>
-                            {labels[e.data.state] || e.data.tool || e.kind}
-                            {e.data.step ? ` · 第 ${e.data.step} 步` : ""}
+                            {t(
+                              labels[e.data.state] ||
+                                eventLabels[e.kind] ||
+                                e.data.tool ||
+                                e.kind,
+                            )}
+                            {e.data.step
+                              ? t(" · 第 {0} 步", [e.data.step])
+                              : ""}
                           </span>
                         </li>
                       ))}
                     </ol>
                     <details>
-                      <summary>任务详情</summary>
+                      <summary>{t("任务详情")}</summary>
                       <pre>{JSON.stringify(current, null, 2)}</pre>
                     </details>
                   </>
                 ) : (
                   <div className="empty">
-                    <h2>任务会留在这里</h2>
-                    <p>关闭页面不会取消任务。选择左侧任务查看进度和成果。</p>
+                    <h2>{t("任务会留在这里")}</h2>
+                    <p>
+                      {t("关闭页面不会取消任务。选择左侧任务查看进度和成果。")}
+                    </p>
                   </div>
                 )}
               </section>
@@ -546,7 +596,9 @@ function App() {
         {section === "浏览器与设备" && (
           <>
             <p className="intro">
-              为每个产品使用独立浏览器。日常 Chrome 的完整权限只属于本人。
+              {t(
+                "为每个产品使用独立浏览器。日常 Chrome 的完整权限只属于本人。",
+              )}
             </p>
             <div className="device-grid">
               {profiles.map((p) => (
@@ -558,22 +610,28 @@ function App() {
                       }
                     />
                     <span>
-                      {p.quarantined ? "等待核验" : p.ready ? "可用" : "离线"}
+                      {p.quarantined
+                        ? t("等待核验")
+                        : p.ready
+                          ? t("可用")
+                          : t("离线")}
                     </span>
                     <small>
-                      {p.mode === "owner" ? "本人浏览器" : "受限产品浏览器"}
+                      {p.mode === "owner"
+                        ? t("本人浏览器")
+                        : t("受限产品浏览器")}
                     </small>
                   </div>
                   <h2>{p.name}</h2>
                   <p>
                     {p.mode === "owner"
-                      ? "保留完整工具能力"
-                      : "独立配置与文件目录"}
+                      ? t("保留完整工具能力")
+                      : t("独立配置与文件目录")}
                   </p>
                   <code>{p.id}</code>
                   {p.mode === "isolated" && (
                     <fieldset>
-                      <legend>允许访问的产品</legend>
+                      <legend>{t("允许访问的产品")}</legend>
                       {products
                         .filter((x) => x.role === "product" && !x.revoked)
                         .map((x) => (
@@ -602,12 +660,15 @@ function App() {
               ))}
             </div>
             <details>
-              <summary>连接新的浏览器</summary>
+              <summary>{t("连接新的浏览器")}</summary>
               <p>
-                在安装目录运行 <code>laofu-browser pair --name 浏览器名称</code>
-                ，再用返回的配置启动执行端。连接日常 Chrome 时添加{" "}
+                {t("在安装目录运行")}
+                <code>{t("laofu-browser pair --name 浏览器名称")}</code>
+                {t("，再用返回的配置启动执行端。连接日常 Chrome 时添加")}{" "}
                 <code>--attach</code>
-                ，按安装手册加载配对扩展。受限产品浏览器使用隔离部署命令。
+                {t(
+                  "，按安装手册加载配对扩展。受限产品浏览器使用隔离部署命令。",
+                )}
               </p>
             </details>
           </>
@@ -615,7 +676,9 @@ function App() {
         {section === "图文产物" && (
           <>
             <p className="intro">
-              下载 ZIP 可完整离线阅读。成果由你主动清理，系统不会自动删除。
+              {t(
+                "下载 ZIP 可完整离线阅读。成果由你主动清理，系统不会自动删除。",
+              )}
             </p>
             {(artifactCursor || nextArtifactCursor) && (
               <div>
@@ -623,29 +686,29 @@ function App() {
                   disabled={!artifactCursor}
                   onClick={() => setArtifactCursor("")}
                 >
-                  最新产物
+                  {t("最新产物")}
                 </button>
                 <button
                   disabled={!nextArtifactCursor}
                   onClick={() => setArtifactCursor(nextArtifactCursor)}
                 >
-                  更早产物
+                  {t("更早产物")}
                 </button>
               </div>
             )}
             {!artifacts.length ? (
               <div className="empty">
-                采集完成或上传文件后，成果会出现在这里。
+                {t("采集完成或上传文件后，成果会出现在这里。")}
               </div>
             ) : (
               <div className="table-wrap">
                 <table>
                   <thead>
                     <tr>
-                      <th>文件</th>
-                      <th>大小</th>
-                      <th>保存时间</th>
-                      <th>操作</th>
+                      <th>{t("文件")}</th>
+                      <th>{t("大小")}</th>
+                      <th>{t("保存时间")}</th>
+                      <th>{t("操作")}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -657,7 +720,7 @@ function App() {
                           </a>
                         </td>
                         <td>{(a.bytes / 1024).toFixed(1)} KB</td>
-                        <td>{new Date(a.createdAt).toLocaleString("zh-CN")}</td>
+                        <td>{new Date(a.createdAt).toLocaleString(locale)}</td>
                         <td>
                           {a.filename === "article.html" &&
                             a.metadata?.source === "worker" && (
@@ -665,21 +728,23 @@ function App() {
                                 className="text-button"
                                 onClick={() => setPreview(a)}
                               >
-                                预览
+                                {t("预览")}
                               </button>
                             )}
                           <button
                             className="text-button"
                             onClick={() => {
                               if (
-                                confirm(`删除 ${a.filename}？下载链接将失效。`)
+                                confirm(
+                                  t("删除 {0}？下载链接将失效。", [a.filename]),
+                                )
                               )
                                 void act(() =>
                                   api(`/artifacts/${a.id}`, "DELETE"),
                                 );
                             }}
                           >
-                            删除
+                            {t("删除")}
                           </button>
                         </td>
                       </tr>
@@ -693,7 +758,9 @@ function App() {
         {section === "产品凭据" && (
           <>
             <p className="intro">
-              每个产品使用自己的凭据；浏览器访问范围在“浏览器与设备”中分配。
+              {t(
+                "每个产品使用自己的凭据；浏览器访问范围在“浏览器与设备”中分配。",
+              )}
             </p>
             <form
               className="inline-form"
@@ -709,7 +776,7 @@ function App() {
               }}
             >
               <label>
-                产品名称
+                {t("产品名称")}
                 <input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -718,12 +785,12 @@ function App() {
                 />
               </label>
               <button className="primary" disabled={busy}>
-                创建凭据
+                {t("创建凭据")}
               </button>
             </form>
             {credential && (
               <div className="notice">
-                <p>请保存这份凭据，离开后不再显示。</p>
+                <p>{t("请保存这份凭据，离开后不再显示。")}</p>
                 <code>{credential}</code>
                 <button
                   onClick={() => {
@@ -732,18 +799,18 @@ function App() {
                       .catch(() => setError("复制未获授权，请手动选择凭据。"));
                   }}
                 >
-                  复制
+                  {t("复制")}
                 </button>
-                <button onClick={() => setCredential("")}>已保存</button>
+                <button onClick={() => setCredential("")}>{t("已保存")}</button>
               </div>
             )}
             <table>
               <thead>
                 <tr>
-                  <th>产品</th>
-                  <th>权限</th>
-                  <th>状态</th>
-                  <th>操作</th>
+                  <th>{t("产品")}</th>
+                  <th>{t("权限")}</th>
+                  <th>{t("状态")}</th>
+                  <th>{t("操作")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -757,15 +824,15 @@ function App() {
                           .map(
                             (s: string) =>
                               ({
-                                "article.capture": "图文采集",
-                                "artifacts.write": "文件上传",
-                                "browser.read": "页面读取",
-                                "learnings.write": "经验编辑",
+                                "article.capture": t("图文采集"),
+                                "artifacts.write": t("文件上传"),
+                                "browser.read": t("页面读取"),
+                                "learnings.write": t("经验编辑"),
                               })[s] || s,
                           )
-                          .join("、")}
+                          .join(locale === "en" ? ", " : "、")}
                       </td>
-                      <td>{p.revoked ? "已吊销" : "有效"}</td>
+                      <td>{p.revoked ? t("已吊销") : t("有效")}</td>
                       <td>
                         {!p.revoked && (
                           <>
@@ -785,10 +852,10 @@ function App() {
                                 )
                               }
                             >
-                              轮换
+                              {t("轮换")}
                             </button>
                             <details>
-                              <summary>使用额度</summary>
+                              <summary>{t("使用额度")}</summary>
                               <form
                                 onSubmit={(e) => {
                                   e.preventDefault();
@@ -808,7 +875,7 @@ function App() {
                                 }}
                               >
                                 <label>
-                                  产物额度（MiB）
+                                  {t("产物额度（MiB）")}
                                   <input
                                     name="disk"
                                     type="number"
@@ -823,7 +890,7 @@ function App() {
                                   />
                                 </label>
                                 <label>
-                                  排队任务上限
+                                  {t("排队任务上限")}
                                   <input
                                     name="queued"
                                     type="number"
@@ -834,7 +901,7 @@ function App() {
                                   />
                                 </label>
                                 <label>
-                                  未结束任务上限
+                                  {t("未结束任务上限")}
                                   <input
                                     name="resident"
                                     type="number"
@@ -844,21 +911,25 @@ function App() {
                                     defaultValue={p.limits?.maxResident ?? 24}
                                   />
                                 </label>
-                                <button disabled={busy}>保存额度</button>
+                                <button disabled={busy}>{t("保存额度")}</button>
                               </form>
                             </details>
                             <button
                               className="text-button"
                               onClick={() => {
                                 if (
-                                  confirm(`吊销 ${p.name} 的凭据并停止其任务？`)
+                                  confirm(
+                                    t("吊销 {0} 的凭据并停止其任务？", [
+                                      p.name,
+                                    ]),
+                                  )
                                 )
                                   void act(() =>
                                     api(`/admin/products/${p.id}`, "DELETE"),
                                   );
                               }}
                             >
-                              吊销
+                              {t("吊销")}
                             </button>
                           </>
                         )}
@@ -874,7 +945,7 @@ function App() {
             <div className="metrics">
               <div>
                 <strong>{diagnostics?.counts.tasks || 0}</strong>
-                <span>任务和命令</span>
+                <span>{t("任务和命令")}</span>
               </div>
               <div>
                 <strong>
@@ -884,20 +955,20 @@ function App() {
                   ).toFixed(1)}{" "}
                   MiB
                 </strong>
-                <span>成果占用 / 10 GiB 默认配额</span>
+                <span>{t("成果占用 / 10 GiB 默认配额")}</span>
               </div>
               <div>
                 <strong>{diagnostics?.counts.unknown || 0}</strong>
-                <span>效果待核验</span>
+                <span>{t("效果待核验")}</span>
               </div>
             </div>
-            <h2>站点经验</h2>
+            <h2>{t("站点经验")}</h2>
             {!!diagnostics?.cooldowns?.filter(
               (c: any) =>
                 !c.releasedAt && (c.until === null || c.until > Date.now()),
             ).length && (
               <section>
-                <h2>站点冷却</h2>
+                <h2>{t("站点冷却")}</h2>
                 {diagnostics.cooldowns
                   .filter(
                     (c: any) =>
@@ -908,14 +979,18 @@ function App() {
                     <p key={c.id}>
                       {c.origin} ·{" "}
                       {c.until === null
-                        ? "恢复时间未知"
-                        : `等待至 ${new Date(c.until).toLocaleString("zh-CN")}`}{" "}
+                        ? t("恢复时间未知")
+                        : t("等待至 {0}", [
+                            new Date(c.until).toLocaleString(locale),
+                          ])}{" "}
                       <button
                         disabled={busy}
                         onClick={() => {
                           if (
                             confirm(
-                              "确认站点已允许继续访问？解除冷却不会重放旧任务。",
+                              t(
+                                "确认站点已允许继续访问？解除冷却不会重放旧任务。",
+                              ),
                             )
                           )
                             void act(() =>
@@ -927,7 +1002,7 @@ function App() {
                             );
                         }}
                       >
-                        已核对，解除冷却
+                        {t("已核对，解除冷却")}
                       </button>
                     </p>
                   ))}
@@ -947,7 +1022,7 @@ function App() {
               }}
             >
               <label>
-                网站域名
+                {t("网站域名")}
                 <input
                   placeholder="mp.weixin.qq.com"
                   value={domain}
@@ -956,10 +1031,11 @@ function App() {
                   pattern="[a-z0-9.-]+"
                 />
               </label>
-              <button disabled={busy}>读取经验</button>
+              <button disabled={busy}>{t("读取经验")}</button>
             </form>
             <label>
-              个人经验 · 版本 {note.version}
+              {t("个人经验 · 版本")}
+              {note.version}
               <textarea
                 rows={8}
                 value={note.body}
@@ -981,17 +1057,18 @@ function App() {
                 )
               }
             >
-              保存新版本
+              {t("保存新版本")}
             </button>
             {note.history?.length > 1 && (
               <details>
-                <summary>历史版本</summary>
+                <summary>{t("历史版本")}</summary>
                 {note.history.map((item: any) => (
                   <p key={item.version}>
-                    版本 {item.version} ·{" "}
+                    {t("版本")}
+                    {item.version} ·{" "}
                     {item.savedAt
-                      ? new Date(item.savedAt).toLocaleString("zh-CN")
-                      : "历史日期未知"}{" "}
+                      ? new Date(item.savedAt).toLocaleString(locale)
+                      : t("历史日期未知")}{" "}
                     <button
                       disabled={busy || item.version === note.version}
                       onClick={() =>
@@ -1012,7 +1089,7 @@ function App() {
                         })
                       }
                     >
-                      恢复为新版本
+                      {t("恢复为新版本")}
                     </button>
                   </p>
                 ))}
@@ -1020,12 +1097,12 @@ function App() {
             )}
             {note.seed && (
               <details>
-                <summary>上游参考经验</summary>
+                <summary>{t("上游参考经验")}</summary>
                 <pre>{note.seed}</pre>
               </details>
             )}
             <details>
-              <summary>运行诊断详情</summary>
+              <summary>{t("运行诊断详情")}</summary>
               <pre>{JSON.stringify(diagnostics, null, 2)}</pre>
             </details>
           </>
@@ -1035,11 +1112,11 @@ function App() {
         <div className="veil">
           <section className="handoff">
             <header>
-              <h2>图文预览</h2>
-              <button onClick={() => setPreview(null)}>关闭预览</button>
+              <h2>{t("图文预览")}</h2>
+              <button onClick={() => setPreview(null)}>{t("关闭预览")}</button>
             </header>
             <iframe
-              title="安全图文预览"
+              title={t("安全图文预览")}
               sandbox="allow-same-origin"
               src={`/v1/artifacts/${preview.id}/preview`}
               style={{ width: "100%", height: "75vh", border: 0 }}
@@ -1051,4 +1128,8 @@ function App() {
     </div>
   );
 }
-createRoot(document.getElementById("root")!).render(<App />);
+createRoot(document.getElementById("root")!).render(
+  <LanguageProvider>
+    <App />
+  </LanguageProvider>,
+);

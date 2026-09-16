@@ -238,6 +238,7 @@ try {
   console.log("Historical 11-image replay passed");
   browser = await chromium.launch({ channel: "chromium", headless: true });
   const context = await browser.newContext({
+    locale: "zh-CN",
     viewport: { width: 1440, height: 1100 },
     acceptDownloads: true,
   });

@@ -319,6 +319,7 @@ try {
         : await x.client.wait((await capture(x, "login", "login-B")).id);
     assert.equal(job.state, "waiting_user");
     const context = await browser.newContext({
+      locale: "zh-CN",
       viewport: { width: 1600, height: 1200 },
     });
     const page = await context.newPage();

@@ -2,7 +2,7 @@
 
 [简体中文](CURRENT_CONTEXT.md) | **English**
 
-Updated: 2026-09-16. **0.1.0-dev.3, macOS Apple Silicon developer preview.** A local browser assistant connecting AI assistants to the browser. All 19 project-owned Markdown documents now have Chinese/English editions with language switches and matching-language guide links. Feature introductions present tasks/management first, then 23 browser operations; attribution is at the README footer. The web console remains Chinese. P5, cross-platform work, and Japan deployment remain paused; X list omissions are deferred.
+Updated: 2026-09-16. **0.1.0-dev.3, macOS Apple Silicon developer preview.** A local browser assistant connecting AI assistants to the browser. All 19 project-owned Markdown documents now have Chinese/English editions with language switches and matching-language guide links. Feature introductions present tasks/management first, then 23 browser operations; attribution is at the README footer. The current-source console supports Chinese/English switching, remembered language, and localized dates/messages. The fixed dev.3 release predates this UI update. P5, cross-platform work, and Japan deployment remain paused; X list omissions are deferred.
 
 ## Delivery Status
 
@@ -12,11 +12,13 @@ Project: https://github.com/Fuyera/801-laofu-browser
 
 Preview: https://github.com/Fuyera/801-laofu-browser/releases/tag/v0.1.0-dev.3
 
-Bundled documentation is the build-time snapshot. Later main commits add final acceptance and bilingual documentation without changing the fixed program. Old dev.1/dev.2 candidates remain local archives; fixed-version artifacts are not overwritten, and historical downgrade migration is not required. No Docker image distribution is provided in this release; isolation implementation/evidence remain in source. Future package generation includes the English root documents and the complete bilingual docs directory.
+Bundled documentation is the build-time snapshot. Later main commits add final acceptance, bilingual documentation, and the bilingual console without replacing the fixed release package. Old dev.1/dev.2 candidates remain local archives; fixed-version artifacts are not overwritten, and historical downgrade migration is not required. No Docker image distribution is provided in this release; isolation implementation/evidence remain in source. Future package generation includes the English root documents and the complete bilingual docs directory.
 
 ## Verification
 
-- Bilingual documentation: 19 pairs/38 files; 401 local links/anchors and 18 executable example pairs checked. Mac documentation copying preserved all 38 files byte-for-byte; Docker documentation input paths and script syntax passed. This update changes documentation and packaging document lists only; no full application/browser regression or fixed-release rebuild was performed.
+- Latest UI increment: full build, frontend typecheck, real Chromium language/interaction acceptance, and all 7 article/console regression groups passed; see [scoped evidence](docs/evidence/ui-language.json). No new release package or daily-service upgrade was performed, and the complete delivery matrix was not rerun.
+
+- Bilingual documentation: 19 pairs/38 files; 401 local links/anchors and 18 executable example pairs checked. Mac documentation copying preserved all 38 files byte-for-byte; Docker documentation input paths and script syntax passed. That earlier documentation round changed documentation and packaging document lists only; no full application/browser regression or fixed-release rebuild was performed.
 
 - This release build and unit/API suite passed 50/50; 58 upstream files are unchanged and the 23-tool baseline matches.
 - Extracted final archive: 19,818 files verified; isolated install/upgrade/rollback/fault recovery: 11/11.

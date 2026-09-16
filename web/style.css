@@ -632,3 +632,36 @@ legend {
     transition: none !important;
   }
 }
+
+.language-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 16px 0;
+}
+.language-switch button {
+  font-size: 12px;
+  padding: 6px 10px;
+  background: transparent;
+}
+.language-switch button[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+.login > .language-switch {
+  justify-content: flex-end;
+  margin-top: 0;
+}
+.page-head,
+.detail-title,
+.handoff header {
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.metrics > div {
+  min-width: 0;
+}
+html[lang="en"] .metrics {
+  flex-wrap: wrap;
+}

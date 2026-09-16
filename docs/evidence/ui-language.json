@@ -1,0 +1,75 @@
+{
+  "date": "2026-09-16",
+  "scope": "Console Chinese/English UI; current source, not the frozen dev.3 package",
+  "sourceBaseCommit": "335cf234a621a5239e10bd641b18fe0d659ffcce",
+  "worktreeChanges": true,
+  "sourceSha256": {
+    "web/main.tsx": "387b3df27e89ac5c00f219c7ff1057050050e295734ad159bc33a6045e9fa078",
+    "web/i18n.tsx": "152b0c20318ef6972c3f4aca3193f1cd64feb40111dbdd5132eacc69d5dd1d1b",
+    "web/messages.ts": "05f795e85be6eb76436188c5a091de85e1d66d1637038ac0777aeb8f5e054d1e",
+    "web/style.css": "fe574b7ff3c087a2ab6c67cf278624841962ec392ad89bda7f4c663088b56abb",
+    "scripts/ui-language-regression.mjs": "d3487386bf81bdc2eb53242499f7c48840d28785a01b8e31389695377a2a2066",
+    "scripts/article-console-regression.mjs": "f220726c4ec2321dc01742f2bf1ca2477aecdab8991ad83b44810e928a0189f3"
+  },
+  "environment": {
+    "os": "macOS",
+    "architecture": "arm64",
+    "browser": "Playwright Chromium",
+    "service": "independent loopback HTTP service and temporary state"
+  },
+  "checks": {
+    "build": "passed",
+    "frontendTypecheck": "passed",
+    "uiLanguage": {
+      "passed": true,
+      "scope": "Real Chromium with isolated real HTTP service; locale detection/persistence, login error, five sections, input preservation, actual credential creation, persisted task state/error/date display, real site-note saving, localized confirmation with cancellation, mobile layout. No daily browser or external website used."
+    },
+    "articleConsole": [
+      {
+        "case": "synthetic-browser-fixture: 11 image hashes and ordered DOM lines",
+        "passed": true,
+        "evidenceKind": "synthetic-browser-fixture"
+      },
+      {
+        "case": "web console submits long capture, all 180 paragraphs/code/table/link retained, downloads ZIP, safe image preview, five zones and mobile layout",
+        "passed": true
+      },
+      {
+        "case": "image larger than 12 MiB uses native bounded download and retains original hash",
+        "passed": true
+      },
+      {
+        "case": "corrupt image reports partial",
+        "passed": true
+      },
+      {
+        "case": "DOM changes during transfer report unknown coverage",
+        "passed": true
+      },
+      {
+        "case": "/denied is never an article",
+        "passed": true
+      },
+      {
+        "case": "/limited is never an article",
+        "passed": true
+      }
+    ],
+    "catalog": {
+      "keys": 136,
+      "staticCalls": 118,
+      "missing": 0
+    },
+    "upstreamBaseline": {
+      "files": 58,
+      "tools": 23,
+      "unchanged": true
+    }
+  },
+  "limitations": [
+    "Task-display cases use synthetic persisted jobs; they do not prove external website execution.",
+    "Article tests use local synthetic pages and a real extension/worker.",
+    "No daily-service upgrade, release rebuild, full delivery matrix, or remote handoff live test in this change.",
+    "Original content, user data and diagnostic payloads retain their original language."
+  ]
+}

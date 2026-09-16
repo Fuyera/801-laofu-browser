@@ -78,3 +78,9 @@ Daily Chrome later passed installation, branding, connection, and basic X reads 
 The [lid-close interruption](evidence/p4/full-interrupted.json) remains historical, superseded by the 22/22 result. The first post-wake matrix exposed GET reconnect failure; the fixed matrix passed. Old dev.1 stays archival; no migration requirement. New-package rollback uses synthetic release IDs of the same program, not verified dev.1 downgrade compatibility.
 
 Historical dev.1 reports and a single 30-image WeChat article remain at the evidence root. This round did not revisit WeChat. No claim covers Windows, Ubuntu, Japan deployment, or all 20 hosts in the field. Final assessment: [ACCEPTANCE](ACCEPTANCE.en.md).
+
+## 2026-09-16 Console Language Update
+
+Current-source UI now supports Chinese/English. Full build and frontend type checking passed. A real Chromium session against an independent local service verified initial language selection, remembered preferences, login errors, five sections, input/task selection preservation, task states/dates, credential creation, site-note saving, cancelled confirmation dialogs, and Chinese/English mobile layout. Task-state display uses explicitly synthetic persisted jobs; it is not a new website execution claim. The existing article/console regression passed all 7 groups using a real worker/extension and local synthetic pages, including capture, ZIP download, and safe preview. The 58 upstream files and 23-tool baseline remain unchanged.
+
+See the [scoped evidence](evidence/ui-language.json). Run `node scripts/ui-language-regression.mjs` after building to reproduce the language checks. No full delivery matrix, remote-handoff live test, daily-service upgrade, or fixed-release rebuild was performed; the published dev.3 package predates this UI change.

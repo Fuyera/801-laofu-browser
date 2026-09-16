@@ -50,6 +50,7 @@ npm run build
 npm run typecheck
 node --import tsx --test test/*.test.ts
 npm run verify:baseline
+node scripts/ui-language-regression.mjs
 node scripts/export-contract.mjs
 git diff -- docs/openapi.json docs/schemas.json
 ```
@@ -130,3 +131,5 @@ Mac 运行浏览器矩阵时须保持开盖唤醒；合盖休眠会让持久任�
 公网解析可通过部署器 `--dns` 或测试的 `LAOFU_PUBLIC_DNS` 显式配置已有授权 DNS IP；只作用于公网代理，内部控制通道沿用 Docker 解析。内部主机名、私网、映射 IPv6 和保留地址仍拒绝。不得默认换到其他解析服务。
 
 版本以 package.json 为入口；构建生成 runtime/build.json。HTTP、worker、MCP 和 CLI 使用同一软件版本，API 版本另为 v1。固定发行要求已提交且干净的 Git 来源；开发候选会如实记录 dirty。镜像构建先校验基础依赖，记录实际基础/结果 image ID 与源码提交。
+
+UI 文案集中在 `web/messages.ts`，语言状态与错误展示在 `web/i18n.tsx`；界面使用 `t()`，不翻译任务数据或协议标识。构建后执行 `scripts/ui-language-regression.mjs`，以独立本地服务及真实 Chromium 验证语言记忆、表单保留、真实 API 操作和布局。使用中文选择器的既有浏览器回归显式设置 `locale: "zh-CN"`。

@@ -105,6 +105,7 @@ try {
   assert.equal(clicks, 0);
   browser = await chromium.launch({ channel: "chromium", headless: true });
   const context = await browser.newContext({
+      locale: "zh-CN",
       viewport: { width: 1600, height: 1200 },
     }),
     page = await context.newPage();

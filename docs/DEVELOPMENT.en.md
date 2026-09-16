@@ -50,6 +50,7 @@ npm run build
 npm run typecheck
 node --import tsx --test test/*.test.ts
 npm run verify:baseline
+node scripts/ui-language-regression.mjs
 node scripts/export-contract.mjs
 git diff -- docs/openapi.json docs/schemas.json
 ```
@@ -130,3 +131,5 @@ Keep the Mac lid open and awake during browser matrices. Sleep can expire persis
 Configure previously authorized public DNS IPs explicitly through deployer `--dns` or test `LAOFU_PUBLIC_DNS`. They affect only the public proxy; internal control traffic retains Docker DNS. Internal names, private addresses, mapped IPv6, and reserved addresses remain denied. Do not switch resolvers by default.
 
 package.json is the version entrypoint; builds generate runtime/build.json. HTTP, workers, MCP, and CLI share one software version; API version is independently v1. Fixed releases require committed clean Git source; development candidates accurately record dirty. Image builds verify base dependencies and record actual base/result IDs and source commit.
+
+UI localization lives in `web/messages.ts` and `web/i18n.tsx`; use `t()` for interface messages, keeping task data and protocol identifiers unchanged. After building, `scripts/ui-language-regression.mjs` starts an isolated local service and real Chromium to check language persistence, form preservation, real API actions, and layout. Browser regressions with Chinese selectors explicitly set `locale: "zh-CN"`.
