@@ -98,7 +98,7 @@ patch("extension/background.js", [
   ["async ask(p, tabId) {", "async ask(p, tabId, ctx) {"],
   [
     "async __lb_control(p) {\n    const {lbControl:old}=await chrome.storage.session.get('lbControl');",
-    "async __lb_control(p) {\n    const {lbControl:old,lbAsk}=await chrome.storage.session.get(['lbControl','lbAsk']);\n    if(p.op==='ask_status') return {ask:lbAsk?.jobId===p.jobId?lbAsk:null};\n    if(p.op==='ask_finish'){if(!old||old.jobId!==p.jobId||old.fence!==p.fence||!lbAsk||lbAsk.jobId!==p.jobId)throw err('CONTROL_REVOKED','No matching handoff');await chrome.storage.session.set({lbAsk:{...lbAsk,outcome:p.outcome==='cancelled'?'cancelled':'continued'}});return {text:'handoff recorded'};}",
+    "async __lb_control(p) {\n    const {lbControl:old,lbAsk}=await chrome.storage.session.get(['lbControl','lbAsk']);\n    if(p.op==='ask_status') return {ask:lbAsk?.jobId===p.jobId?lbAsk:null};\n    if(p.op==='tab_target'){if(!old||old.jobId!==p.jobId||old.fence!==p.fence||old.cancelled||Date.now()>old.expiresAt)throw err('CONTROL_REVOKED','No matching active controller');if(!Number.isInteger(p.tabId))throw err('INVALID_ARGUMENT','tabId required');const target=(await chrome.debugger.getTargets()).find(t=>t.type==='page'&&t.tabId===p.tabId);return {targetId:target?.id||null};}\n    if(p.op==='ask_finish'){if(!old||old.jobId!==p.jobId||old.fence!==p.fence||!lbAsk||lbAsk.jobId!==p.jobId)throw err('CONTROL_REVOKED','No matching handoff');await chrome.storage.session.set({lbAsk:{...lbAsk,outcome:p.outcome==='cancelled'?'cancelled':'continued'}});return {text:'handoff recorded'};}",
   ],
   [
     "const panel = pollPanel(id, timeout);",
@@ -224,7 +224,7 @@ patch("extension/net-hook.js", [
 patch("src/mcp-server.js", [
   [
     "return { content: [{ type: 'text', text: body + mismatchNote() }] };",
-    "return { content: [{ type: 'text', text: body + mismatchNote() }], _meta:{'laofu.output':{truncated:!!data.truncated || /已截断|超过 maxBody/.test(data.text||''),originalLength:data.originalLength ?? null,outcome:data.outcome ?? null,effectUnknown:!!data.effectUnknown,completed:data.completed ?? null,doneCount:data.doneCount ?? null,nextAction:data.truncated?'request_larger_budget_or_article_capture':null}} };",
+    "return { content: [{ type: 'text', text: body + mismatchNote() }], _meta:{'laofu.output':{truncated:!!data.truncated || /已截断|超过 maxBody/.test(data.text||''),originalLength:data.originalLength ?? null,outcome:data.outcome ?? null,effectUnknown:!!data.effectUnknown,completed:data.completed ?? null,doneCount:data.doneCount ?? null,tabId:data.tabId ?? null,nextAction:data.truncated?'request_larger_budget_or_article_capture':null}} };",
   ],
   [
     "const m = /^(\\d+)\\n\\n([\\s\\S]*)$/.exec(data?.text || '');",
