@@ -134,6 +134,7 @@ test("error summary flags truncation while preserving the full original tool con
   const text = "x".repeat(1800);
   let result: any;
   w.browser = {
+    releaseClient: async () => {},
     control: async () => {},
     call: async () => ({
       isError: true,
