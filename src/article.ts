@@ -594,8 +594,9 @@ export async function captureArticle(
     images: prepared.images.map((i) => ({ index: i.index, source: i.source })),
   };
   const rendered = renderArticle(meta, prepared);
-  const renderedDOM = cheerio.load(rendered.body);
-  const orderedBlocks = renderedDOM("p,h1,h2,h3,h4,h5,h6,pre,table,img")
+  // Bind structural evidence to the exact HTML artifact, not Turndown Markdown.
+  const renderedDOM = cheerio.load(rendered.html);
+  const orderedBlocks = renderedDOM("main").find("p,h1,h2,h3,h4,h5,h6,pre,table,img")
     .toArray()
     .map((el: any, index: number) => ({
       index: index + 1,

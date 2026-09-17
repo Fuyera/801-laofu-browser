@@ -210,11 +210,7 @@ export async function createServer(options: ServerOptions) {
       attemptId: job.id + ":" + job.attempt,
       requestId: job.input.requestId || job.id,
       checkpoint: {
-        step:
-          store
-            .events(job.id)
-            .filter((e) => e.kind === "progress")
-            .at(-1)?.data?.step || 0,
+        step: store.latestProgress(job.id)?.step || 0,
       },
       nextAction:
         job.state === "waiting_user"

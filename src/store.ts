@@ -37,6 +37,7 @@ export class Store {
  CREATE TABLE IF NOT EXISTS credentials(digest TEXT PRIMARY KEY,kind TEXT NOT NULL,subject TEXT NOT NULL,expires INTEGER);
  CREATE TABLE IF NOT EXISTS jobs(id TEXT PRIMARY KEY,kind TEXT NOT NULL,product_id TEXT NOT NULL,idem TEXT NOT NULL,request_hash TEXT NOT NULL,profile_id TEXT NOT NULL,state TEXT NOT NULL,payload TEXT NOT NULL,UNIQUE(kind,product_id,idem));
  CREATE TABLE IF NOT EXISTS events(id INTEGER PRIMARY KEY AUTOINCREMENT,job_id TEXT NOT NULL,kind TEXT NOT NULL,payload TEXT NOT NULL,created INTEGER NOT NULL);
+ CREATE INDEX IF NOT EXISTS events_job_kind_id ON events(job_id,kind,id);
  CREATE TABLE IF NOT EXISTS leases(profile_id TEXT PRIMARY KEY,holder TEXT,fence INTEGER NOT NULL DEFAULT 0);
  CREATE TABLE IF NOT EXISTS artifacts(id TEXT PRIMARY KEY,product_id TEXT NOT NULL,payload TEXT NOT NULL);
  CREATE TABLE IF NOT EXISTS journal(id TEXT PRIMARY KEY,request_hash TEXT NOT NULL,state TEXT NOT NULL,payload TEXT NOT NULL);
@@ -383,6 +384,12 @@ export class Store {
         data: JSON.parse(r.payload),
         createdAt: r.created,
       }));
+  }
+  latestProgress(jobId: string): any | undefined {
+    const row = this.db.prepare(
+      "SELECT payload FROM events WHERE job_id=? AND kind='progress' ORDER BY id DESC LIMIT 1",
+    ).get(jobId) as { payload: string } | undefined;
+    return row ? JSON.parse(row.payload) : undefined;
   }
   acquire(profileId: string, holder: string) {
     return this.db.transaction(() => {
