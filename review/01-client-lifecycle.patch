@@ -1,0 +1,480 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+new file mode 100644
+index 0000000..c60cb95
+--- /dev/null
++++ b/.github/workflows/ci.yml
+@@ -0,0 +1,23 @@
++name: Code checks
++on:
++  pull_request:
++  push:
++    branches: [main]
++permissions:
++  contents: read
++jobs:
++  checks:
++    runs-on: ubuntu-latest
++    timeout-minutes: 15
++    steps:
++      - uses: actions/checkout@v4
++        with:
++          persist-credentials: false
++      - uses: actions/setup-node@v4
++        with:
++          node-version: '22'
++          cache: npm
++      - run: npm ci
++      - run: npm run typecheck
++      - run: npm test
++      - run: npm run build
+ diff --git a/src/browser.ts b/src/browser.ts
+index b60083a..dfdce42 100644
+--- a/src/browser.ts
++++ b/src/browser.ts
+@@ -12,6 +12,7 @@ import { Fault } from "./errors.js";
+ import { operationalLog } from "./logs.js";
+ import { mkdir, privateFile, secret } from "./util.js";
+ import type { Job, ToolReply } from "./types.js";
++import { ClientPool } from "./client-pool.js";
+ export interface BrowserConfig {
+   home: string;
+   profileId: string;
+@@ -24,7 +25,7 @@ export interface BrowserConfig {
+ export class BrowserAdapter {
+   private bridge?: ChildProcess;
+   private context?: BrowserContext;
+-  private clients = new Map<string, Client>();
++  private clients = new ClientPool<Client>((key) => this.createClient(key));
+   private rpc: any;
+   private current?: Job;
+   private stopping = false;
+@@ -222,29 +223,38 @@ export class BrowserAdapter {
+     }
+     throw new Fault("EXTENSION_OFFLINE", "独立扩展未连接");
+   }
+-  async client(sessionId: string) {
+-    let client = this.clients.get(sessionId);
+-    if (!client) {
+-      client = new Client(
+-        { name: "laofu-browser-worker", version: VERSION },
+-        { capabilities: {} },
+-      );
+-      await client.connect(
+-        new StdioClientTransport({
+-          command: process.execPath,
+-          args: [
+-            path.join(this.engine, "src/cli.js"),
+-            "mcp",
+-            "--client",
+-            "laofu-browser",
+-          ],
+-          env: { ...this.env, LAOFU_SESSION_ID: sessionId },
+-          stderr: "ignore",
+-        }),
+-      );
+-      this.clients.set(sessionId, client);
++  private async createClient(sessionId: string) {
++    const client = new Client(
++      { name: "laofu-browser-worker", version: VERSION },
++      { capabilities: {} },
++    );
++    const transport = new StdioClientTransport({
++      command: process.execPath,
++      args: [path.join(this.engine, "src/cli.js"), "mcp", "--client", "laofu-browser"],
++      env: { ...this.env, LAOFU_SESSION_ID: sessionId },
++      stderr: "ignore",
++    });
++    try {
++      await client.connect(transport);
++      return client;
++    } catch (error) {
++      await Promise.allSettled([client.close(), transport.close()]);
++      throw error;
++    }
++  }
++  async releaseClient(key: string) {
++    try {
++      await this.clients.release(key);
++    } catch (error) {
++      this.diagnostic("client_cleanup_failed", { key, error: String(error) });
++    }
++  }
++  async pruneClients() {
++    try {
++      await this.clients.sweep();
++    } catch (error) {
++      this.diagnostic("client_cleanup_failed", { error: String(error) });
+     }
+-    return client;
+   }
+   async connected(timeout = 35000) {
+     const end = Date.now() + timeout;
+@@ -292,16 +302,17 @@ export class BrowserAdapter {
+     };
+   }
+   async call(name: string, args: any, job: Job): Promise<ToolReply> {
+-    const client = await this.client(job.sessionId || job.id);
+     const timeout = Math.max(
+       35000,
+       Math.min(job.expiresAt - Date.now() + 25000, 925000),
+     );
+-    const result = (await client.callTool(
+-      { name, arguments: this.args(args, job) },
+-      undefined,
+-      { timeout },
+-    )) as ToolReply;
++    const result = await this.clients.use(job.sessionId || job.id, async (client) =>
++      await client.callTool(
++        { name, arguments: this.args(args, job) },
++        undefined,
++        { timeout },
++      ) as ToolReply,
++    );
+     if (name === "reload" && !result.isError) {
+       await new Promise((r) => setTimeout(r, 500));
+       await this.connected(45000);
+@@ -347,8 +358,9 @@ export class BrowserAdapter {
+   }
+   async stop() {
+     this.stopping = true;
+-    await Promise.allSettled([...this.clients.values()].map((c) => c.close()));
+-    this.clients.clear();
++    await this.clients.close().catch((error) =>
++      this.diagnostic("client_cleanup_failed", { error: String(error) }),
++    );
+     this.rpc?.close();
+     await this.context?.close();
+     this.bridge?.kill("SIGTERM");
+diff --git a/src/client-pool.ts b/src/client-pool.ts
+new file mode 100644
+index 0000000..c769b93
+--- /dev/null
++++ b/src/client-pool.ts
+@@ -0,0 +1,107 @@
++/** Bounded, reference-counted clients. Browser/session data is not owned here. */
++export interface ClosableClient {
++  close(): Promise<void>;
++}
++interface Entry<T> {
++  key: string;
++  ready: Promise<T>;
++  users: number;
++  idleSince: number;
++  retired: boolean;
++  disposing: boolean;
++  drained: Promise<void>;
++  resolve: () => void;
++  reject: (error: unknown) => void;
++}
++export class ClientPool<T extends ClosableClient> {
++  private entries = new Map<string, Entry<T>>();
++  private stopped = false;
++  constructor(
++    private readonly create: (key: string) => Promise<T>,
++    private readonly maxClients = 16,
++    private readonly idleMs = 300_000,
++    private readonly now: () => number = Date.now,
++  ) {
++    if (!Number.isInteger(maxClients) || maxClients < 1 || idleMs < 0)
++      throw new Error("Invalid client pool limits");
++  }
++  get size() { return this.entries.size; }
++
++  async use<R>(key: string, operation: (client: T) => Promise<R>): Promise<R> {
++    if (this.stopped) throw new Error("Client pool stopped");
++    let entry = this.entries.get(key);
++    if (!entry) {
++      if (this.entries.size >= this.maxClients) {
++        const idle = [...this.entries.values()]
++          .filter((e) => e.users === 0 && !e.retired)
++          .sort((a, b) => a.idleSince - b.idleSince)[0];
++        if (!idle) throw new Error("Client pool capacity reached");
++        await this.release(idle.key);
++        // Recheck after awaiting: another caller may have claimed this key/slot.
++        return this.use(key, operation);
++      }
++      let resolve!: () => void, reject!: (error: unknown) => void;
++      const drained = new Promise<void>((yes, no) => { resolve = yes; reject = no; });
++      // A task may retire its entry without awaiting it until its call completes.
++      void drained.catch(() => {});
++      entry = {
++        key, users: 0, idleSince: this.now(), retired: false, disposing: false,
++        ready: Promise.resolve().then(() => this.create(key)),
++        drained, resolve, reject,
++      };
++      this.entries.set(key, entry);
++    }
++    if (entry.retired) throw new Error("Client session is closing");
++    entry.users++;
++    let connected = false;
++    try {
++      const client = await entry.ready;
++      connected = true;
++      if (this.stopped) throw new Error("Client pool stopped");
++      return await operation(client);
++    } catch (error) {
++      // The factory must close any transport it created before rejecting.
++      if (!connected) entry.retired = true;
++      throw error;
++    } finally {
++      entry.users--;
++      entry.idleSince = this.now();
++      if (entry.retired) this.dispose(entry);
++    }
++  }
++
++  release(key: string): Promise<void> {
++    const entry = this.entries.get(key);
++    if (!entry) return Promise.resolve();
++    entry.retired = true;
++    this.dispose(entry);
++    return entry.drained;
++  }
++  async sweep(): Promise<void> {
++    const now = this.now();
++    await Promise.all([...this.entries.values()]
++      .filter((e) => e.users === 0 && !e.retired && now - e.idleSince >= this.idleMs)
++      .map((e) => this.release(e.key)));
++  }
++  async close(): Promise<void> {
++    this.stopped = true;
++    const entries = [...this.entries.values()];
++    for (const entry of entries) {
++      entry.retired = true;
++      // Shutdown must interrupt live calls, unlike idle/session retirement.
++      this.dispose(entry, true);
++    }
++    await Promise.all(entries.map((e) => e.drained));
++  }
++  private dispose(entry: Entry<T>, force = false) {
++    if (entry.disposing || (!force && entry.users > 0)) return;
++    entry.disposing = true;
++    void entry.ready.then((client) => client.close(), () => {}).then(() => {
++      if (this.entries.get(entry.key) === entry) this.entries.delete(entry.key);
++      entry.resolve();
++    }, (error) => {
++      // Keep a failed-close slot reserved; do not grow unchecked after cleanup failure.
++      entry.reject(error);
++    });
++  }
++}
+diff --git a/src/server.ts b/src/server.ts
+index 85e8aa6..6498f7f 100644
+--- a/src/server.ts
++++ b/src/server.ts
+@@ -595,6 +595,14 @@ export async function createServer(options: ServerOptions) {
+     store.put("session", s.id, { ...s, closed: true });
+     for (const j of store.jobs(p).filter((j) => j.sessionId === s.id))
+       broker.cancel(j);
++    const profile = store.profile(p, s.profileId);
++    try {
++      broker.send(profile.workerId, { type: "session_closed", sessionId: s.id });
++    } catch (error) {
++      // An offline worker cannot be synchronously notified. Its bounded idle
++      // cleanup/shutdown still retires the cache; the closed session stays denied.
++      if (!(error instanceof Fault && error.code === "WORKER_OFFLINE")) throw error;
++    }
+     return { closed: true };
+   });
+   app.get("/v1/sessions/:id/commands", async (req: any) => {
+diff --git a/src/worker.ts b/src/worker.ts
+index e3ee853..280c5da 100644
+--- a/src/worker.ts
++++ b/src/worker.ts
+@@ -149,6 +149,10 @@ export class Worker {
+   }
+   private async message(msg: WorkerMessage) {
+     const active = this.active;
++    if (msg.type === "session_closed") {
++      await this.browser.releaseClient(msg.sessionId);
++      return;
++    }
+     if (msg.type === "execute") {
+       if (this.running) {
+         if (this.active?.id === msg.job.id) {
+@@ -866,6 +870,9 @@ export class Worker {
+       this.store.journalUnknown(job.id, response);
+       this.send(response);
+     } finally {
++      // Task-only clients never outlive the job. Persistent sessions are retired
++      // by session_closed, idle expiry, capacity eviction, or worker shutdown.
++      if (!job.sessionId) await this.browser.releaseClient(job.id);
+       fs.rmSync(dir, { recursive: true, force: true });
+       this.running = false;
+       this.active = undefined;
+@@ -874,6 +881,7 @@ export class Worker {
+     }
+   }
+   private maintainRetention() {
++    void this.browser.pruneClients();
+     try {
+       this.store.pruneJournalPayloads();
+       this.cleanRetainedFiles();
+diff --git a/test/client-lifecycle.test.ts b/test/client-lifecycle.test.ts
+new file mode 100644
+index 0000000..d80a7f3
+--- /dev/null
++++ b/test/client-lifecycle.test.ts
+@@ -0,0 +1,52 @@
++import test from "node:test";
++import assert from "node:assert/strict";
++import fs from "node:fs";
++import os from "node:os";
++import path from "node:path";
++import { Worker } from "../src/worker.js";
++import { createServer } from "../src/server.js";
++import { id } from "../src/util.js";
++
++for (const sessionId of ["", "ses_persistent"]) {
++  test(`Worker retires only task-scoped clients (session=${sessionId || "none"})`, async () => {
++    const home = fs.mkdtempSync(path.join(os.tmpdir(), "lb-clients-"));
++    const w: any = new Worker({ home, profileId: "fixture", workerId: "fixture", token: "fixture", baseUrl: "http://unused" });
++    const released: string[] = [], sent: any[] = [];
++    w.browser = {
++      control: async () => {}, call: async () => ({ content: [] }),
++      releaseClient: async (key: string) => { released.push(key); }, diagnostic() {},
++    };
++    w.send = (msg: any) => sent.push(msg);
++    const job = { id: id("tsk"), sessionId, kind: "task", type: "browser.flow@v1", attempt: 1, fence: 1,
++      expiresAt: Date.now() + 900_000, input: { steps: [{ tool: "read_text", args: {} }] } };
++    try {
++      await w.execute(job);
++      assert.equal(sent.find((m) => m.type === "result")?.state, "succeeded");
++      assert.deepEqual(released, sessionId ? [] : [job.id]);
++      await w.message({ type: "session_closed", sessionId: "ses_persistent" });
++      assert.equal(released.at(-1), "ses_persistent");
++    } finally { w.store.close(); fs.rmSync(home, { recursive: true, force: true }); }
++  });
++}
++
++test("closing a Session notifies its Worker after denying new commands", async () => {
++  const home = fs.mkdtempSync(path.join(os.tmpdir(), "lb-session-"));
++  const server = await createServer({ home });
++  try {
++    const owner = server.store.createProduct("fixture", "owner", ["*"]);
++    const profileId = id("prf"), workerId = id("wrk");
++    server.store.put("profile", profileId, { id: profileId, workerId, productIds: [], mode: "owner" });
++    const headers = { authorization: `Bearer ${owner.token}` };
++    const created = await server.app.inject({ method: "POST", url: "/v1/sessions", headers, payload: { profileId } });
++    assert.equal(created.statusCode, 200);
++    const session = created.json();
++    const messages: any[] = [];
++    server.broker.send = (worker, message) => { messages.push({ worker, message }); };
++    const closed = await server.app.inject({ method: "DELETE", url: `/v1/sessions/${session.id}`, headers });
++    assert.equal(closed.statusCode, 200);
++    assert.equal(server.store.get("session", session.id).closed, true);
++    assert.deepEqual(messages, [{ worker: workerId, message: { type: "session_closed", sessionId: session.id } }]);
++    const denied = await server.app.inject({ method: "GET", url: `/v1/sessions/${session.id}`, headers });
++    assert.equal(denied.statusCode, 403);
++  } finally { await server.app.close(); fs.rmSync(home, { recursive: true, force: true }); }
++});
+diff --git a/test/client-pool.test.ts b/test/client-pool.test.ts
+new file mode 100644
+index 0000000..91e468e
+--- /dev/null
++++ b/test/client-pool.test.ts
+@@ -0,0 +1,104 @@
++import test from "node:test";
++import assert from "node:assert/strict";
++import { ClientPool } from "../src/client-pool.js";
++const deferred = <T = void>() => {
++  let resolve!: (value: T) => void, reject!: (error: unknown) => void;
++  const promise = new Promise<T>((yes, no) => { resolve = yes; reject = no; });
++  return { promise, resolve, reject };
++};
++test("100 transient jobs release clients without growing the pool", async () => {
++  let created = 0, closed = 0;
++  const pool = new ClientPool(async () => { created++; return { close: async () => { closed++; } }; });
++  for (let i = 0; i < 100; i++) {
++    await pool.use(`task-${i}`, async () => {});
++    await pool.release(`task-${i}`);
++    assert.equal(pool.size, 0);
++  }
++  assert.equal(created, 100);
++  assert.equal(closed, 100);
++});
++test("persistent session reuses one client; concurrent connection is coalesced", async () => {
++  let created = 0, closed = 0;
++  const gate = deferred();
++  const pool = new ClientPool(async () => { created++; await gate.promise; return { close: async () => { closed++; } }; });
++  const a = pool.use("session", async (client) => client);
++  const b = pool.use("session", async (client) => client);
++  gate.resolve();
++  assert.equal(await a, await b);
++  await pool.use("session", async () => {});
++  assert.equal(created, 1);
++  await pool.release("session");
++  assert.equal(closed, 1);
++});
++test("session retirement waits for in-flight calls and rejects later acquisitions", async () => {
++  let closed = 0;
++  const gate = deferred(), started = deferred();
++  const pool = new ClientPool(async () => ({ close: async () => { closed++; } }));
++  const active = pool.use("session", async () => { started.resolve(); await gate.promise; });
++  await started.promise;
++  const retiring = pool.release("session");
++  assert.equal(closed, 0);
++  await assert.rejects(pool.use("session", async () => {}), /closing/);
++  gate.resolve();
++  await active;
++  await retiring;
++  assert.equal(closed, 1);
++  assert.equal(pool.size, 0);
++});
++test("idle expiration skips active calls and refreshes on use", async () => {
++  let now = 0, closed = 0;
++  const pool = new ClientPool(async () => ({ close: async () => { closed++; } }), 2, 100, () => now);
++  await pool.use("idle", async () => {});
++  now = 90;
++  await pool.use("idle", async () => {});
++  now = 110;
++  await pool.sweep();
++  assert.equal(closed, 0);
++  const gate = deferred(), started = deferred();
++  const active = pool.use("busy", async () => { started.resolve(); await gate.promise; });
++  await started.promise;
++  now = 250;
++  await pool.sweep();
++  assert.equal(closed, 1);
++  assert.equal(pool.size, 1);
++  gate.resolve();
++  await active;
++  await pool.close();
++  assert.equal(closed, 2);
++});
++test("capacity evicts idle clients, never active clients", async () => {
++  const pool = new ClientPool(async () => ({ close: async () => {} }), 1);
++  await pool.use("old", async () => {});
++  await pool.use("new", async () => {});
++  assert.equal(pool.size, 1);
++  const gate = deferred(), started = deferred();
++  const active = pool.use("new", async () => { started.resolve(); await gate.promise; });
++  await started.promise;
++  await assert.rejects(pool.use("extra", async () => {}), /capacity/);
++  gate.resolve(); await active; await pool.close();
++});
++test("rejected factory frees its slot and permits retry", async () => {
++  let calls = 0;
++  const pool = new ClientPool(async () => { if (++calls === 1) throw new Error("connect failed"); return { close: async () => {} }; });
++  await assert.rejects(pool.use("same", async () => {}), /connect failed/);
++  await pool.release("same");
++  assert.equal(pool.size, 0);
++  await pool.use("same", async () => {});
++  await pool.close();
++});
++test("shutdown closes live clients and prevents new connections", async () => {
++  const gate = deferred(), started = deferred(); let closed = 0;
++  const pool = new ClientPool(async () => ({ close: async () => { closed++; gate.resolve(); } }));
++  const active = pool.use("busy", async () => { started.resolve(); await gate.promise; });
++  await started.promise;
++  await pool.close(); await active;
++  assert.equal(closed, 1);
++  await assert.rejects(pool.use("new", async () => {}), /stopped/);
++});
++test("failed close keeps capacity reserved rather than allowing unchecked growth", async () => {
++  const pool = new ClientPool(async () => ({ close: async () => { throw new Error("close failed"); } }), 1);
++  await pool.use("session", async () => {});
++  await assert.rejects(pool.release("session"), /close failed/);
++  assert.equal(pool.size, 1);
++  await assert.rejects(pool.use("new", async () => {}), /capacity/);
++});
