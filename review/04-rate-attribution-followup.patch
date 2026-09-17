@@ -1,0 +1,28 @@
+diff --git a/src/browser.ts b/src/browser.ts
+index 0dfc16c..d10ace6 100644
+--- a/src/browser.ts
++++ b/src/browser.ts
+@@ -311,7 +311,7 @@ export class BrowserAdapter {
+       ) as ToolReply,
+     );
+     const createdTab = result._meta?.["laofu.output"]?.tabId;
+-    if (existing && Number.isInteger(createdTab))
++    if (existing && typeof createdTab === "number" && Number.isInteger(createdTab))
+       await this.bindRatePage(createdTab, job, existing);
+     if (name === "reload" && !result.isError) {
+       await new Promise((r) => setTimeout(r, 500));
+diff --git a/src/types.ts b/src/types.ts
+index 81609e4..0614c4a 100644
+--- a/src/types.ts
++++ b/src/types.ts
+@@ -96,6 +96,10 @@ export interface ToolReply {
+     [k: string]: any;
+   }>;
+   isError?: boolean;
++  _meta?: {
++    "laofu.output"?: { tabId?: number | null; [key: string]: unknown };
++    [key: string]: unknown;
++  };
+ }
+ export interface WorkerMessage {
+   type: string;
