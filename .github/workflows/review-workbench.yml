@@ -1,0 +1,36 @@
+name: Review workbench
+on:
+  push:
+    branches: [review/remediation-workbench-20260917]
+permissions:
+  contents: read
+jobs:
+  baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Archive exact review baseline
+        run: |
+          mkdir -p /tmp/review-baseline
+          git archive 492c3b445e52664e044b1fc920e550a4aecdc17a | tar -x -C /tmp/review-baseline
+      - uses: actions/upload-artifact@v4
+        with:
+          name: review-baseline-source
+          path: /tmp/review-baseline
+          include-hidden-files: true
+          retention-days: 3
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Unit and interface tests
+        run: npm test
+      - name: Build
+        run: npm run build
