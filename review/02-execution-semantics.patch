@@ -1,0 +1,284 @@
+diff --git a/src/worker.ts b/src/worker.ts
+index 280c5da..2cf994a 100644
+--- a/src/worker.ts
++++ b/src/worker.ts
+@@ -37,6 +37,8 @@ export class Worker {
+   private rateLimited?: Fault;
+   private activeStarted = 0;
+   private humanElapsed = 0;
++  private humanStarted?: number;
++  private effectTools = new Set<string>();
+   private reconnectTimer?: NodeJS.Timeout;
+   private reconnectDelay = 1000;
+   private lastReady?: boolean;
+@@ -240,13 +242,36 @@ export class Worker {
+       this.viewers.delete(msg.viewerId);
+     }
+   }
++  private humanTime(now = Date.now()) {
++    return this.humanElapsed + (this.humanStarted === undefined
++      ? 0 : Math.max(0, now - this.humanStarted));
++  }
++  private beginHuman() {
++    this.humanStarted ??= Date.now();
++  }
++  private finishHuman() {
++    this.humanElapsed = this.humanTime();
++    this.humanStarted = undefined;
++  }
++  private humanBudget(job: Job) {
++    const remaining = (job.input.limits?.humanWaitSeconds || 600) * 1000 - this.humanTime();
++    if (remaining <= 0) throw new Fault("HUMAN_TIMEOUT", "人工等待预算已用完");
++    return remaining;
++  }
++  private externalEffects() {
++    return {
++      possible: this.effectTools.size > 0,
++      outcome: this.effectTools.size ? "not_independently_verified" : "none",
++      dispatchedTools: [...this.effectTools],
++    };
++  }
+   private check(job: Job) {
+     if (this.cancelled)
+       throw new Fault("CANCELLED", "用户或连接状态已取消本次执行");
+     if (this.rateLimited) throw this.rateLimited;
+     if (
+       job.kind === "task" &&
+-      Date.now() - this.activeStarted - this.humanElapsed >
++      Date.now() - this.activeStarted - this.humanTime() >
+         (job.input.limits?.activeTimeoutSeconds || 180) * 1000
+     )
+       throw new Fault("ACTIVE_TIMEOUT", "主动执行预算已用完");
+@@ -281,6 +306,11 @@ export class Worker {
+     });
+     let received = false;
+     try {
++      // Record at dispatch, not from the plan. Internal extraction eval/GETs are
++      // not user-defined writes; unknown transport results keep this evidence.
++      if ((job.kind === "command" || job.type === "browser.flow@v1") &&
++          ["click", "type", "fill", "select", "key", "act", "eval", "fetch", "upload", "ask"].includes(tool))
++        this.effectTools.add(tool);
+       const result = raw
+         ? await this.browser.raw(tool, args, job)
+         : tool === "ask"
+@@ -352,12 +382,8 @@ export class Worker {
+     }
+   }
+   private async ask(job: Job, args: any) {
+-    let done = false,
+-      humanStart = 0;
+-    const budget = Math.max(
+-      1,
+-      (job.input.limits?.humanWaitSeconds || 600) * 1000 - this.humanElapsed,
+-    );
++    let done = false;
++    const budget = this.humanBudget(job);
+     const pending = this.browser.call(
+       "ask",
+       { ...args, timeout: Math.min(Number(args.timeout) || 300000, budget) },
+@@ -381,7 +407,7 @@ export class Worker {
+         const status = await this.browser.handoff(job);
+         if (status.ask?.ready) {
+           await this.browser.control(job, true);
+-          humanStart = Date.now();
++          this.beginHuman();
+           this.resolveHuman = () => {
+             void this.browser.handoff(job, "continued").catch(() => {});
+           };
+@@ -402,6 +428,7 @@ export class Worker {
+         await new Promise((r) => setTimeout(r, 150));
+       }
+       const result = await Promise.race([pending, interrupted]);
++      this.finishHuman();
+       const outcome = (result as any)?._meta?.["laofu.output"]?.outcome;
+       if (["continued", "completed"].includes(outcome)) {
+         this.check(job);
+@@ -434,7 +461,7 @@ export class Worker {
+       }
+       throw e;
+     } finally {
+-      if (humanStart) this.humanElapsed += Date.now() - humanStart;
++      this.finishHuman();
+       this.resolveHuman = undefined;
+       this.rejectHuman = undefined;
+       for (const tcp of this.viewers.values()) tcp.destroy();
+@@ -442,8 +469,9 @@ export class Worker {
+     }
+   }
+   private async human(job: Job, info: any) {
+-    const humanStarted = Date.now();
++    const budget = this.humanBudget(job);
+     await this.browser.control(job, true);
++    this.beginHuman();
+     this.send({
+       type: "waiting_user",
+       jobId: job.id,
+@@ -454,7 +482,7 @@ export class Worker {
+       await new Promise<void>((resolve, reject) => {
+         const timer = setTimeout(
+           () => reject(new Fault("HUMAN_TIMEOUT", "人工等待已到期")),
+-          Math.min(job.input.limits?.humanWaitSeconds || 600, 600) * 1000,
++          Math.min(budget, Math.max(1, job.expiresAt - Date.now())),
+         );
+         this.resolveHuman = () => {
+           clearTimeout(timer);
+@@ -466,7 +494,7 @@ export class Worker {
+         };
+       });
+     } finally {
+-      this.humanElapsed += Date.now() - humanStarted;
++      this.finishHuman();
+       this.resolveHuman = undefined;
+       this.rejectHuman = undefined;
+       for (const tcp of this.viewers.values()) tcp.destroy();
+@@ -542,6 +570,8 @@ export class Worker {
+     this.rateLimited = undefined;
+     this.activeStarted = Date.now();
+     this.humanElapsed = 0;
++    this.humanStarted = undefined;
++    this.effectTools = new Set();
+     this.store.pruneJournalPayloads();
+     this.cleanRetainedFiles();
+     let commandError: any = null;
+@@ -795,36 +825,7 @@ export class Worker {
+           rssBytes: process.memoryUsage().rss,
+           modelCalls: 0,
+         },
+-        externalEffects: {
+-          possible:
+-            job.kind === "command" &&
+-            [
+-              "click",
+-              "type",
+-              "fill",
+-              "select",
+-              "key",
+-              "act",
+-              "eval",
+-              "fetch",
+-              "upload",
+-            ].includes(job.type),
+-          outcome:
+-            job.kind === "command" &&
+-            [
+-              "click",
+-              "type",
+-              "fill",
+-              "select",
+-              "key",
+-              "act",
+-              "eval",
+-              "fetch",
+-              "upload",
+-            ].includes(job.type)
+-              ? "not_independently_verified"
+-              : "none",
+-        },
++        externalEffects: this.externalEffects(),
+       };
+       const response = {
+         type: "result",
+@@ -866,6 +867,7 @@ export class Worker {
+         effectState: this.step ? "unknown" : "not_started",
+         stopped,
+         error,
++        result: { externalEffects: this.externalEffects() },
+       };
+       this.store.journalUnknown(job.id, response);
+       this.send(response);
+diff --git a/test/execution-semantics.test.ts b/test/execution-semantics.test.ts
+new file mode 100644
+index 0000000..012b014
+--- /dev/null
++++ b/test/execution-semantics.test.ts
+@@ -0,0 +1,90 @@
++import test from "node:test";
++import assert from "node:assert/strict";
++import fs from "node:fs";
++import os from "node:os";
++import path from "node:path";
++import { Worker } from "../src/worker.js";
++import { Fault } from "../src/errors.js";
++import { id } from "../src/util.js";
++
++test("Flow ask excludes long and repeated human waits, while other budgets remain enforced", async () => {
++  const originalNow = Date.now;
++  let now = 1_000_000;
++  const w: any = Object.create(Worker.prototype);
++  Object.assign(w, { config: {}, cancelled: false, activeStarted: now, humanElapsed: 0,
++    humanStarted: undefined, viewers: new Map(), rateLimited: undefined });
++  const job: any = { id: "fixture", fence: 1, kind: "task", expiresAt: now + 900_000,
++    input: { limits: { activeTimeoutSeconds: 180, humanWaitSeconds: 600 } } };
++  Date.now = () => now;
++  try {
++    for (const delay of [179_000, 181_000]) {
++      let resolve!: (result: any) => void;
++      const pending = new Promise((yes) => { resolve = yes; });
++      w.browser = { call: () => pending, handoff: async () => ({ ask: { ready: true, tabId: 1 } }), control: async () => {} };
++      w.send = (message: any) => {
++        if (message.type === "waiting_user") {
++          now += delay;
++          resolve({ _meta: { "laofu.output": { outcome: "continued" } } });
++        }
++      };
++      await w.ask(job, {});
++    }
++    assert.equal(w.humanElapsed, 360_000);
++    assert.equal(w.humanStarted, undefined);
++    assert.equal(w.humanBudget(job), 240_000);
++    now += 180_001;
++    assert.throws(() => w.check(job), { code: "ACTIVE_TIMEOUT" });
++    w.activeStarted = now;
++    w.humanElapsed = 600_000;
++    assert.throws(() => w.humanBudget(job), { code: "HUMAN_TIMEOUT" });
++    job.expiresAt = now - 1;
++    assert.throws(() => w.check(job), { code: "TIMEOUT" });
++  } finally { Date.now = originalNow; }
++});
++
++test("human wait settlement is idempotent, including a clock starting at zero", () => {
++  const originalNow = Date.now; let now = 0;
++  const w: any = Object.create(Worker.prototype);
++  Object.assign(w, { humanElapsed: 0, humanStarted: undefined });
++  Date.now = () => now;
++  try {
++    w.beginHuman(); now = 181_000;
++    assert.equal(w.humanTime(), 181_000);
++    w.finishHuman(); w.finishHuman();
++    assert.equal(w.humanTime(), 181_000);
++  } finally { Date.now = originalNow; }
++});
++
++for (const scenario of ["read", "write", "write-fail", "write-cancel", "cancel-before-write", "command"] as const) {
++  test(`external effect evidence follows issued tools: ${scenario}`, async () => {
++    const home = fs.mkdtempSync(path.join(os.tmpdir(), "lb-effects-"));
++    const w: any = new Worker({ home, profileId: "fixture", workerId: "fixture", token: "fixture", baseUrl: "http://unused" });
++    const messages: any[] = [], calls: string[] = [];
++    w.browser = {
++      control: async () => { if (scenario === "cancel-before-write") w.cancelled = true; },
++      call: async (tool: string) => {
++        calls.push(tool);
++        if (scenario === "write-fail" && tool === "read_text") throw new Fault("INTERNAL", "fixture transport failure");
++        if (scenario === "write-cancel" && tool === "click") w.cancelled = true;
++        return { content: [] };
++      },
++      releaseClient: async () => {}, diagnostic() {},
++    };
++    w.send = (message: any) => messages.push(message);
++    const steps = scenario === "read" ? [{ tool: "read_text" }] : [{ tool: "click" }, { tool: "read_text" }];
++    const job: any = { id: id(scenario === "command" ? "cmd" : "tsk"), sessionId: "", attempt: 1, fence: 1,
++      kind: scenario === "command" ? "command" : "task", type: scenario === "command" ? "click" : "browser.flow@v1",
++      expiresAt: Date.now() + 900_000, input: scenario === "command" ? { args: {} } : { steps } };
++    try {
++      await w.execute(job);
++      const reply = messages.find((m) => m.type === "result");
++      const possible = calls.includes("click");
++      assert.equal(reply.result.externalEffects.possible, possible);
++      assert.equal(reply.result.externalEffects.outcome, possible ? "not_independently_verified" : "none");
++      assert.deepEqual(reply.result.externalEffects.dispatchedTools, possible ? ["click"] : []);
++      if (scenario === "write-fail") assert.equal(reply.state, "failed");
++      else if (scenario.includes("cancel")) assert.equal(reply.state, "cancelled");
++      else assert.equal(reply.state, "succeeded");
++    } finally { w.store.close(); fs.rmSync(home, { recursive: true, force: true }); }
++  });
++}
