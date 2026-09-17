@@ -1,0 +1,440 @@
+diff --git a/docs/RATE_LIMIT_SCOPE.en.md b/docs/RATE_LIMIT_SCOPE.en.md
+new file mode 100644
+index 0000000..9267c7e
+--- /dev/null
++++ b/docs/RATE_LIMIT_SCOPE.en.md
+@@ -0,0 +1,13 @@
++# Rate-limit attribution
++
++[简体中文](RATE_LIMIT_SCOPE.md) | **English**
++
++Service-launched Chromium binds requests to the execution generation, exact Page, job ID and fence at request start. Child frames belong to their Page. Only a 429 attributed to a bound page stops the active job; related cross-origin resources retain rate-limit protection. Delayed requests cannot affect a new job or a generation after human handoff.
++
++An internal controller-authorized tab_target query maps the Chrome tabId to a CDP target ID, which is matched exactly against Playwright Pages. No URL, title or page-order inference is used. Target IDs are read and cached at page creation without DOM mutation.
++
++Explicit-tab commands bind before dispatch. tabs.new returns its tabId, allowing initial navigation responses for that verified new Page to be attributed after its receipt. Binding an existing Page never retrospectively adopts its earlier background traffic. Pending samples are capped at 128 and cleared on generation changes.
++
++Article capture creates and binds a blank page before navigating. Legacy session commands without an explicit tabId do not guess their target; callers should pass tabId explicitly. Service Worker traffic without a resolvable Page is diagnostic only. Attach mode has no Playwright Context observer and continues to rely on existing tool errors and page-state checks; equivalent network coverage is not claimed.
++
++This is not the network authorization layer. Proxy/private-network protections, cooldowns, human handoff and the prohibition on replaying unknown writes remain unchanged. Release acceptance must exercise extension target mapping, L2 actions, initial navigation and multi-tab timing in a supported real Chrome environment. Node test doubles do not replace those checks.
+diff --git a/docs/RATE_LIMIT_SCOPE.md b/docs/RATE_LIMIT_SCOPE.md
+new file mode 100644
+index 0000000..a15b9c0
+--- /dev/null
++++ b/docs/RATE_LIMIT_SCOPE.md
+@@ -0,0 +1,13 @@
++# 限流事件归属
++
++**简体中文** | [English](RATE_LIMIT_SCOPE.en.md)
++
++服务启动的 Chromium 将请求开始时的执行代次、实际 Page 和任务 ID/fence 绑定。子 Frame 请求归属于其 Page。429 只有属于本次已绑定页面才会停止当前任务；跨站子资源仍保留限流保护。旧请求在任务切换或人工接手前后迟到，不得取消下一代执行。
++
++Chrome tabId 通过扩展的内部、受当前 controller 保护的 tab_target 查询映射到 CDP target ID，再与 Playwright Page 逐一精确匹配；不按 URL、页面顺序或标题猜测。同 URL 多标签页也不共享归属。target ID 在页面建立时读取并缓存，不修改 DOM。
++
++显式 tabId 命令在执行前绑定。tabs.new 的回执携带新 tabId；其新页面初始导航的 429 可以在身份核验后补归属。旧页面的历史后台请求不会因后来绑定而追溯归属。待归属样本上限 128 条，每次任务代次切换清空。
++
++图文采集先建立空白页、完成绑定，再导航。没有显式 tabId 且不能确定实际目标的旧 Session 命令不猜测归属；调用者应显式提供 tabId。无法关联 Page 的 Service Worker 流量只记诊断。attach 模式没有此 Playwright Context 监听器，仍使用原有工具级错误与页面状态检测，不能宣称获得同等网络覆盖。
++
++这不是网络访问授权层。代理、私网阻断、站点冷却、人工接手及未知写结果禁止重放等保护不应因此被关闭。发布前还须在支持的实际 Chrome 环境验收扩展 target 映射、L2 操作、初始导航和多标签页时序；Node 测试替身不替代这些验收。
+diff --git a/scripts/build-engine.mjs b/scripts/build-engine.mjs
+index cfdae40..843baa7 100644
+--- a/scripts/build-engine.mjs
++++ b/scripts/build-engine.mjs
+@@ -98,7 +98,7 @@ patch("extension/background.js", [
+   ["async ask(p, tabId) {", "async ask(p, tabId, ctx) {"],
+   [
+     "async __lb_control(p) {\n    const {lbControl:old}=await chrome.storage.session.get('lbControl');",
+-    "async __lb_control(p) {\n    const {lbControl:old,lbAsk}=await chrome.storage.session.get(['lbControl','lbAsk']);\n    if(p.op==='ask_status') return {ask:lbAsk?.jobId===p.jobId?lbAsk:null};\n    if(p.op==='ask_finish'){if(!old||old.jobId!==p.jobId||old.fence!==p.fence||!lbAsk||lbAsk.jobId!==p.jobId)throw err('CONTROL_REVOKED','No matching handoff');await chrome.storage.session.set({lbAsk:{...lbAsk,outcome:p.outcome==='cancelled'?'cancelled':'continued'}});return {text:'handoff recorded'};}",
++    "async __lb_control(p) {\n    const {lbControl:old,lbAsk}=await chrome.storage.session.get(['lbControl','lbAsk']);\n    if(p.op==='ask_status') return {ask:lbAsk?.jobId===p.jobId?lbAsk:null};\n    if(p.op==='tab_target'){if(!old||old.jobId!==p.jobId||old.fence!==p.fence||old.cancelled||Date.now()>old.expiresAt)throw err('CONTROL_REVOKED','No matching active controller');if(!Number.isInteger(p.tabId))throw err('INVALID_ARGUMENT','tabId required');const target=(await chrome.debugger.getTargets()).find(t=>t.type==='page'&&t.tabId===p.tabId);return {targetId:target?.id||null};}\n    if(p.op==='ask_finish'){if(!old||old.jobId!==p.jobId||old.fence!==p.fence||!lbAsk||lbAsk.jobId!==p.jobId)throw err('CONTROL_REVOKED','No matching handoff');await chrome.storage.session.set({lbAsk:{...lbAsk,outcome:p.outcome==='cancelled'?'cancelled':'continued'}});return {text:'handoff recorded'};}",
+   ],
+   [
+     "const panel = pollPanel(id, timeout);",
+@@ -224,7 +224,7 @@ patch("extension/net-hook.js", [
+ patch("src/mcp-server.js", [
+   [
+     "return { content: [{ type: 'text', text: body + mismatchNote() }] };",
+-    "return { content: [{ type: 'text', text: body + mismatchNote() }], _meta:{'laofu.output':{truncated:!!data.truncated || /已截断|超过 maxBody/.test(data.text||''),originalLength:data.originalLength ?? null,outcome:data.outcome ?? null,effectUnknown:!!data.effectUnknown,completed:data.completed ?? null,doneCount:data.doneCount ?? null,nextAction:data.truncated?'request_larger_budget_or_article_capture':null}} };",
++    "return { content: [{ type: 'text', text: body + mismatchNote() }], _meta:{'laofu.output':{truncated:!!data.truncated || /已截断|超过 maxBody/.test(data.text||''),originalLength:data.originalLength ?? null,outcome:data.outcome ?? null,effectUnknown:!!data.effectUnknown,completed:data.completed ?? null,doneCount:data.doneCount ?? null,tabId:data.tabId ?? null,nextAction:data.truncated?'request_larger_budget_or_article_capture':null}} };",
+   ],
+   [
+     "const m = /^(\\d+)\\n\\n([\\s\\S]*)$/.exec(data?.text || '');",
+diff --git a/src/browser.ts b/src/browser.ts
+index dfdce42..0dfc16c 100644
+--- a/src/browser.ts
++++ b/src/browser.ts
+@@ -4,7 +4,7 @@ import path from "node:path";
+ import net from "node:net";
+ import { spawn, type ChildProcess } from "node:child_process";
+ import { pathToFileURL } from "node:url";
+-import { chromium, type BrowserContext } from "playwright";
++import { chromium, type BrowserContext, type Page, type Request } from "playwright";
+ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+ import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+ import { ROOT } from "./catalog.js";
+@@ -13,6 +13,7 @@ import { operationalLog } from "./logs.js";
+ import { mkdir, privateFile, secret } from "./util.js";
+ import type { Job, ToolReply } from "./types.js";
+ import { ClientPool } from "./client-pool.js";
++import { RateLimitScope, type RateEvidence } from "./rate-scope.js";
+ export interface BrowserConfig {
+   home: string;
+   profileId: string;
+@@ -42,15 +43,14 @@ export class BrowserAdapter {
+   readonly port: number;
+   readonly pairing: string;
+   browserVersion = "unknown";
+-  onRateLimit?: (evidence: {
+-    origin: string;
+-    retryAfter: string | null;
+-    observedAt: number;
+-  }) => void;
+-  private rateResponses = new Map<
+-    string,
+-    { origin: string; retryAfter: string | null; observedAt: number }
+-  >();
++  onRateLimit?: (evidence: RateEvidence) => void;
++  private rateResponses = new Map<string, RateEvidence>();
++  private tabPages = new Map<number, Page>();
++  private targetIds = new WeakMap<Page, Promise<string>>();
++  private rateScope = new RateLimitScope<Page, Request>((evidence) => {
++    this.rateResponses.set(evidence.origin, evidence);
++    this.onRateLimit?.(evidence);
++  });
+   rateLimit(url: string, since: number) {
+     const value = this.rateResponses.get(new URL(url).origin);
+     return value && value.observedAt >= since ? value : undefined;
+@@ -162,16 +162,7 @@ export class BrowserAdapter {
+         this.context.browser()?.version() ||
+         (await this.context.pages()[0]?.evaluate(() => navigator.userAgent)) ||
+         "unknown";
+-      this.context.on("response", (response) => {
+-        if (response.status() !== 429) return;
+-        const origin = new URL(response.url()).origin;
+-        this.rateResponses.set(origin, {
+-          origin,
+-          retryAfter: response.headers()["retry-after"] || null,
+-          observedAt: Date.now(),
+-        });
+-        this.onRateLimit?.(this.rateResponses.get(origin)!);
+-      });
++      this.observeRateLimits();
+       const setup = await this.context.newPage();
+       try {
+         const downloadSession = await this.context.newCDPSession(setup);
+@@ -267,6 +258,9 @@ export class BrowserAdapter {
+       );
+   }
+   async control(job: Job, cancelled = false) {
++    if (this.current?.id !== job.id || this.current.fence !== job.fence)
++      this.rateResponses.clear();
++    this.rateScope.control(job.id, job.fence, cancelled);
+     this.current = job;
+     await this.connected();
+     return this.rpc.call(
+@@ -302,6 +296,9 @@ export class BrowserAdapter {
+     };
+   }
+   async call(name: string, args: any, job: Job): Promise<ToolReply> {
++    const existing = name === "tabs" && args.action === "new" && this.context
++      ? new Set(this.context.pages()) : undefined;
++    if (Number.isInteger(args.tabId)) await this.bindRatePage(args.tabId, job);
+     const timeout = Math.max(
+       35000,
+       Math.min(job.expiresAt - Date.now() + 25000, 925000),
+@@ -313,6 +310,9 @@ export class BrowserAdapter {
+         { timeout },
+       ) as ToolReply,
+     );
++    const createdTab = result._meta?.["laofu.output"]?.tabId;
++    if (existing && Number.isInteger(createdTab))
++      await this.bindRatePage(createdTab, job, existing);
+     if (name === "reload" && !result.isError) {
+       await new Promise((r) => setTimeout(r, 500));
+       await this.connected(45000);
+@@ -320,6 +320,9 @@ export class BrowserAdapter {
+     return result;
+   }
+   async raw(name: string, args: any, job: Job) {
++    const existing = name === "tabs" && args.action === "new" && this.context
++      ? new Set(this.context.pages()) : undefined;
++    if (Number.isInteger(args.tabId)) await this.bindRatePage(args.tabId, job);
+     // Register the new page before the recipe navigates it, so initial response headers cannot race observation.
+     const page =
+       name === "tabs" &&
+@@ -334,6 +337,8 @@ export class BrowserAdapter {
+       timeoutMs: Math.max(35000, Math.min(job.expiresAt - Date.now(), 650000)),
+     });
+     if (page) await page;
++    if (existing && Number.isInteger(result.tabId))
++      await this.bindRatePage(result.tabId, job, existing);
+     return result;
+   }
+   async evaluate(expression: string, job: Job, tabId?: number) {
+@@ -353,11 +358,71 @@ export class BrowserAdapter {
+       );
+     }
+   }
++  private observeRateLimits() {
++    const context = this.context!;
++    const requestPage = (request: Request): Page | undefined => {
++      try { return request.frame().page(); } catch { return undefined; }
++    };
++    const prepare = (page: Page) => {
++      void this.targetId(page).catch(() => {});
++      page.once("close", () => {
++        for (const [tabId, bound] of this.tabPages)
++          if (bound === page) this.tabPages.delete(tabId);
++      });
++    };
++    for (const page of context.pages()) prepare(page);
++    context.on("page", prepare);
++    context.on("request", (request) => this.rateScope.request(request, requestPage(request)));
++    context.on("response", (response) => {
++      if (response.status() !== 429) return;
++      const request = response.request();
++      const evidence = {
++        origin: new URL(response.url()).origin,
++        retryAfter: response.headers()["retry-after"] || null,
++        observedAt: Date.now(),
++      };
++      if (!this.rateScope.response(request, evidence, requestPage(request)))
++        this.diagnostic("unattributed_rate_limit", { origin: evidence.origin });
++    });
++  }
++  private targetId(page: Page): Promise<string> {
++    let pending = this.targetIds.get(page);
++    if (!pending) {
++      pending = (async () => {
++        const cdp = await this.context!.newCDPSession(page);
++        try { return (await cdp.send("Target.getTargetInfo")).targetInfo.targetId; }
++        finally { await cdp.detach(); }
++      })();
++      this.targetIds.set(page, pending);
++      void pending.catch(() => this.targetIds.delete(page));
++    }
++    return pending;
++  }
++  private async bindRatePage(tabId: number, job: Job, existing?: Set<Page>) {
++    if (!this.context) return; // attach mode has no Playwright context observer.
++    let page = this.tabPages.get(tabId);
++    if (!page || page.isClosed()) {
++      const target = await this.rpc.call("__lb_control", {
++        op: "tab_target", jobId: job.id, fence: job.fence, tabId,
++      }, { timeoutMs: 5000 });
++      if (target.targetId) for (const candidate of this.context.pages()) {
++        if (await this.targetId(candidate).catch(() => null) === target.targetId) {
++          page = candidate; this.tabPages.set(tabId, page); break;
++        }
++      }
++    }
++    if (!page || page.isClosed())
++      throw new Fault("NO_TAB", "无法确认当前标签页的网络响应归属，未执行后续动作");
++    this.rateScope.bind(page, job.id, job.fence, !!existing && !existing.has(page));
++  }
+   diagnostic(event: string, data: Record<string, unknown>) {
+     this.logs?.write(event, data);
+   }
+   async stop() {
+     this.stopping = true;
++    this.rateScope.clear();
++    this.tabPages.clear();
++    this.rateResponses.clear();
+     await this.clients.close().catch((error) =>
+       this.diagnostic("client_cleanup_failed", { error: String(error) }),
+     );
+diff --git a/src/rate-scope.ts b/src/rate-scope.ts
+new file mode 100644
+index 0000000..21fc417
+--- /dev/null
++++ b/src/rate-scope.ts
+@@ -0,0 +1,59 @@
++export interface RateEvidence {
++  origin: string;
++  retryAfter: string | null;
++  observedAt: number;
++  jobId: string;
++  fence: number;
++}
++type Sample = Omit<RateEvidence, "jobId" | "fence">;
++/** Correlate request-start generations and exact Page identities, never URL guesses. */
++export class RateLimitScope<P extends object, R extends object> {
++  private generation = 0;
++  private current?: { jobId: string; fence: number; active: boolean; pages: Set<P> };
++  private requests = new WeakMap<R, { generation: number; page?: P }>();
++  private pending: Array<{ page: P; sample: Sample; generation: number }> = [];
++  constructor(private readonly notify: (evidence: RateEvidence) => void) {}
++  control(jobId: string, fence: number, cancelled = false) {
++    const same = this.current?.jobId === jobId && this.current.fence === fence;
++    if (!same || cancelled || !this.current?.active) {
++      this.generation++;
++      this.pending = [];
++      this.current = { jobId, fence, active: !cancelled, pages: same ? this.current!.pages : new Set() };
++    }
++  }
++  bind(page: P, jobId: string, fence: number, newlyCreated = false) {
++    const current = this.current;
++    if (!current?.active || current.jobId !== jobId || current.fence !== fence) return;
++    current.pages.add(page);
++    const pending = this.pending;
++    this.pending = pending.filter((p) => p.page !== page);
++    // Only a newly created, subsequently identity-verified tab may adopt initial
++    // navigation responses. Never retroactively adopt an old tab's background traffic.
++    if (newlyCreated) for (const item of pending) {
++      if (item.page === page && item.generation === this.generation && current.active)
++        this.notify({ ...item.sample, jobId, fence });
++    }
++  }
++  request(request: R, page?: P) {
++    if (this.current?.active) this.requests.set(request, { generation: this.generation, page });
++  }
++  response(request: R, sample: Sample, resolvedPage?: P): boolean {
++    const started = this.requests.get(request), current = this.current;
++    const page = started?.page || resolvedPage;
++    if (!started || !page || !current?.active || started.generation !== this.generation) return false;
++    if (current.pages.has(page)) {
++      this.notify({ ...sample, jobId: current.jobId, fence: current.fence });
++      return true;
++    }
++    // Bounded retention for a tab-creation operation whose tabId arrives after headers.
++    this.pending.push({ page, sample, generation: this.generation });
++    if (this.pending.length > 128) this.pending.shift();
++    return false;
++  }
++  clear() {
++    this.generation++;
++    this.current = undefined;
++    this.pending = [];
++    this.requests = new WeakMap();
++  }
++}
+diff --git a/src/worker.ts b/src/worker.ts
+index 2cf994a..e9643c0 100644
+--- a/src/worker.ts
++++ b/src/worker.ts
+@@ -48,7 +48,7 @@ export class Worker {
+     this.store = new Store(path.join(config.home, "journal"));
+     this.browser = new BrowserAdapter(config);
+     this.browser.onRateLimit = (evidence) => {
+-      if (!this.active) return;
++      if (!this.active || evidence.jobId !== this.active.id || evidence.fence !== this.active.fence) return;
+       this.rateLimited = new Fault(
+         "RATE_LIMITED",
+         "站点返回限流，已停止后续自动动作",
+diff --git a/test/rate-attribution.test.ts b/test/rate-attribution.test.ts
+new file mode 100644
+index 0000000..04a9f50
+--- /dev/null
++++ b/test/rate-attribution.test.ts
+@@ -0,0 +1,52 @@
++import test from "node:test";
++import assert from "node:assert/strict";
++import fs from "node:fs";
++import os from "node:os";
++import path from "node:path";
++import { EventEmitter } from "node:events";
++import { BrowserAdapter } from "../src/browser.js";
++import { Worker } from "../src/worker.js";
++
++test("BrowserAdapter correlates Chrome tab ID to exact target, not identical page URLs", async () => {
++  const home = fs.mkdtempSync(path.join(os.tmpdir(), "lb-rate-adapter-"));
++  const browser: any = new BrowserAdapter({ home, profileId: "fixture" });
++  const page = (targetId: string) => Object.assign(new EventEmitter(), { targetId, isClosed: () => false });
++  const a = page("target-a"), b = page("target-b");
++  const context: any = Object.assign(new EventEmitter(), {
++    pages: () => [a, b], newCDPSession: async (page: any) => ({
++      send: async () => ({ targetInfo: { targetId: page.targetId } }), detach: async () => {},
++    }),
++  });
++  browser.context = context;
++  browser.rpc = { call: async () => ({ targetId: "target-a" }) };
++  const seen: any[] = []; browser.onRateLimit = (e: any) => seen.push(e);
++  browser.observeRateLimits(); browser.rateScope.control("job", 1);
++  try {
++    await browser.bindRatePage(7, { id: "job", fence: 1 });
++    const emit = (page: any) => {
++      const request = { frame: () => ({ page: () => page }) };
++      context.emit("request", request);
++      context.emit("response", { status: () => 429, url: () => "https://same.example/resource", headers: () => ({ "retry-after": "10" }), request: () => request });
++    };
++    emit(b); assert.equal(seen.length, 0);
++    emit(a); assert.equal(seen.length, 1);
++    assert.equal(seen[0].jobId, "job"); assert.equal(seen[0].fence, 1);
++    a.emit("close"); assert.equal(browser.tabPages.has(7), false);
++  } finally { fs.rmSync(home, { recursive: true, force: true }); }
++});
++
++test("Worker ignores stale or foreign execution identity in rate-limit evidence", () => {
++  const home = fs.mkdtempSync(path.join(os.tmpdir(), "lb-rate-worker-"));
++  const w: any = new Worker({ home, profileId: "fixture", workerId: "fixture", token: "fixture", baseUrl: "http://unused" });
++  const callback = w.browser.onRateLimit; const sent: any[] = [];
++  w.browser.control = async () => {}; w.send = (message: any) => sent.push(message);
++  w.active = { id: "active", fence: 3 };
++  const evidence = { origin: "https://example.org", retryAfter: "30", observedAt: 1 };
++  try {
++    callback({ ...evidence, jobId: "other", fence: 3 });
++    callback({ ...evidence, jobId: "active", fence: 2 });
++    assert.equal(w.rateLimited, undefined); assert.equal(sent.length, 0);
++    callback({ ...evidence, jobId: "active", fence: 3 });
++    assert.equal(w.rateLimited.code, "RATE_LIMITED"); assert.equal(sent.length, 1);
++  } finally { w.store.close(); fs.rmSync(home, { recursive: true, force: true }); }
++});
+diff --git a/test/rate-scope.test.ts b/test/rate-scope.test.ts
+new file mode 100644
+index 0000000..b34fa9b
+--- /dev/null
++++ b/test/rate-scope.test.ts
+@@ -0,0 +1,54 @@
++import test from "node:test";
++import assert from "node:assert/strict";
++import { RateLimitScope } from "../src/rate-scope.js";
++const sample = { origin: "https://example.org", retryAfter: "120", observedAt: 1 };
++const setup = () => {
++  const seen: any[] = [], scope = new RateLimitScope<object, object>((e) => seen.push(e));
++  const page = {}, other = {}; scope.control("job-a", 1); scope.bind(page, "job-a", 1);
++  return { scope, page, other, seen };
++};
++test("unrelated page 429 does not cancel the active page, even with identical origin", () => {
++  const { scope, other, seen } = setup(), request = {};
++  scope.request(request, other); assert.equal(scope.response(request, sample), false); assert.equal(seen.length, 0);
++});
++test("active main document and related cross-origin resources carry execution identity", () => {
++  const { scope, page, seen } = setup();
++  for (const origin of [sample.origin, "https://cdn.example.org"]) {
++    const request = {}; scope.request(request, page); assert.equal(scope.response(request, { ...sample, origin }), true);
++  }
++  assert.deepEqual(seen.map((e) => [e.jobId, e.fence]), [["job-a", 1], ["job-a", 1]]);
++});
++test("old request arriving after a new job on the same page is ignored", () => {
++  const { scope, page, seen } = setup(), request = {}; scope.request(request, page);
++  scope.control("job-b", 2); scope.bind(page, "job-b", 2);
++  assert.equal(scope.response(request, sample), false); assert.equal(seen.length, 0);
++});
++test("pause/resume fences out requests from before or during human control", () => {
++  const { scope, page, seen } = setup(), before = {}, during = {};
++  scope.request(before, page); scope.control("job-a", 1, true); scope.request(during, page); scope.control("job-a", 1);
++  assert.equal(scope.response(before, sample), false); assert.equal(scope.response(during, sample), false); assert.equal(seen.length, 0);
++});
++test("new tab initial response is adopted only after exact page identity is bound", () => {
++  const { scope, other, seen } = setup(), request = {};
++  scope.request(request, other); scope.response(request, sample);
++  scope.bind({}, "job-a", 1, true); assert.equal(seen.length, 0);
++  scope.bind(other, "job-a", 1, true); assert.equal(seen.length, 1);
++});
++test("binding an existing tab never adopts its earlier background 429", () => {
++  const { scope, other, seen } = setup(), request = {};
++  scope.request(request, other); scope.response(request, sample);
++  scope.bind(other, "job-a", 1); assert.equal(seen.length, 0);
++});
++test("late frame availability can resolve page identity, but missing request origin cannot", () => {
++  const { scope, page, seen } = setup(), request = {};
++  scope.request(request); assert.equal(scope.response(request, sample, page), true);
++  assert.equal(scope.response({}, sample, page), false); assert.equal(seen.length, 1);
++});
++test("late binding from an old job cannot claim a page in a new generation", () => {
++  const { scope, other, seen } = setup(); scope.control("job-b", 2); scope.bind(other, "job-a", 1, true);
++  const request = {}; scope.request(request, other); assert.equal(scope.response(request, sample), false); assert.equal(seen.length, 0);
++});
++test("clear releases scope and rejects delayed responses", () => {
++  const { scope, page, seen } = setup(), request = {}; scope.request(request, page); scope.clear();
++  assert.equal(scope.response(request, sample), false); assert.equal(seen.length, 0);
++});
