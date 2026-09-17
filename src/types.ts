@@ -96,6 +96,10 @@ export interface ToolReply {
     [k: string]: any;
   }>;
   isError?: boolean;
+  _meta?: {
+    "laofu.output"?: { tabId?: number | null; [key: string]: unknown };
+    [key: string]: unknown;
+  };
 }
 export interface WorkerMessage {
   type: string;

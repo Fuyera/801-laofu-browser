@@ -48,7 +48,7 @@ export class Worker {
     this.store = new Store(path.join(config.home, "journal"));
     this.browser = new BrowserAdapter(config);
     this.browser.onRateLimit = (evidence) => {
-      if (!this.active) return;
+      if (!this.active || evidence.jobId !== this.active.id || evidence.fence !== this.active.fence) return;
       this.rateLimited = new Fault(
         "RATE_LIMITED",
         "站点返回限流，已停止后续自动动作",

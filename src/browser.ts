@@ -4,7 +4,7 @@ import path from "node:path";
 import net from "node:net";
 import { spawn, type ChildProcess } from "node:child_process";
 import { pathToFileURL } from "node:url";
-import { chromium, type BrowserContext } from "playwright";
+import { chromium, type BrowserContext, type Page, type Request } from "playwright";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { ROOT } from "./catalog.js";
@@ -13,6 +13,7 @@ import { operationalLog } from "./logs.js";
 import { mkdir, privateFile, secret } from "./util.js";
 import type { Job, ToolReply } from "./types.js";
 import { ClientPool } from "./client-pool.js";
+import { RateLimitScope, type RateEvidence } from "./rate-scope.js";
 export interface BrowserConfig {
   home: string;
   profileId: string;
@@ -42,15 +43,14 @@ export class BrowserAdapter {
   readonly port: number;
   readonly pairing: string;
   browserVersion = "unknown";
-  onRateLimit?: (evidence: {
-    origin: string;
-    retryAfter: string | null;
-    observedAt: number;
-  }) => void;
-  private rateResponses = new Map<
-    string,
-    { origin: string; retryAfter: string | null; observedAt: number }
-  >();
+  onRateLimit?: (evidence: RateEvidence) => void;
+  private rateResponses = new Map<string, RateEvidence>();
+  private tabPages = new Map<number, Page>();
+  private targetIds = new WeakMap<Page, Promise<string>>();
+  private rateScope = new RateLimitScope<Page, Request>((evidence) => {
+    this.rateResponses.set(evidence.origin, evidence);
+    this.onRateLimit?.(evidence);
+  });
   rateLimit(url: string, since: number) {
     const value = this.rateResponses.get(new URL(url).origin);
     return value && value.observedAt >= since ? value : undefined;
@@ -162,16 +162,7 @@ export class BrowserAdapter {
         this.context.browser()?.version() ||
         (await this.context.pages()[0]?.evaluate(() => navigator.userAgent)) ||
         "unknown";
-      this.context.on("response", (response) => {
-        if (response.status() !== 429) return;
-        const origin = new URL(response.url()).origin;
-        this.rateResponses.set(origin, {
-          origin,
-          retryAfter: response.headers()["retry-after"] || null,
-          observedAt: Date.now(),
-        });
-        this.onRateLimit?.(this.rateResponses.get(origin)!);
-      });
+      this.observeRateLimits();
       const setup = await this.context.newPage();
       try {
         const downloadSession = await this.context.newCDPSession(setup);
@@ -267,6 +258,9 @@ export class BrowserAdapter {
       );
   }
   async control(job: Job, cancelled = false) {
+    if (this.current?.id !== job.id || this.current.fence !== job.fence)
+      this.rateResponses.clear();
+    this.rateScope.control(job.id, job.fence, cancelled);
     this.current = job;
     await this.connected();
     return this.rpc.call(
@@ -302,6 +296,9 @@ export class BrowserAdapter {
     };
   }
   async call(name: string, args: any, job: Job): Promise<ToolReply> {
+    const existing = name === "tabs" && args.action === "new" && this.context
+      ? new Set(this.context.pages()) : undefined;
+    if (Number.isInteger(args.tabId)) await this.bindRatePage(args.tabId, job);
     const timeout = Math.max(
       35000,
       Math.min(job.expiresAt - Date.now() + 25000, 925000),
@@ -313,6 +310,9 @@ export class BrowserAdapter {
         { timeout },
       ) as ToolReply,
     );
+    const createdTab = result._meta?.["laofu.output"]?.tabId;
+    if (existing && typeof createdTab === "number" && Number.isInteger(createdTab))
+      await this.bindRatePage(createdTab, job, existing);
     if (name === "reload" && !result.isError) {
       await new Promise((r) => setTimeout(r, 500));
       await this.connected(45000);
@@ -320,6 +320,9 @@ export class BrowserAdapter {
     return result;
   }
   async raw(name: string, args: any, job: Job) {
+    const existing = name === "tabs" && args.action === "new" && this.context
+      ? new Set(this.context.pages()) : undefined;
+    if (Number.isInteger(args.tabId)) await this.bindRatePage(args.tabId, job);
     // Register the new page before the recipe navigates it, so initial response headers cannot race observation.
     const page =
       name === "tabs" &&
@@ -334,6 +337,8 @@ export class BrowserAdapter {
       timeoutMs: Math.max(35000, Math.min(job.expiresAt - Date.now(), 650000)),
     });
     if (page) await page;
+    if (existing && Number.isInteger(result.tabId))
+      await this.bindRatePage(result.tabId, job, existing);
     return result;
   }
   async evaluate(expression: string, job: Job, tabId?: number) {
@@ -353,11 +358,71 @@ export class BrowserAdapter {
       );
     }
   }
+  private observeRateLimits() {
+    const context = this.context!;
+    const requestPage = (request: Request): Page | undefined => {
+      try { return request.frame().page(); } catch { return undefined; }
+    };
+    const prepare = (page: Page) => {
+      void this.targetId(page).catch(() => {});
+      page.once("close", () => {
+        for (const [tabId, bound] of this.tabPages)
+          if (bound === page) this.tabPages.delete(tabId);
+      });
+    };
+    for (const page of context.pages()) prepare(page);
+    context.on("page", prepare);
+    context.on("request", (request) => this.rateScope.request(request, requestPage(request)));
+    context.on("response", (response) => {
+      if (response.status() !== 429) return;
+      const request = response.request();
+      const evidence = {
+        origin: new URL(response.url()).origin,
+        retryAfter: response.headers()["retry-after"] || null,
+        observedAt: Date.now(),
+      };
+      if (!this.rateScope.response(request, evidence, requestPage(request)))
+        this.diagnostic("unattributed_rate_limit", { origin: evidence.origin });
+    });
+  }
+  private targetId(page: Page): Promise<string> {
+    let pending = this.targetIds.get(page);
+    if (!pending) {
+      pending = (async () => {
+        const cdp = await this.context!.newCDPSession(page);
+        try { return (await cdp.send("Target.getTargetInfo")).targetInfo.targetId; }
+        finally { await cdp.detach(); }
+      })();
+      this.targetIds.set(page, pending);
+      void pending.catch(() => this.targetIds.delete(page));
+    }
+    return pending;
+  }
+  private async bindRatePage(tabId: number, job: Job, existing?: Set<Page>) {
+    if (!this.context) return; // attach mode has no Playwright context observer.
+    let page = this.tabPages.get(tabId);
+    if (!page || page.isClosed()) {
+      const target = await this.rpc.call("__lb_control", {
+        op: "tab_target", jobId: job.id, fence: job.fence, tabId,
+      }, { timeoutMs: 5000 });
+      if (target.targetId) for (const candidate of this.context.pages()) {
+        if (await this.targetId(candidate).catch(() => null) === target.targetId) {
+          page = candidate; this.tabPages.set(tabId, page); break;
+        }
+      }
+    }
+    if (!page || page.isClosed())
+      throw new Fault("NO_TAB", "无法确认当前标签页的网络响应归属，未执行后续动作");
+    this.rateScope.bind(page, job.id, job.fence, !!existing && !existing.has(page));
+  }
   diagnostic(event: string, data: Record<string, unknown>) {
     this.logs?.write(event, data);
   }
   async stop() {
     this.stopping = true;
+    this.rateScope.clear();
+    this.tabPages.clear();
+    this.rateResponses.clear();
     await this.clients.close().catch((error) =>
       this.diagnostic("client_cleanup_failed", { error: String(error) }),
     );
