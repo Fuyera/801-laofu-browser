@@ -9,8 +9,9 @@ type Sample = Omit<RateEvidence, "jobId" | "fence">;
 /** Correlate request-start generations and exact Page identities, never URL guesses. */
 export class RateLimitScope<P extends object, R extends object> {
   private generation = 0;
-  private current?: { jobId: string; fence: number; active: boolean; pages: Set<P> };
-  private requests = new WeakMap<R, { generation: number; page?: P }>();
+  private bindingSequence = 0;
+  private current?: { jobId: string; fence: number; active: boolean; pages: Map<P, number>; created: Set<P> };
+  private requests = new WeakMap<R, { generation: number; binding: number; page?: P }>();
   private pending: Array<{ page: P; sample: Sample; generation: number }> = [];
   constructor(private readonly notify: (evidence: RateEvidence) => void) {}
   control(jobId: string, fence: number, cancelled = false) {
@@ -18,13 +19,14 @@ export class RateLimitScope<P extends object, R extends object> {
     if (!same || cancelled || !this.current?.active) {
       this.generation++;
       this.pending = [];
-      this.current = { jobId, fence, active: !cancelled, pages: same ? this.current!.pages : new Set() };
+      this.current = { jobId, fence, active: !cancelled, pages: same ? this.current!.pages : new Map(), created: new Set() };
     }
   }
   bind(page: P, jobId: string, fence: number, newlyCreated = false) {
     const current = this.current;
     if (!current?.active || current.jobId !== jobId || current.fence !== fence) return;
-    current.pages.add(page);
+    if (!current.pages.has(page)) current.pages.set(page, ++this.bindingSequence);
+    if (newlyCreated) current.created.add(page);
     const pending = this.pending;
     this.pending = pending.filter((p) => p.page !== page);
     // Only a newly created, subsequently identity-verified tab may adopt initial
@@ -35,13 +37,14 @@ export class RateLimitScope<P extends object, R extends object> {
     }
   }
   request(request: R, page?: P) {
-    if (this.current?.active) this.requests.set(request, { generation: this.generation, page });
+    if (this.current?.active) this.requests.set(request, { generation: this.generation, binding: this.bindingSequence, page });
   }
   response(request: R, sample: Sample, resolvedPage?: P): boolean {
     const started = this.requests.get(request), current = this.current;
     const page = started?.page || resolvedPage;
     if (!started || !page || !current?.active || started.generation !== this.generation) return false;
-    if (current.pages.has(page)) {
+    const boundAt = current.pages.get(page);
+    if (boundAt !== undefined && (boundAt <= started.binding || current.created.has(page))) {
       this.notify({ ...sample, jobId: current.jobId, fence: current.fence });
       return true;
     }
