@@ -37,6 +37,8 @@ export class Worker {
   private rateLimited?: Fault;
   private activeStarted = 0;
   private humanElapsed = 0;
+  private humanStarted?: number;
+  private effectTools = new Set<string>();
   private reconnectTimer?: NodeJS.Timeout;
   private reconnectDelay = 1000;
   private lastReady?: boolean;
@@ -240,13 +242,36 @@ export class Worker {
       this.viewers.delete(msg.viewerId);
     }
   }
+  private humanTime(now = Date.now()) {
+    return this.humanElapsed + (this.humanStarted === undefined
+      ? 0 : Math.max(0, now - this.humanStarted));
+  }
+  private beginHuman() {
+    this.humanStarted ??= Date.now();
+  }
+  private finishHuman() {
+    this.humanElapsed = this.humanTime();
+    this.humanStarted = undefined;
+  }
+  private humanBudget(job: Job) {
+    const remaining = (job.input.limits?.humanWaitSeconds || 600) * 1000 - this.humanTime();
+    if (remaining <= 0) throw new Fault("HUMAN_TIMEOUT", "人工等待预算已用完");
+    return remaining;
+  }
+  private externalEffects() {
+    return {
+      possible: this.effectTools.size > 0,
+      outcome: this.effectTools.size ? "not_independently_verified" : "none",
+      dispatchedTools: [...this.effectTools],
+    };
+  }
   private check(job: Job) {
     if (this.cancelled)
       throw new Fault("CANCELLED", "用户或连接状态已取消本次执行");
     if (this.rateLimited) throw this.rateLimited;
     if (
       job.kind === "task" &&
-      Date.now() - this.activeStarted - this.humanElapsed >
+      Date.now() - this.activeStarted - this.humanTime() >
         (job.input.limits?.activeTimeoutSeconds || 180) * 1000
     )
       throw new Fault("ACTIVE_TIMEOUT", "主动执行预算已用完");
@@ -281,6 +306,11 @@ export class Worker {
     });
     let received = false;
     try {
+      // Record at dispatch, not from the plan. Internal extraction eval/GETs are
+      // not user-defined writes; unknown transport results keep this evidence.
+      if ((job.kind === "command" || job.type === "browser.flow@v1") &&
+          ["click", "type", "fill", "select", "key", "act", "eval", "fetch", "upload", "ask"].includes(tool))
+        this.effectTools.add(tool);
       const result = raw
         ? await this.browser.raw(tool, args, job)
         : tool === "ask"
@@ -352,12 +382,8 @@ export class Worker {
     }
   }
   private async ask(job: Job, args: any) {
-    let done = false,
-      humanStart = 0;
-    const budget = Math.max(
-      1,
-      (job.input.limits?.humanWaitSeconds || 600) * 1000 - this.humanElapsed,
-    );
+    let done = false;
+    const budget = this.humanBudget(job);
     const pending = this.browser.call(
       "ask",
       { ...args, timeout: Math.min(Number(args.timeout) || 300000, budget) },
@@ -381,7 +407,7 @@ export class Worker {
         const status = await this.browser.handoff(job);
         if (status.ask?.ready) {
           await this.browser.control(job, true);
-          humanStart = Date.now();
+          this.beginHuman();
           this.resolveHuman = () => {
             void this.browser.handoff(job, "continued").catch(() => {});
           };
@@ -402,6 +428,7 @@ export class Worker {
         await new Promise((r) => setTimeout(r, 150));
       }
       const result = await Promise.race([pending, interrupted]);
+      this.finishHuman();
       const outcome = (result as any)?._meta?.["laofu.output"]?.outcome;
       if (["continued", "completed"].includes(outcome)) {
         this.check(job);
@@ -434,7 +461,7 @@ export class Worker {
       }
       throw e;
     } finally {
-      if (humanStart) this.humanElapsed += Date.now() - humanStart;
+      this.finishHuman();
       this.resolveHuman = undefined;
       this.rejectHuman = undefined;
       for (const tcp of this.viewers.values()) tcp.destroy();
@@ -442,8 +469,9 @@ export class Worker {
     }
   }
   private async human(job: Job, info: any) {
-    const humanStarted = Date.now();
+    const budget = this.humanBudget(job);
     await this.browser.control(job, true);
+    this.beginHuman();
     this.send({
       type: "waiting_user",
       jobId: job.id,
@@ -454,7 +482,7 @@ export class Worker {
       await new Promise<void>((resolve, reject) => {
         const timer = setTimeout(
           () => reject(new Fault("HUMAN_TIMEOUT", "人工等待已到期")),
-          Math.min(job.input.limits?.humanWaitSeconds || 600, 600) * 1000,
+          Math.min(budget, Math.max(1, job.expiresAt - Date.now())),
         );
         this.resolveHuman = () => {
           clearTimeout(timer);
@@ -466,7 +494,7 @@ export class Worker {
         };
       });
     } finally {
-      this.humanElapsed += Date.now() - humanStarted;
+      this.finishHuman();
       this.resolveHuman = undefined;
       this.rejectHuman = undefined;
       for (const tcp of this.viewers.values()) tcp.destroy();
@@ -542,6 +570,8 @@ export class Worker {
     this.rateLimited = undefined;
     this.activeStarted = Date.now();
     this.humanElapsed = 0;
+    this.humanStarted = undefined;
+    this.effectTools = new Set();
     this.store.pruneJournalPayloads();
     this.cleanRetainedFiles();
     let commandError: any = null;
@@ -802,36 +832,7 @@ export class Worker {
           rssBytes: process.memoryUsage().rss,
           modelCalls: 0,
         },
-        externalEffects: {
-          possible:
-            job.kind === "command" &&
-            [
-              "click",
-              "type",
-              "fill",
-              "select",
-              "key",
-              "act",
-              "eval",
-              "fetch",
-              "upload",
-            ].includes(job.type),
-          outcome:
-            job.kind === "command" &&
-            [
-              "click",
-              "type",
-              "fill",
-              "select",
-              "key",
-              "act",
-              "eval",
-              "fetch",
-              "upload",
-            ].includes(job.type)
-              ? "not_independently_verified"
-              : "none",
-        },
+        externalEffects: this.externalEffects(),
       };
       // Retire before advertising a reusable worker to the broker.
       await retireClient();
@@ -877,6 +878,7 @@ export class Worker {
         effectState: this.step ? "unknown" : "not_started",
         stopped,
         error,
+        result: { externalEffects: this.externalEffects() },
       };
       this.store.journalUnknown(job.id, response);
       this.send(response);
