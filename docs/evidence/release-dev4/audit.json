@@ -1,0 +1,42 @@
+{
+  "date": "2026-09-25",
+  "releaseVersion": "0.1.0-dev.4",
+  "dailyAudit": {
+    "version": "0.1.0-dev.3",
+    "source": {
+      "commit": "c1a12c9d06fd9ee08c4ce6d6dd8d0730dd3c4aeb",
+      "dirty": false
+    },
+    "checkedFiles": 19818,
+    "changed": [],
+    "missing": [],
+    "dailyService": "not_running",
+    "listeners17992And18992": false,
+    "staleWorkerPidReusedBy": "macOS tipsd",
+    "fix": "status/start/stop/backup verify registered command identity on macOS/Linux; unrelated process is not signalled",
+    "dailyRuntimeChanged": false
+  },
+  "sourceValidation": {
+    "node": "22.23.2",
+    "build": "passed",
+    "unitAndInterface": {
+      "passed": 53,
+      "failed": 0
+    },
+    "observationRealChromiumMcpStdio": {
+      "passed": 6
+    },
+    "bilingualConsole": "real Chromium passed",
+    "originalTools": {
+      "passed": 23,
+      "scope": "same feature changes verified in immediately preceding source run; version-only/PID launcher changes do not affect engine"
+    }
+  },
+  "limitations": [
+    "macOS arm64 preview; unsigned/not notarized",
+    "No Windows/Linux desktop or P5 acceptance",
+    "Full article/list coverage not guaranteed",
+    "Daily installation remains fixed dev.3; publication is not local upgrade"
+  ],
+  "packageAcceptance": "pending; final package evidence will accompany GitHub Release"
+}

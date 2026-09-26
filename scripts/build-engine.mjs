@@ -117,6 +117,38 @@ patch("extension/background.js", [
     "auto?.stop();\n    await chrome.storage.session.remove('lbAsk');\n    if (res.outcome === 'completed' || res.outcome === 'continued' || res.outcome === 'cancelled')",
   ],
 ]);
+// Agent observation improvements, independently implemented; baseline stays immutable.
+patch("extension/content.js", [
+  [
+    "if (s.cursor === 'pointer' && (el.innerText || '').trim()) return true;",
+    "if (s.cursor === 'pointer' && ((el.innerText || '').trim() || (el.tagName === 'IMG' && (el.getAttribute('alt') || el.getAttribute('aria-label'))))) return true;",
+  ],
+  [
+    "const excerpt = mainText().slice(0, 1500);",
+    `const bodyText = mainText();
+    const excerpt = bodyText.slice(0, 1500);
+    const scrolling = document.scrollingElement || document.documentElement;
+    const observation = {
+      version: 1, scope: 'current_frame_rendered_dom',
+      readyState: document.readyState,
+      busy: Array.from(document.querySelectorAll('[aria-busy="true"]')).some(el => isVisible(el)),
+      interactiveElements: n, elementsTruncated: !!truncated,
+      offWindowElements: keep.offWindow || 0,
+      excerptTruncated: bodyText.length > excerpt.length,
+      scroll: { y: scrolling.scrollTop, viewportHeight: innerHeight, documentHeight: scrolling.scrollHeight,
+        atBottom: scrolling.scrollTop + innerHeight >= scrolling.scrollHeight - 2 },
+      completeness: 'not_assessed'
+    };`,
+  ],
+  [
+    "snapshotId,\n      alerts,",
+    "snapshotId,\n      observation,\n      alerts,",
+  ],
+  [
+    "text: `${header}\\n${lines.join('\\n')}",
+    "text: `${header}\\n[observation ${JSON.stringify(observation)}]\\n${lines.join('\\n')}",
+  ],
+]);
 // Compare a stable target's text, including equal-length state changes. Never infer
 // a business-side effect from unrelated global text changes.
 patch("extension/content.js", [

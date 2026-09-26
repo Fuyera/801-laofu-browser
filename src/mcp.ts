@@ -1,6 +1,7 @@
 import { VERSION, BUILD, API_VERSION } from "./version.js";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
 import {
   ListToolsRequestSchema,
   CallToolRequestSchema,
@@ -10,7 +11,13 @@ import fs from "node:fs";
 import path from "node:path";
 import { BrowserClient } from "./client.js";
 import { problem, Fault } from "./errors.js";
-export async function serveMcp(client: BrowserClient, profileId: string) {
+import { validateTool } from "./catalog.js";
+import { jobEvidence, toolAnnotations } from "./mcp-result.js";
+export async function serveMcp(
+  client: BrowserClient,
+  profileId: string,
+  transport: Transport = new StdioServerTransport(),
+) {
   const server = new Server(
     { name: "laofu-browser", version: VERSION },
     { capabilities: { tools: {} } },
@@ -77,8 +84,12 @@ export async function serveMcp(client: BrowserClient, profileId: string) {
           name,
           description,
           inputSchema,
+          annotations: toolAnnotations(name),
         })),
-      ...extra,
+      ...extra.map((tool) => ({
+        ...tool,
+        annotations: toolAnnotations(tool.name),
+      })),
     ],
   }));
   server.setRequestHandler(CallToolRequestSchema, async (req) => {
@@ -115,6 +126,8 @@ export async function serveMcp(client: BrowserClient, profileId: string) {
       else if (req.params.name === "laofu_resume")
         result = await client.resume(args.id);
       else {
+        // Reject unknown/invalid calls before creating sessions or uploading files.
+        validateTool(req.params.name, args);
         if (!sessionId) sessionId = (await client.session(profileId)).id;
         const forwarded = { ...args },
           inputArtifacts: any = {};
@@ -146,6 +159,10 @@ export async function serveMcp(client: BrowserClient, profileId: string) {
         if (result.state === "succeeded" && result.result?.content)
           return {
             ...result.result,
+            isError:
+              result.result.isError === true ||
+              result.effectState === "unknown",
+            structuredContent: jobEvidence(result),
             content: [
               ...result.result.content,
               {
@@ -160,7 +177,15 @@ export async function serveMcp(client: BrowserClient, profileId: string) {
       }
       return {
         content: [{ type: "text", text: JSON.stringify(result) }],
-        isError: result.state === "failed",
+        ...(result.id && result.state
+          ? { structuredContent: jobEvidence(result) }
+          : {}),
+        isError:
+          ["failed", "cancelled", "partial", "suspended"].includes(
+            result.state,
+          ) ||
+          result.effectState === "unknown" ||
+          result.result?.isError === true,
       };
     } catch (e) {
       const unknown =
@@ -168,6 +193,21 @@ export async function serveMcp(client: BrowserClient, profileId: string) {
         (!(e instanceof Fault) || e.statusCode >= 500 || submission.commandId);
       return {
         isError: true,
+        structuredContent: {
+          format: "laofu.mcp-result@v1",
+          error: unknown
+            ? { code: "EFFECT_UNKNOWN", retryable: false }
+            : problem(e),
+          ...(unknown
+            ? {
+                recovery: {
+                  ...submission,
+                  queryTool: submission?.commandId ? "laofu_job" : "laofu_jobs",
+                  nextAction: "query_before_resubmit",
+                },
+              }
+            : {}),
+        },
         content: [
           {
             type: "text",
@@ -193,6 +233,6 @@ export async function serveMcp(client: BrowserClient, profileId: string) {
       };
     }
   });
-  await server.connect(new StdioServerTransport());
+  await server.connect(transport);
   return server;
 }

@@ -6,7 +6,7 @@ Laofu Browser is a **local browser assistant connecting AI assistants to your br
 
 It consists of a local service, a browser extension, and a web console. Use a dedicated Chromium browser or connect your existing signed-in Chrome. The console also lets you submit an article URL, save currently accessible text and images as Markdown, HTML, and ZIP, follow task progress, and take over when needed.
 
-The current release is **`0.1.0-dev.3`, a preview for macOS Apple Silicon (arm64)**. The project's own code is MIT-licensed. Installation packages and acceptance records are available on [GitHub Releases](https://github.com/Fuyera/801-laofu-browser/releases). You can also build from source below. Windows, Linux desktop, and server deployment have not completed acceptance testing.
+The current release is **`0.1.0-dev.4`, a preview for macOS Apple Silicon (arm64)**. The project's own code is MIT-licensed. Installation packages and acceptance records are available on [GitHub Releases](https://github.com/Fuyera/801-laofu-browser/releases). You can also build from source below. Windows, Linux desktop, and server deployment have not completed acceptance testing.
 
 Repository: [https://github.com/Fuyera/801-laofu-browser](https://github.com/Fuyera/801-laofu-browser)
 
@@ -88,7 +88,7 @@ To use your signed-in Chrome, follow [Connect existing Chrome](docs/OPERATIONS.e
 - Reading public X profiles, individual posts, search results, and scrolled pages has been tested. **List extraction can omit offscreen posts and is not guaranteed to be exhaustive.** For completeness-sensitive work, collect post links and verify individual detail pages. The list issue is deferred; see [X acceptance](docs/X_READ_ACCEPTANCE.en.md).
 - Website sign-in, CAPTCHAs, and rate limits may require your intervention. Article capture covers currently authorized, accessible content; it does not guarantee archives of collapsed, paid, paginated, audio, or video content.
 - The final dev.3 package, both SDKs, and daily Chrome stop/reconnect lifecycle passed acceptance. Results accompany the Release. Windows, Linux desktop, and server installation are not currently promised.
-- The source-build console and complete project documentation support Chinese and English. The existing fixed dev.3 download predates this UI update.
+- The source-build console and complete project documentation support Chinese and English. The dev.4 package includes this UI, Agent observation/result improvements, and process-identity verification.
 
 ## Documentation and feedback
 

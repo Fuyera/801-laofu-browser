@@ -51,24 +51,40 @@ function live(pid) {
     throw e;
   }
 }
-async function stopped(pid) {
-  if (!live(pid)) return;
-  const record = records.find((p) => p.pid === pid);
-  if (record && process.platform !== "win32") {
-    const check = spawnSync("ps", ["-p", String(pid), "-o", "command="], {
-      encoding: "utf8",
-    });
-    if (
-      check.status !== 0 ||
-      !check.stdout.includes(path.join(record.root, "dist/cli.js"))
-    )
-      throw new Error(`PID ${pid} 身份已变化，拒绝停止`);
+function ownedLive(record) {
+  if (!live(record.pid)) return false;
+  if (process.platform !== "win32") {
+    const check = spawnSync(
+      "ps",
+      ["-p", String(record.pid), "-o", "command="],
+      {
+        encoding: "utf8",
+      },
+    );
+    if (check.error) throw check.error;
+    if (check.status !== 0) {
+      if (!live(record.pid)) return false;
+      throw new Error(`PID ${record.pid} 身份无法核验`);
+    }
+    const args =
+      record.args ||
+      (record.name === "service"
+        ? ["serve", "--home", home]
+        : ["worker", "--config", path.join(home, record.name)]);
+    return check.stdout.includes(
+      [path.join(record.root, "dist/cli.js"), ...args].join(" "),
+    );
   }
+  return true; // Existing Windows behavior; not part of the macOS preview acceptance.
+}
+async function stopped(record) {
+  const { pid } = record;
+  if (!ownedLive(record)) return;
   process.kill(pid, "SIGTERM");
   const end = Date.now() + 20000;
-  while (live(pid) && Date.now() < end)
+  while (ownedLive(record) && Date.now() < end)
     await new Promise((r) => setTimeout(r, 200));
-  if (live(pid))
+  if (ownedLive(record))
     throw new Error(
       `进程 ${pid} 未确认退出；保留现场，不发送强制信号或切换版本`,
     );
@@ -97,12 +113,12 @@ function run(args, name) {
   });
   fs.closeSync(log);
   p.unref();
-  return { pid: p.pid, name, root };
+  return { pid: p.pid, name, root, args };
 }
 const records = fs.existsSync(registry) ? read(registry) : [];
 if (command === "start") {
   mkdir(home);
-  if (records.some((p) => live(p.pid))) {
+  if (records.some(ownedLive)) {
     console.log(JSON.stringify({ alreadyRunning: true, processes: records }));
     process.exit(0);
   }
@@ -156,7 +172,7 @@ if (command === "start") {
         )
       )
         break;
-      if (created.some((p) => !live(p.pid)))
+      if (created.some((p) => !ownedLive(p)))
         throw new Error("启动进程提前退出");
       if (i === 119) throw new Error("执行端未在60秒内就绪");
       await new Promise((r) => setTimeout(r, 500));
@@ -170,23 +186,23 @@ if (command === "start") {
       }),
     );
   } catch (e) {
-    for (const p of created.reverse()) await stopped(p.pid).catch(() => {});
+    for (const p of created.reverse()) await stopped(p).catch(() => {});
     throw e;
   }
 } else if (command === "stop") {
-  // The registry is created only by this launcher and never contains unrelated browser processes.
-  for (const p of [...records].reverse()) await stopped(p.pid);
+  // A registry PID can be reused after reboot; never signal a different process.
+  for (const p of [...records].reverse()) await stopped(p);
   privateFile(registry, "[]");
   console.log(JSON.stringify({ stopped: true }));
 } else if (command === "status") {
   console.log(
     JSON.stringify({
       home,
-      processes: records.map((p) => ({ ...p, running: live(p.pid) })),
+      processes: records.map((p) => ({ ...p, running: ownedLive(p) })),
     }),
   );
 } else if (command === "backup") {
-  if (records.some((p) => live(p.pid)))
+  if (records.some(ownedLive))
     throw new Error("先停止本安装的服务和执行端，再备份用于升级的状态");
   for (const file of [
     "server.lock",

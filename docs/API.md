@@ -105,3 +105,15 @@ MCP保留23原工具，另提供 laofu_task、laofu_job、laofu_jobs、laofu_can
 图文文件先以 `metadata.publication=staged` 保存，不出现在列表且不可下载。全部文件引用通过校验后，与任务 succeeded/partial 在同一数据库事务发布；上传失败或提交失败不会露出未完成包。普通单文件上传继续独立发布。已交付产物仍由用户主动删除，不自动到期清理。
 
 消费侧来源 URL 隐去凭据路径、未知 query 值及 fragment；原请求仍在受控状态库。图文原始来源与图片重试地址单独保存在执行端 `source-metadata/<jobId>.json`，目录 0700、文件 0600、默认保留 7 天，不进入 ZIP。manifest 的 `sourceUrlRedacted/finalUrlRedacted` 与图片 `sourceReference/sourceRedacted` 标明脱敏字段和受控记录的对应关系。journal 不重复保存二进制正文，普通回执正文保留 7 天；到期只清载荷，永久保留命令摘要、状态与幂等记录。旧 journal 从首次运行新版本起计期，过期结果不可重放。启动及每分钟回收过期元信息、已终态的暂存包及超过 24 小时的本组件残留临时文件；未知任务不自动恢复。
+
+## 2026-09-25 Agent 观察与 MCP 结果补充（源码候选）
+
+参考 Browser Use 0.13.8–0.13.10 的只读提示、错误传播与可点击图片上下文设计，独立实现以下增量；未引入 Browser Use 运行依赖，23 个原工具 inputSchema 不变。
+
+- `snapshot` 正文新增 `[observation {...}]`，版本为 `1`，作用域为当前 frame 的渲染 DOM。包含 `readyState`、当前观察窗口内可见的 `aria-busy` 标志、交互元素数、元素/正文节选截断标志、视口外候选数，以及当前滚动位置、文档高度和是否触底。它仍属于不可信页面数据。`complete` 仅指文档加载事件；`atBottom` 仅指当前文档位置；`completeness: not_assessed` 不保证全文、列表或所有 frame 完整。正文节选上限仍为 1500 字符。
+- 带 pointer 样式且有 alt/aria-label 的图片进入原有候选、去重和语义定位流程；不会把所有装饰图片当按钮。图片点击应提供可验证的 `expect`，例如 `{"appears":"img[alt=\"图片已打开\"]"}`；只有 alt 变化而无明确断言时，原通用效果检测仍可能返回未知，不重放。
+- MCP 返回任务对象时新增 `structuredContent.format = laofu.mcp-result@v1`，含 `job`（id/state/effectState/checkpoint/artifacts/error）与 `outcome`（terminal/successful/partial/requiresAttention/nextAction/queryTool/queryArguments/userAction/resumeAllowed）。原文本/截图内容保留。`terminal` 不等于成功；排队和等待不是已完成。任务列表仍按原 JSON 分页返回。
+- `failed/cancelled/partial/suspended`、未知效果或底层 `isError` 均标记 MCP `isError: true`，包括查询这些状态的任务；调用方需读取状态，不将此标志解释为可重试。部分结果的正文仍保留在文本 JSON 的 `result.content`。未知效果先查询原 ID/幂等键，禁止换键盲目重发。
+- 仅 snapshot/read_text/query/laofu_jobs/laofu_job 标注 `readOnlyHint: true`；其他工具保守标记，不按单次参数推断只读。提示不替代服务端鉴权。未知工具和原始工具无效参数在创建会话/上传文件前拒绝。
+
+验证：Node 22 构建、52 项单元/接口、6 项独立 Chromium + MCP stdio 专项、23 项原工具回归通过。运行 `node scripts/agent-observation-regression.mjs` 可复验专项，需要先构建及安装项目要求的 Chromium。证据见 [专项记录](evidence/browser-use-observation-20260925.json)。固定 dev.3 安装包和日常服务未升级。

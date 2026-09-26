@@ -6,7 +6,7 @@
 
 程序由本机服务、浏览器扩展和网页控制台组成，可使用独立的 Chromium，也可连接你已登录的 Chrome。你还可以直接在控制台提交文章链接，将当前可见正文和图片保存为 Markdown、HTML 与 ZIP，查看任务进度，并在需要登录或验证时人工接手。
 
-当前版本为 **`0.1.0-dev.3` 预览版**，面向 **macOS Apple Silicon（arm64）**。源码采用 MIT 许可证；安装包和最终验收记录见 [GitHub Releases](https://github.com/Fuyera/801-laofu-browser/releases)。也可按下方步骤从源码运行。Windows、Linux 桌面和服务器部署暂未验收。
+当前版本为 **`0.1.0-dev.4` 预览版**，面向 **macOS Apple Silicon（arm64）**。源码采用 MIT 许可证；安装包和最终验收记录见 [GitHub Releases](https://github.com/Fuyera/801-laofu-browser/releases)。也可按下方步骤从源码运行。Windows、Linux 桌面和服务器部署暂未验收。
 
 项目仓库：[https://github.com/Fuyera/801-laofu-browser](https://github.com/Fuyera/801-laofu-browser)
 
@@ -91,7 +91,7 @@ node scripts/local.mjs stop --home workspace/local-state
 
 ## 文档与反馈
 
-全套项目自有 Markdown 文档均提供中文和英文版，页首可切换语言；英文指南之间使用英文链接。源码版网页控制台也支持中英文切换并记住选择；首次按浏览器首选语言显示。已发布 dev.3 安装包为此前固定快照，尚未包含此次 UI 更新。
+全套项目自有 Markdown 文档均提供中文和英文版，页首可切换语言；英文指南之间使用英文链接。源码版网页控制台也支持中英文切换并记住选择；首次按浏览器首选语言显示。dev.4 包含双语控制台、Agent 快照/结果反馈优化及进程身份核验修复。
 
 - [用户指南](docs/USER_GUIDE.md)：采集、成果下载、人工接手和常见问题。
 - [研发指南](docs/DEVELOPMENT.md)：源码构建、架构、SDK 打包和回归。

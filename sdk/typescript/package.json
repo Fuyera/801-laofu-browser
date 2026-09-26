@@ -1,6 +1,6 @@
 {
   "name": "@laofu/browser",
-  "version": "0.1.0-dev.3",
+  "version": "0.1.0-dev.4",
   "type": "module",
   "description": "TypeScript client for laofu-browser",
   "exports": {

@@ -1,0 +1,152 @@
+{
+  "date": "2026-09-25",
+  "scope": "current source only; isolated Chromium and MCP stdio; daily installed release unchanged",
+  "upstream": {
+    "browserUseStable": "0.13.10",
+    "stablePublishedAt": "2026-09-04T03:28:53Z",
+    "browserUseMain": "d8110c5ff87c",
+    "browserHarnessMain": "afbcc381b963",
+    "sources": [
+      "https://github.com/browser-use/browser-use/releases/tag/0.13.10",
+      "https://github.com/browser-use/browser-use/releases/tag/0.13.9",
+      "https://github.com/browser-use/browser-use/releases/tag/0.13.8"
+    ]
+  },
+  "build": "passed with Node 22.23.2",
+  "unitAndInterfaceTests": {
+    "passed": 52,
+    "failed": 0
+  },
+  "observationRegression": {
+    "node": "v22.23.2",
+    "checks": [
+      "real MCP preserves snapshot text and delivers structured job evidence",
+      "snapshot reports busy, excerpt truncation and bounded scroll scope",
+      "image-only pointer control is discoverable and clickable by semantic name",
+      "new observations reflect DOM changes; hidden busy markers are excluded",
+      "element limit is explicit and bottom is not a completeness claim",
+      "unknown MCP tool is rejected without creating a task"
+    ],
+    "passed": 6,
+    "scope": "real isolated Chromium extension / HTTP worker / MCP stdio"
+  },
+  "baseline": {
+    "unchangedFiles": 58,
+    "unchangedToolSchemas": 23
+  },
+  "originalToolRegression": {
+    "environment": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "node": "v22.23.2",
+      "upstream": "1.2.0",
+      "playwright": "1.63.0"
+    },
+    "results": [
+      {
+        "label": "B10 tabs/new",
+        "status": "passed"
+      },
+      {
+        "label": "B02 navigate",
+        "status": "passed"
+      },
+      {
+        "label": "B01 snapshot + DOM/iframe",
+        "status": "passed"
+      },
+      {
+        "label": "B04 type + clear + expect",
+        "status": "passed"
+      },
+      {
+        "label": "B05 select",
+        "status": "passed"
+      },
+      {
+        "label": "B03 click + real + expect",
+        "status": "passed"
+      },
+      {
+        "label": "B06 fill stateful refs",
+        "status": "passed"
+      },
+      {
+        "label": "B07 key sequence",
+        "status": "passed"
+      },
+      {
+        "label": "B08 read_text formats",
+        "status": "passed"
+      },
+      {
+        "label": "B09 screenshot JPEG/PNG + artifact",
+        "status": "passed"
+      },
+      {
+        "label": "B11 wait selector/text/idle",
+        "status": "passed"
+      },
+      {
+        "label": "B12 network capture + response",
+        "status": "passed"
+      },
+      {
+        "label": "B13 fetch pagination + binary",
+        "status": "passed"
+      },
+      {
+        "label": "B14 scroll",
+        "status": "passed"
+      },
+      {
+        "label": "B15 download 5 MiB artifact",
+        "status": "passed"
+      },
+      {
+        "label": "B16 upload file input and drop",
+        "status": "passed"
+      },
+      {
+        "label": "B17 query extracted table",
+        "status": "passed"
+      },
+      {
+        "label": "B18 act repeat/if/assert",
+        "status": "passed"
+      },
+      {
+        "label": "B19 ask completion predicate",
+        "status": "passed"
+      },
+      {
+        "label": "B20 status",
+        "status": "passed"
+      },
+      {
+        "label": "B21 eval async",
+        "status": "passed"
+      },
+      {
+        "label": "B22 learnings versioned save/read",
+        "status": "passed"
+      },
+      {
+        "label": "B23 reload extension reconnect",
+        "status": "passed"
+      }
+    ]
+  },
+  "initialRuns": [
+    "Sandbox denied loopback/IPC; tests rerun with authorized local testing permission.",
+    "Image alt-only change without expect conservatively returned EFFECT_UNKNOWN. Added explicit appears assertion in fixture; did not weaken production effect checks.",
+    "Fixture eval initially used statements rather than an expression; corrected to an IIFE.",
+    "Truncated snapshot returned partial/isError as designed; adjusted fixture to assert this outcome instead of requiring success."
+  ],
+  "limitations": [
+    "No same-model benchmark against Browser Use.",
+    "No claim of complete article or list collection; snapshot completeness is not_assessed.",
+    "No deployed runtime upgrade, remote push or release.",
+    "No native AX-tree merger, visual agent, list collector or automatic retry added."
+  ]
+}
