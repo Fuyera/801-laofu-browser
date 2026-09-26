@@ -1,0 +1,54 @@
+{
+  "url": "https://github.com/Fuyera/801-laofu-browser/releases/tag/v0.1.0-dev.4",
+  "publishedAt": "2026-09-26T02:58:11Z",
+  "prerelease": true,
+  "assets": [
+    {
+      "name": "ACCEPTANCE-dev4.json",
+      "bytes": 3965,
+      "sha256": "425e519d87808fde33504e8355afc87b8012bb155e421851d1c62daecf84e5de"
+    },
+    {
+      "name": "DELIVERY.json",
+      "bytes": 1145,
+      "sha256": "962dd7373b49a2fb1d9a031242aa283208e5e6edea3744a18e0469c7017134a9"
+    },
+    {
+      "name": "laofu-browser-0.1.0-dev.4-macos-arm64.tar.gz",
+      "bytes": 292153477,
+      "sha256": "7734caaebfc4f1f2eb0bdeb82c1e8ee8b2216140076917800bd10d50ac24c569"
+    },
+    {
+      "name": "laofu-browser-0.1.0-dev.4-macos-arm64.tar.gz.sha256",
+      "bytes": 111,
+      "sha256": "94bb962009df585af693744f0be924f6d98be55b42cfc71e053db6f0a366656d"
+    },
+    {
+      "name": "laofu-browser-0.1.0-dev.4.tgz",
+      "bytes": 6085,
+      "sha256": "36035ff9ef8e941e03731817d72ec07b9ab4cf75a1973937acb1e6d79f28ccbf"
+    },
+    {
+      "name": "laofu-browser-0.1.0-dev.4.tgz.sha256",
+      "bytes": 96,
+      "sha256": "f77d04683024e9c2cba3246eb8404ab8d741dd4e2f19aac8e18fc6a36e8d959c"
+    },
+    {
+      "name": "laofu_browser-0.1.0.dev4-py3-none-any.whl",
+      "bytes": 4751,
+      "sha256": "51df09e195d8d2fe963ac942caac87471db960d26791b82825e47a48b2bf2763"
+    },
+    {
+      "name": "laofu_browser-0.1.0.dev4-py3-none-any.whl.sha256",
+      "bytes": 108,
+      "sha256": "fc942e8fa89470457b7b1c555ed6e1c37e1e8b782361bf00671d707d2df2232a"
+    },
+    {
+      "name": "SHA256SUMS",
+      "bytes": 818,
+      "sha256": "cbd8b63a83c0bd4c12064aa430ef68272d5b93826282a5c45e84bd38a7b71a4a"
+    }
+  ],
+  "verification": "all 9 local sizes/SHA-256 match GitHub API asset digests; anonymous Release page and TypeScript SDK download verified",
+  "tagCommit": "1800ada796dd07ca4fa8a674aab2d3bc4dd56dc3"
+}

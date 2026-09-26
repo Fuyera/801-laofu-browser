@@ -1,0 +1,130 @@
+{
+  "at": "2026-09-26T02:56:29.076246+00:00",
+  "version": "0.1.0-dev.4",
+  "source": {
+    "commit": "1800ada796dd07ca4fa8a674aab2d3bc4dd56dc3",
+    "dirty": false
+  },
+  "dailyAudit": {
+    "version": "0.1.0-dev.3",
+    "source": {
+      "commit": "c1a12c9d06fd9ee08c4ce6d6dd8d0730dd3c4aeb",
+      "dirty": false
+    },
+    "checkedFiles": 19818,
+    "changed": [],
+    "missing": [],
+    "dailyService": "not_running",
+    "listeners17992And18992": false,
+    "staleWorkerPidReusedBy": "macOS tipsd",
+    "fix": "status/start/stop/backup verify registered command identity on macOS/Linux; unrelated process is not signalled",
+    "dailyRuntimeChanged": false
+  },
+  "sourceValidation": {
+    "node": "22.23.2",
+    "build": "passed",
+    "unitAndInterface": {
+      "passed": 53,
+      "failed": 0
+    },
+    "observationRealChromiumMcpStdio": {
+      "passed": 6
+    },
+    "bilingualConsole": "real Chromium passed",
+    "originalTools": {
+      "passed": 23,
+      "scope": "same feature changes verified in immediately preceding source run; version-only/PID launcher changes do not affect engine"
+    }
+  },
+  "archive": {
+    "verifiedFiles": 19853,
+    "status": "passed",
+    "privateRuntimePaths": []
+  },
+  "install": {
+    "home": "<repo>/workspace/install-Yqb0Vq",
+    "environment": {
+      "platform": "darwin",
+      "arch": "arm64",
+      "node": "v22.23.2"
+    },
+    "checks": [
+      {
+        "name": "完整性校验和独立目录安装",
+        "status": "passed"
+      },
+      {
+        "name": "固定Node/Chromium/扩展启动并实际就绪",
+        "status": "passed"
+      },
+      {
+        "name": "从安装包运行真实HTTP图文采集和上传",
+        "status": "passed"
+      },
+      {
+        "name": "篡改制品拒绝且运行服务不受影响",
+        "status": "passed"
+      },
+      {
+        "name": "清单以外文件拒绝",
+        "status": "passed"
+      },
+      {
+        "name": "相同发行标识即使清单合法也拒绝不同内容",
+        "status": "passed"
+      },
+      {
+        "name": "兼容版本切换后任务和产物保留",
+        "status": "passed"
+      },
+      {
+        "name": "程序回退保留当前幂等和效果记录",
+        "status": "passed"
+      },
+      {
+        "name": "新版本启动失败自动恢复旧程序",
+        "status": "passed"
+      },
+      {
+        "name": "确认停止与SQLite在线备份文件生成",
+        "status": "passed"
+      },
+      {
+        "name": "Mac自启动配置语法校验，未注册自启动",
+        "status": "passed"
+      }
+    ],
+    "jobId": "tsk_2ddfaa026aef482185ffe12a5d4ea91a",
+    "versionFixtures": "同一固定程序的两个合成发行标识，以及故意启动失败的测试程序；未声称已有历史正式版本"
+  },
+  "sdk": {
+    "home": "<repo>/workspace/sdk-69mbWn",
+    "external": "<tmp>/sdk-consumers",
+    "results": [
+      {
+        "sdk": "typescript",
+        "capture": "tsk_831f9d7f58d34d63a06654d2db442cec",
+        "resumed": "tsk_bf5c795117164823bd617c989a192481",
+        "cancelled": "tsk_ea648046d3f7477994ab53ff45b85ee6",
+        "upload": "art_b9aeb9d056e84e3f809e2c545d66a2dd",
+        "state": "succeeded"
+      },
+      {
+        "sdk": "python",
+        "capture": "tsk_93fa0b43bf38452d9eabe6e13338292c",
+        "resumed": "tsk_ed758059a2f24530a0ce23059497abb7",
+        "cancelled": "tsk_4bb15b63a9f745689b07cf750eecc5c5",
+        "upload": "art_5ad4f323951343eb9bcb31b1427d8dc1",
+        "state": "succeeded"
+      }
+    ],
+    "scope": "两个独立安装的 SDK 程序通过所有者入口访问真实服务；不作为受限产品隔离或业务产品接入证据",
+    "cliMcpSameTask": true
+  },
+  "limitations": [
+    "macOS arm64 preview; unsigned/not notarized",
+    "No Windows/Linux desktop or P5 acceptance",
+    "Full article/list coverage not guaranteed",
+    "Daily installation remains fixed dev.3; publication is not local upgrade"
+  ]
+}

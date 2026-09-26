@@ -87,7 +87,7 @@ To use your signed-in Chrome, follow [Connect existing Chrome](docs/OPERATIONS.e
 - The macOS arm64 service, isolated browser execution, installation candidates, and SDKs have real execution records. See the [test report](docs/TEST_REPORT.en.md); check the code, package, and environment versions separately.
 - Reading public X profiles, individual posts, search results, and scrolled pages has been tested. **List extraction can omit offscreen posts and is not guaranteed to be exhaustive.** For completeness-sensitive work, collect post links and verify individual detail pages. The list issue is deferred; see [X acceptance](docs/X_READ_ACCEPTANCE.en.md).
 - Website sign-in, CAPTCHAs, and rate limits may require your intervention. Article capture covers currently authorized, accessible content; it does not guarantee archives of collapsed, paid, paginated, audio, or video content.
-- The final dev.3 package, both SDKs, and daily Chrome stop/reconnect lifecycle passed acceptance. Results accompany the Release. Windows, Linux desktop, and server installation are not currently promised.
+- The final dev.4 package passed 11 isolated install/upgrade/rollback checks and both SDKs passed real execution. Results accompany the Release. The daily installation remains dev.3 and was not upgraded. Windows, Linux desktop, and server installation are not currently promised.
 - The source-build console and complete project documentation support Chinese and English. The dev.4 package includes this UI, Agent observation/result improvements, and process-identity verification.
 
 ## Documentation and feedback

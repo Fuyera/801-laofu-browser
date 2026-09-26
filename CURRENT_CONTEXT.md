@@ -2,38 +2,33 @@
 
 **简体中文** | [English](CURRENT_CONTEXT.en.md)
 
-更新：2026-09-25。**0.1.0-dev.3，macOS Apple Silicon 开发者预览版**。产品定位为连接 AI 助手与浏览器的本地浏览器助手。19 份项目自有 Markdown 文档现均提供完整中英文版本、页首语言切换及同语言指南链接，功能介绍先展示任务与管理，再展示 23 种浏览器操作；版权与来源统一置于文末。当前源码的网页控制台已支持中英文切换、语言记忆和本地化日期／提示；固定 dev.3 发行包尚不包含此 UI 更新。P5、跨平台和日本服务器部署继续暂停；X 列表遗漏作为已知限制暂缓处理。
-
-2026-09-25 源码优化：吸收 Browser Use 的观察/错误反馈设计，新增快照加载、滚动与截断元信息，识别有名称的 pointer 图片；MCP 增加结构化任务结果、保守只读提示和执行前参数检查，部分完成/未知效果不再作为普通成功返回。构建、52 项单元/接口、6 项真实 Chromium + MCP stdio 专项及 23 项原工具回归通过；[证据](docs/evidence/browser-use-observation-20260925.json)。仅源码候选，未升级固定发行包和日常服务，未推送/发布。既有本地验收报告与状态修改保留。
-
-dev.4 发布准备（2026-09-25）：日常 dev.3 的 19,818 个清单条目哈希一致，但当前服务未运行；旧 worker PID 被 macOS tipsd 复用，原管理器误报运行。源码已修复 status/start/stop 的进程身份判断，并通过真实旧 PID、不误杀、重新启动回归；当前 53 项测试、6 项 Chromium/MCP 专项和双语控制台通过。准备新固定包、SDK 和 GitHub 预览 Release；日常安装未更改。[审计](docs/evidence/release-dev4/audit.json)。
+更新：2026-09-25。**0.1.0-dev.4，macOS Apple Silicon 开发者预览版已发布**。产品为连接 AI 助手与浏览器的本地浏览器助手。固定包包含完整双语文档、中英文控制台、Agent 观察与结果反馈优化，以及 macOS/Linux 进程身份核验修复。P5、跨平台和日本服务器部署继续暂停；X 列表遗漏仍为已知限制。
 
 ## 交付状态
 
-用户已明确授权完成剩余交付：合并 main、同步 GitHub、公开仓库及发布预览版。源码已合并并同步 GitHub main，固定构建提交 `c1a12c9d06fd9ee08c4ce6d6dd8d0730dd3c4aeb`，工作区构建时干净。最新安装包、SDK、SHA256SUMS、DELIVERY.json 和脱敏验收证据已上传。仓库已公开，预览 Release 已于 2026-09-16 11:09 UTC 发布；9 个附件大小与 SHA-256 全部匹配，匿名仓库／Release 访问和 SDK 下载验证通过。P4 本轮收口完成。
+按用户授权已推送 main、发布标签及 GitHub 预览版。固定构建提交为 `1800ada796dd07ca4fa8a674aab2d3bc4dd56dc3`，来自干净工作树。Release 于 2026-09-26 02:58:11 UTC（本地 9 月 25 日）发布，9 个附件大小及 SHA-256 与 GitHub 资产摘要全部一致；匿名 Release 访问和 TypeScript SDK 下载校验通过。安装包、两套 SDK、SHA256SUMS、DELIVERY.json 与 ACCEPTANCE-dev4.json 均已上传。
 
 项目地址：https://github.com/Fuyera/801-laofu-browser
 
-预览版地址：https://github.com/Fuyera/801-laofu-browser/releases/tag/v0.1.0-dev.3
+预览版地址：https://github.com/Fuyera/801-laofu-browser/releases/tag/v0.1.0-dev.4
 
-包内文档为构建时快照，main 后续提交已补充最终验收、全套双语文档与控制台双语；不覆盖此前固定发行包。旧 dev.1／dev.2 候选仅本地归档，不覆盖同版本制品，不要求历史降级迁移。此次不提供 Docker 镜像发行包，隔离实现和既有证据保留于源码。后续打包包含根目录英文文档和完整双语 docs 目录。
+包内状态文档是发布准备阶段快照，最终验收与发布结果见 Release 附件和 main 的[验收](docs/evidence/release-dev4/acceptance.json)、[交付清单](docs/evidence/release-dev4/delivery.json)、[发布回执](docs/evidence/release-dev4/publication.json)。后续文档提交不改变固定包或标签。原版 vendor 保持不变，不覆盖历史发行包；此次不提供 Docker 镜像发行包。
+
+## 日常安装审计
+
+日常仍为 dev.3；本次没有升级或启动日常服务。19,818 个清单条目哈希一致，无缺失或变更；17992/18992 无监听。旧 worker PID 被 macOS tipsd 复用，旧管理器误报运行。dev.4 修复 status/start/stop/backup 的进程身份判断，真实旧 PID、不误杀及重新启动回归通过；修复后的只读检查正确报告服务和 worker 均未运行。[审计](docs/evidence/release-dev4/audit.json)。
 
 ## 验证
 
-- 最新 UI 增量：完整构建、前端类型检查、真实 Chromium 双语交互验收及图文／控制台 7 组回归通过，见[专项证据](docs/evidence/ui-language.json)。当前源码尚未打新发行包或升级日常服务；未重跑完整交付矩阵。
-
-- 双语文档：19 对／38 份，401 处本地链接及锚点、18 组命令示例对应检查通过；Mac 文档复制 38/38 字节一致，Docker 文档输入路径及脚本语法检查通过。该文档轮次仅修改文档与打包文档清单，未重跑完整程序／浏览器回归，也未重生成固定发行包。
-
-- 本轮构建、单元／接口 50/50；上游 58 文件不变，23 工具基线一致。
-- 最终压缩包解压后 19,818 文件通过校验；独立副本安装、升级、回退、故障恢复 11/11。
-- 最终 TS／Python SDK 独立安装及真实浏览器调用、CLI／MCP 同任务验证通过。
-- 日常 Chrome 已升级 dev.3：扩展重载、读取、停止保留原浏览器与页面、自动重连和原页面读取通过；18 个扩展实现文件与固定包一致。原账号与其他标签页保留；仅关闭本次验收页。
-- 前次对抗修复 28 项成立缺陷已完成；37 项相关源码哈希仍一致，复用浏览器 19/19、双身份 Docker 8/8、接手 2/2。历史矩阵首轮 22/24 与补跑均保留，未冒称本轮重新运行完整矩阵。
-
-最新证据：[发布验收](docs/evidence/release-dev3/acceptance.json)、[交付清单](docs/evidence/release-dev3/delivery.json)。
+- 完整构建及 53 项单元/接口测试通过；上游 58 文件、23 工具基线不变。
+- 6 项真实 Chromium + MCP stdio 专项和双语控制台实测通过。快照增加加载、滚动与截断元信息，并识别有名称的 pointer 图片；MCP 增加结构化任务状态、恢复建议、保守只读提示和执行前参数检查。partial/unknown 不作为普通成功返回。
+- 最终压缩包解压后 19,853 条目校验通过；独立副本安装、升级、回退与恢复 11/11，回归后再次校验通过。版本切换使用合成发行标识，不代表日常 dev.3 已升级。
+- 最终 TS/Python SDK 独立安装、真实浏览器采集/上传/下载/查询/取消/恢复，以及 CLI/MCP 同任务验证通过。
+- 23 项原工具回归复用本轮功能修改后、版本号和 PID 管理器改动前的实测；未冒称整个交付矩阵全部重跑。[观察专项证据](docs/evidence/browser-use-observation-20260925.json)。
+- 历史 dev.3 的日常 Chrome 停止/重连等证据见[此前验收](docs/evidence/release-dev3/acceptance.json)。历史成功不代表当前日常服务正在运行。
 
 ## 公开范围与边界
 
 自有代码 MIT，保留上游版权／许可证，README 底部保留署名、完整来源地址及修改范围。当前公开文档已脱敏，凭据、Cookie、profile、数据库、原始现场日志和账号数据不提交。当前文件及历史提交的定向密钥／私人服务器地址扫描无命中；历史报告含本机目录路径，保留原始 Git 历史，不宣称完整安全审计。双语范围覆盖项目自有 Markdown；不可变上游文档、机器可读契约／证据及原始许可证正文保留原格式。
 
-9 月 17 日按用户要求将本机日常运行从源码目录切换到 GitHub 固定发行包：程序为 `~/.local/share/laofu-browser/releases/0.1.0-dev.3-macos-arm64`，状态为同级 `state`，端口仍为 17992／18992。旧状态路径保留兼容链接，801 源码保留；完整旧状态和原 Codex 项目配置备份在同级 `backups/pre-release-install-20260917`。下载 SHA-256 和安装器逐文件校验通过，Chrome 已重新加载发行包扩展，18 个实现文件一致；真实浏览器配置 ready=true、quarantined=false，新 stdio MCP 的 28 个工具可列出且标签页读取成功。历史未知效果保留、不重放。101 的 MCP 配置已改用发行包，用户重启 Codex 后已实测确认 MCP 进程来自发行包目录，未发现旧开发版 MCP 进程，当前会话标签页读取成功；验收证据在安装目录 `release-install-verification.json`。公众号原链接实测约 22 秒得到 Markdown、HTML 和 7/7 图片；采集状态为 partial，正文加载稳定性未确认，不宣称全文完整或已入库 M01。 旧 `workspace/local-state` 未切换。预览包未签名／公证、未上架 Chrome 商店；不能称为跨平台稳定 v1.0。
+以下为 9 月 17 日历史验收，当前运行状态以上述日常审计为准。9 月 17 日按用户要求将本机日常运行从源码目录切换到 GitHub 固定发行包：程序为 `~/.local/share/laofu-browser/releases/0.1.0-dev.3-macos-arm64`，状态为同级 `state`，端口仍为 17992／18992。旧状态路径保留兼容链接，801 源码保留；完整旧状态和原 Codex 项目配置备份在同级 `backups/pre-release-install-20260917`。下载 SHA-256 和安装器逐文件校验通过，Chrome 已重新加载发行包扩展，18 个实现文件一致；真实浏览器配置 ready=true、quarantined=false，新 stdio MCP 的 28 个工具可列出且标签页读取成功。历史未知效果保留、不重放。101 的 MCP 配置已改用发行包，用户重启 Codex 后已实测确认 MCP 进程来自发行包目录，未发现旧开发版 MCP 进程，当前会话标签页读取成功；验收证据在安装目录 `release-install-verification.json`。公众号原链接实测约 22 秒得到 Markdown、HTML 和 7/7 图片；采集状态为 partial，正文加载稳定性未确认，不宣称全文完整或已入库 M01。 旧 `workspace/local-state` 未切换。预览包未签名／公证、未上架 Chrome 商店；不能称为跨平台稳定 v1.0。

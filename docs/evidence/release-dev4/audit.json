@@ -38,5 +38,10 @@
     "Full article/list coverage not guaranteed",
     "Daily installation remains fixed dev.3; publication is not local upgrade"
   ],
-  "packageAcceptance": "pending; final package evidence will accompany GitHub Release"
+  "packageAcceptance": {
+    "status": "passed",
+    "evidence": "acceptance.json",
+    "publication": "publication.json",
+    "dailyInstallationUpgraded": false
+  }
 }

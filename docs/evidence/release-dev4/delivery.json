@@ -1,0 +1,36 @@
+{
+  "version": "0.1.0-dev.4",
+  "releaseTag": "v0.1.0-dev.4",
+  "stage": "macOS Apple Silicon developer preview",
+  "source": {
+    "commit": "1800ada796dd07ca4fa8a674aab2d3bc4dd56dc3",
+    "dirty": false
+  },
+  "assets": [
+    {
+      "name": "laofu-browser-0.1.0-dev.4-macos-arm64.tar.gz",
+      "bytes": 292153477,
+      "sha256": "7734caaebfc4f1f2eb0bdeb82c1e8ee8b2216140076917800bd10d50ac24c569"
+    },
+    {
+      "name": "laofu-browser-0.1.0-dev.4.tgz",
+      "bytes": 6085,
+      "sha256": "36035ff9ef8e941e03731817d72ec07b9ab4cf75a1973937acb1e6d79f28ccbf"
+    },
+    {
+      "name": "laofu_browser-0.1.0.dev4-py3-none-any.whl",
+      "bytes": 4751,
+      "sha256": "51df09e195d8d2fe963ac942caac87471db960d26791b82825e47a48b2bf2763"
+    }
+  ],
+  "acceptance": {
+    "file": "ACCEPTANCE-dev4.json",
+    "sha256": "425e519d87808fde33504e8355afc87b8012bb155e421851d1c62daecf84e5de"
+  },
+  "limitations": [
+    "macOS arm64 preview; unsigned/not notarized",
+    "No Windows/Linux desktop or P5 acceptance",
+    "Full article/list coverage not guaranteed",
+    "Daily installation remains fixed dev.3; publication is not local upgrade"
+  ]
+}
