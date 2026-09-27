@@ -1,0 +1,68 @@
+{
+  "version": "0.1.0-dev.5",
+  "scope": "macOS arm64 developer preview dev.5",
+  "cause": "Upstream onRemoved callback referenced undefined childKey; no corresponding definition or storage writer exists",
+  "fix": "Build patch removes stale childKey branch; vendor unchanged",
+  "regressionBefore": "ReferenceError: childKey is not defined",
+  "regressionAfter": "passed: own session/local entries removed, registry pruned, unrelated entries preserved, tab_closed emitted",
+  "realChromium": {
+    "errors": [],
+    "localCleared": true,
+    "sessionCleared": true,
+    "registryPruned": true,
+    "otherPreserved": true
+  },
+  "fullTests": {
+    "passed": 54,
+    "failed": 0
+  },
+  "dailyInstall": {
+    "at": "2026-09-27T11:43:53.275Z",
+    "version": "0.1.0-dev.5",
+    "source": {
+      "version": "0.1.0-dev.5",
+      "commit": "61717d1f35165e178add48225e350ba940138fc5",
+      "dirty": false,
+      "builtAt": "2026-09-27T11:41:51.182Z"
+    },
+    "backup": "backups/pre-dev5-20260927",
+    "oldJobsPreserved": 184,
+    "unknownEffectsPreserved": 3,
+    "credentialsAndWorkerConfigUnchanged": true,
+    "extensionFilesMatched": 18,
+    "mcpToolCount": 28,
+    "exampleDomainRead": true,
+    "liveObservationMetadata": true,
+    "receipts": [
+      {
+        "tool": "tabs",
+        "job": "cmd_a85fb2a3ddc3475abaef908b890882c6",
+        "state": "succeeded"
+      },
+      {
+        "tool": "read_text",
+        "job": "cmd_a755b9979cad43408d632c2edd832dfa",
+        "state": "succeeded"
+      },
+      {
+        "tool": "snapshot",
+        "job": "cmd_2b047cd2f02a4ef4af4e1f62b8a104b7",
+        "state": "succeeded"
+      },
+      {
+        "tool": "tabs",
+        "job": "cmd_08b79fc5e35a45e1b22d1be1a62311d0",
+        "state": "succeeded"
+      }
+    ]
+  },
+  "chromeErrorsAfterClose": {
+    "childKeyError": false,
+    "remaining": "historical WebSocket ERR_CONNECTION_REFUSED; unchanged after real close"
+  },
+  "package": {
+    "verifiedEntries": 19860,
+    "archiveSha256": "de73a2243f044e1e8c415a025bc685753ad840d181789ec4b6a91eae7f470b99"
+  },
+  "validationBoundary": "54 tests and daily install passed; full install/rollback and SDK matrix from dev.4 not rerun for this tab-cleanup-only fix. Final dev.5 archive and packaged extension verified before publication."
+}

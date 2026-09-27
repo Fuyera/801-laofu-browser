@@ -1,0 +1,53 @@
+{
+  "url": "https://github.com/Fuyera/801-laofu-browser/releases/tag/v0.1.0-dev.5",
+  "publishedAt": "2026-09-27T11:53:59Z",
+  "sourceCommit": "61717d1f35165e178add48225e350ba940138fc5",
+  "assets": [
+    {
+      "name": "ACCEPTANCE-dev5.json",
+      "bytes": 2285,
+      "sha256": "587ed93e58c1e8cbc124a3423c1e35448425727540683395b461e7dde4e3310c"
+    },
+    {
+      "name": "DELIVERY-dev5.json",
+      "bytes": 944,
+      "sha256": "19b6b0490674a0cb08b598a8d1f2c0317893566cd9f26912c636667a2ec8017f"
+    },
+    {
+      "name": "laofu-browser-0.1.0-dev.5-macos-arm64.tar.gz",
+      "bytes": 292162061,
+      "sha256": "de73a2243f044e1e8c415a025bc685753ad840d181789ec4b6a91eae7f470b99"
+    },
+    {
+      "name": "laofu-browser-0.1.0-dev.5-macos-arm64.tar.gz.sha256",
+      "bytes": 111,
+      "sha256": "3949ae1a6ebe655a969ace6125d5ababefa78270bf31d7c0298321c326e3fd92"
+    },
+    {
+      "name": "laofu-browser-0.1.0-dev.5.tgz",
+      "bytes": 6085,
+      "sha256": "5f55f41a655b81ce6fd64c7cc82279c8fd190703008dcf2e23566f95b3d7cf79"
+    },
+    {
+      "name": "laofu-browser-0.1.0-dev.5.tgz.sha256",
+      "bytes": 96,
+      "sha256": "9e66dbc2e9fbf424b4661ba538001becce51f5086634d3988259b0e7d815b084"
+    },
+    {
+      "name": "laofu_browser-0.1.0.dev5-py3-none-any.whl",
+      "bytes": 4751,
+      "sha256": "17a4d361da562f87ecc0d1ac694f219343ff8cd8db236e19b7596c587ee02ddd"
+    },
+    {
+      "name": "laofu_browser-0.1.0.dev5-py3-none-any.whl.sha256",
+      "bytes": 108,
+      "sha256": "d19eecfd982a01c9428608ff9b3d9d9fce483956a6fdb77114edd2f639f53002"
+    },
+    {
+      "name": "SHA256SUMS-dev5",
+      "bytes": 823,
+      "sha256": "08d444d9dda1bb2a553a3076bb534f9185bf034cae42f739f031ac836bf4f0e3"
+    }
+  ],
+  "verified": "9 asset sizes and hashes match GitHub digests; anonymous Release and SDK download passed"
+}

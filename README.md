@@ -6,7 +6,7 @@
 
 程序由本机服务、浏览器扩展和网页控制台组成，可使用独立的 Chromium，也可连接你已登录的 Chrome。你还可以直接在控制台提交文章链接，将当前可见正文和图片保存为 Markdown、HTML 与 ZIP，查看任务进度，并在需要登录或验证时人工接手。
 
-当前版本为 **`0.1.0-dev.4` 预览版**，面向 **macOS Apple Silicon（arm64）**。源码采用 MIT 许可证；安装包和最终验收记录见 [GitHub Releases](https://github.com/Fuyera/801-laofu-browser/releases)。也可按下方步骤从源码运行。Windows、Linux 桌面和服务器部署暂未验收。
+当前版本为 **`0.1.0-dev.5` 预览版**，面向 **macOS Apple Silicon（arm64）**。源码采用 MIT 许可证；安装包和最终验收记录见 [GitHub Releases](https://github.com/Fuyera/801-laofu-browser/releases)。也可按下方步骤从源码运行。Windows、Linux 桌面和服务器部署暂未验收。
 
 项目仓库：[https://github.com/Fuyera/801-laofu-browser](https://github.com/Fuyera/801-laofu-browser)
 
@@ -87,7 +87,7 @@ node scripts/local.mjs stop --home workspace/local-state
 - macOS arm64 的服务、隔离浏览器、安装候选及 SDK 有真实测试记录，详见[测试报告](docs/TEST_REPORT.md)。测试环境、代码和安装包的版本应分别核对。
 - X 的公开主页、单帖、搜索和滚动读取已经实测可用。**列表读取可能漏掉屏幕外帖子，不保证全量无遗漏**；完整性要求较高时应取得帖子链接后逐帖核对。该问题暂缓处理，见[X 验收记录](docs/X_READ_ACCEPTANCE.md)。
 - 网站的登录、验证码和限流可能需要本人处理。图文采集范围为当前授权可见内容，不保证折叠、付费、分页或音视频全部归档。
-- dev.4 最终安装包通过 11 项独立安装／升级／回退检查，两套 SDK 实测通过；结果随 Release 提供。日常安装随后已升级 dev.4 并通过真实浏览器验证；当前不承诺 Windows、Linux 桌面或服务器可直接安装使用。
+- dev.4 最终安装包通过 11 项独立安装／升级／回退检查，两套 SDK 实测通过；结果随 Release 提供。日常安装已升级 dev.5，关闭标签清理修复及真实浏览器验证通过；当前不承诺 Windows、Linux 桌面或服务器可直接安装使用。
 
 ## 文档与反馈
 
