@@ -4,7 +4,8 @@
 
 更新：2026-09-25。**0.1.0-dev.4，macOS Apple Silicon 开发者预览版已发布**。产品为连接 AI 助手与浏览器的本地浏览器助手。固定包包含完整双语文档、中英文控制台、Agent 观察与结果反馈优化，以及 macOS/Linux 进程身份核验修复。P5、跨平台和日本服务器部署继续暂停；X 列表遗漏仍为已知限制。
 
-2026-09-27 本地修复候选 dev.5：通过构建补丁删除上游标签关闭回调中不存在的 childKey 引用，恢复 session 清理和关闭通知；新增回归先复现失败再通过，隔离真实 Chromium 后台测试通过。正在打包更新日常安装，dev.4 公开 Release 保持不变。
+2026-09-27 本地 dev.5 已安装（公开 Release 仍为 dev.4）：修复上游关闭标签回调中未定义的 childKey 引用。54 项测试、隔离真实 Chromium 后台清理和日常 MCP 开页/读取/关闭通过；后台无新 childKey 异常。184 条原任务、3 条 unknown 效果记录和原凭据保留，备份位于 `~/.local/share/laofu-browser/backups/pre-dev5-20260927`，previous 为 dev.4。固定构建提交 `61717d1f35165e178add48225e350ba940138fc5`；19860 个清单条目校验通过。Chrome 仍保留历史连接拒绝记录，不代表当前断线。[修复和本地验收](docs/evidence/tab-cleanup-20260927.json)。本次未推送或发布，也未改业务消费者配置。
+
 
 ## 交付状态
 
@@ -20,7 +21,7 @@
 
 2026-09-25 审计发现 dev.3 的 19,818 个清单条目完整，但服务未运行，旧 worker PID 被 tipsd 复用导致误报。[原审计](docs/evidence/release-dev4/audit.json)。随后按用户“升级本地”指令完成 dev.4 日常升级；current.json 指向 dev.4，保留 dev.3 作为 previous。升级前完整状态及版本指针备份于 `~/.local/share/laofu-browser/backups/pre-dev4-20260925`，安装器另生成数据库备份。
 
-服务、worker 均从固定 dev.4 目录运行，原 Chrome 扩展重载后 ready=true、quarantined=false。18 个扩展实现文件与发行包一致；180 条旧任务及 3 条 unknown 效果记录保留，不重放；所有者凭据和 worker 配置未变。新 dev.4 stdio MCP 列出 28 个工具，Example Domain 读取和新 observation 元信息实测通过，验收页已关闭。[升级证据](docs/evidence/release-dev4/local-upgrade.json)。101 项目的 MCP 启动配置仍固定 dev.3；遵循不自动改动业务消费者规则，未修改该配置。
+9 月 25 日升级验收时，服务、worker 均从固定 dev.4 目录运行，原 Chrome 扩展重载后 ready=true、quarantined=false。18 个扩展实现文件与发行包一致；180 条旧任务及 3 条 unknown 效果记录保留，不重放；所有者凭据和 worker 配置未变。新 dev.4 stdio MCP 列出 28 个工具，Example Domain 读取和新 observation 元信息实测通过，验收页已关闭。[升级证据](docs/evidence/release-dev4/local-upgrade.json)。101 项目的 MCP 启动配置仍固定 dev.3；遵循不自动改动业务消费者规则，未修改该配置。
 
 ## 验证
 

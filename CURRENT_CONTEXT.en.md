@@ -4,7 +4,8 @@
 
 Updated: 2026-09-25. **0.1.0-dev.4, macOS Apple Silicon developer preview, published.** A local browser assistant connecting AI assistants to the browser. The fixed package includes bilingual documentation/console, Agent observations and outcome feedback, and macOS/Linux process identity checks. P5, cross-platform work and Japan deployment remain paused; X list omissions remain a known limitation.
 
-2026-09-27 local dev.5 fix candidate: a build patch removes the undefined upstream childKey reference in tab closure cleanup. The new regression reproduced the failure and passes after the fix; an isolated real Chromium background test also passes. Packaging for the daily installation; the public dev.4 Release remains unchanged.
+2026-09-27 local dev.5 is installed; the public Release remains dev.4. The undefined childKey call in upstream tab-closure cleanup is fixed. All 54 tests, isolated real Chromium background cleanup and daily MCP open/read/close passed, without a new childKey error. All 184 old jobs, three unknown-effect records and credentials are retained. Backup: `~/.local/share/laofu-browser/backups/pre-dev5-20260927`; previous: dev.4. Fixed build: `61717d1f35165e178add48225e350ba940138fc5`; all 19860 manifest entries verified. Chrome retains a historical connection-refused record, not a current disconnect. [Evidence](docs/evidence/tab-cleanup-20260927.json). Not pushed or published; consumer configuration unchanged.
+
 
 ## Delivery Status
 
@@ -20,7 +21,7 @@ Bundled status documents are preparation-time snapshots. Final results are in th
 
 The September 25 audit found all 19,818 dev.3 manifest entries intact, but the service stopped and a stale worker PID reused by tipsd. [Original audit](docs/evidence/release-dev4/audit.json). The user then requested a local upgrade, which completed to dev.4. current.json selects dev.4 and retains dev.3 as previous. Full state and version selection were backed up to `~/.local/share/laofu-browser/backups/pre-dev4-20260925`; the installer also created a database backup.
 
-Service and worker now run from the fixed dev.4 package. After reloading the existing Chrome extension, the profile is ready and not quarantined. All 18 extension implementation files match; 180 old jobs and three unknown-effect records remain, without replay. Owner credentials and worker configurations are unchanged. A fresh dev.4 stdio MCP lists 28 tools; Example Domain reading and live observation metadata passed, and the test tab was closed. [Upgrade evidence](docs/evidence/release-dev4/local-upgrade.json). Project 101's MCP launcher remains pinned to dev.3; its consumer configuration was not automatically changed.
+At the September 25 acceptance, service and worker ran from the fixed dev.4 package. After reloading the existing Chrome extension, the profile is ready and not quarantined. All 18 extension implementation files match; 180 old jobs and three unknown-effect records remain, without replay. Owner credentials and worker configurations are unchanged. A fresh dev.4 stdio MCP lists 28 tools; Example Domain reading and live observation metadata passed, and the test tab was closed. [Upgrade evidence](docs/evidence/release-dev4/local-upgrade.json). Project 101's MCP launcher remains pinned to dev.3; its consumer configuration was not automatically changed.
 
 ## Verification
 
