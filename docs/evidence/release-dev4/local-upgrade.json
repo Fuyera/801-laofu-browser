@@ -1,0 +1,42 @@
+{
+  "at": "2026-09-26T03:03:51.570Z",
+  "version": "0.1.0-dev.4",
+  "source": {
+    "version": "0.1.0-dev.4",
+    "commit": "1800ada796dd07ca4fa8a674aab2d3bc4dd56dc3",
+    "dirty": false,
+    "builtAt": "2026-09-26T02:52:45.383Z"
+  },
+  "backup": "backups/pre-dev4-20260925",
+  "oldJobsPreserved": 180,
+  "unknownEffectsPreserved": 3,
+  "credentialsAndWorkerConfigUnchanged": true,
+  "extensionFilesMatched": 18,
+  "mcpToolCount": 28,
+  "exampleDomainRead": true,
+  "liveObservationMetadata": true,
+  "receipts": [
+    {
+      "tool": "tabs",
+      "job": "cmd_d7225618ecc54aa6a2a981819cb1972c",
+      "state": "succeeded"
+    },
+    {
+      "tool": "read_text",
+      "job": "cmd_1600c2de153d4015b4ee91e865cb5fe8",
+      "state": "succeeded"
+    },
+    {
+      "tool": "snapshot",
+      "job": "cmd_0aa448e003ac409cad845bf2acd89aec",
+      "state": "succeeded"
+    },
+    {
+      "tool": "tabs",
+      "job": "cmd_189584061f924e55b07d22572124e588",
+      "state": "succeeded"
+    }
+  ],
+  "serviceAndWorker": "dev.4 running; attached Chrome ready=true, quarantined=false",
+  "consumerBoundary": "101 project MCP launcher remains pinned to dev.3; consumer config not changed"
+}

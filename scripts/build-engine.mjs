@@ -21,6 +21,11 @@ function patch(rel, changes) {
   fs.writeFileSync(f, body);
   changed.push(rel);
 }
+// Upstream has no childKey definition or storage writer. The stale reference
+// aborts onRemoved before removing snapshots and emitting tab_closed.
+patch("extension/background.js", [
+  [" || k === childKey(tabId)", ""],
+]);
 patch("src/lib/paths.js", [
   [
     "path.join(os.homedir(), '.huashu-chrome')",

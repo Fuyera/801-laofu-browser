@@ -4,6 +4,8 @@
 
 Updated: 2026-09-25. **0.1.0-dev.4, macOS Apple Silicon developer preview, published.** A local browser assistant connecting AI assistants to the browser. The fixed package includes bilingual documentation/console, Agent observations and outcome feedback, and macOS/Linux process identity checks. P5, cross-platform work and Japan deployment remain paused; X list omissions remain a known limitation.
 
+2026-09-27 local dev.5 fix candidate: a build patch removes the undefined upstream childKey reference in tab closure cleanup. The new regression reproduced the failure and passes after the fix; an isolated real Chromium background test also passes. Packaging for the daily installation; the public dev.4 Release remains unchanged.
+
 ## Delivery Status
 
 As authorized, main and the release tag were pushed and the preview published. The clean fixed build is `1800ada796dd07ca4fa8a674aab2d3bc4dd56dc3`. Publication: 2026-09-26 02:58:11 UTC (September 25 locally). All nine asset sizes and SHA-256 hashes match GitHub asset digests; anonymous Release access and a TypeScript SDK download were verified. The installation package, both SDKs, SHA256SUMS, DELIVERY.json and ACCEPTANCE-dev4.json are uploaded.
@@ -14,9 +16,11 @@ Preview: https://github.com/Fuyera/801-laofu-browser/releases/tag/v0.1.0-dev.4
 
 Bundled status documents are preparation-time snapshots. Final results are in the Release attachments and main's [acceptance](docs/evidence/release-dev4/acceptance.json), [delivery manifest](docs/evidence/release-dev4/delivery.json) and [publication receipt](docs/evidence/release-dev4/publication.json). Documentation follow-ups do not change the fixed package or tag. Original vendor and historical packages remain unchanged. No Docker image distribution is included.
 
-## Daily Installation Audit
+## Daily Installation Audit and Upgrade
 
-The daily installation remains dev.3; it was neither upgraded nor started. All 19,818 manifest entries match, with no missing or changed entries; ports 17992/18992 have no listeners. macOS tipsd reused a stale worker PID, causing the old manager to falsely report a running worker. dev.4 verifies process identity for status/start/stop/backup; real stale-PID, no-signal and restart regressions passed. The corrected read-only check reports both service and worker stopped. [Audit](docs/evidence/release-dev4/audit.json).
+The September 25 audit found all 19,818 dev.3 manifest entries intact, but the service stopped and a stale worker PID reused by tipsd. [Original audit](docs/evidence/release-dev4/audit.json). The user then requested a local upgrade, which completed to dev.4. current.json selects dev.4 and retains dev.3 as previous. Full state and version selection were backed up to `~/.local/share/laofu-browser/backups/pre-dev4-20260925`; the installer also created a database backup.
+
+Service and worker now run from the fixed dev.4 package. After reloading the existing Chrome extension, the profile is ready and not quarantined. All 18 extension implementation files match; 180 old jobs and three unknown-effect records remain, without replay. Owner credentials and worker configurations are unchanged. A fresh dev.4 stdio MCP lists 28 tools; Example Domain reading and live observation metadata passed, and the test tab was closed. [Upgrade evidence](docs/evidence/release-dev4/local-upgrade.json). Project 101's MCP launcher remains pinned to dev.3; its consumer configuration was not automatically changed.
 
 ## Verification
 

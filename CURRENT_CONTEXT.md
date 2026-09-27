@@ -4,6 +4,8 @@
 
 更新：2026-09-25。**0.1.0-dev.4，macOS Apple Silicon 开发者预览版已发布**。产品为连接 AI 助手与浏览器的本地浏览器助手。固定包包含完整双语文档、中英文控制台、Agent 观察与结果反馈优化，以及 macOS/Linux 进程身份核验修复。P5、跨平台和日本服务器部署继续暂停；X 列表遗漏仍为已知限制。
 
+2026-09-27 本地修复候选 dev.5：通过构建补丁删除上游标签关闭回调中不存在的 childKey 引用，恢复 session 清理和关闭通知；新增回归先复现失败再通过，隔离真实 Chromium 后台测试通过。正在打包更新日常安装，dev.4 公开 Release 保持不变。
+
 ## 交付状态
 
 按用户授权已推送 main、发布标签及 GitHub 预览版。固定构建提交为 `1800ada796dd07ca4fa8a674aab2d3bc4dd56dc3`，来自干净工作树。Release 于 2026-09-26 02:58:11 UTC（本地 9 月 25 日）发布，9 个附件大小及 SHA-256 与 GitHub 资产摘要全部一致；匿名 Release 访问和 TypeScript SDK 下载校验通过。安装包、两套 SDK、SHA256SUMS、DELIVERY.json 与 ACCEPTANCE-dev4.json 均已上传。
@@ -14,9 +16,11 @@
 
 包内状态文档是发布准备阶段快照，最终验收与发布结果见 Release 附件和 main 的[验收](docs/evidence/release-dev4/acceptance.json)、[交付清单](docs/evidence/release-dev4/delivery.json)、[发布回执](docs/evidence/release-dev4/publication.json)。后续文档提交不改变固定包或标签。原版 vendor 保持不变，不覆盖历史发行包；此次不提供 Docker 镜像发行包。
 
-## 日常安装审计
+## 日常安装审计与升级
 
-日常仍为 dev.3；本次没有升级或启动日常服务。19,818 个清单条目哈希一致，无缺失或变更；17992/18992 无监听。旧 worker PID 被 macOS tipsd 复用，旧管理器误报运行。dev.4 修复 status/start/stop/backup 的进程身份判断，真实旧 PID、不误杀及重新启动回归通过；修复后的只读检查正确报告服务和 worker 均未运行。[审计](docs/evidence/release-dev4/audit.json)。
+2026-09-25 审计发现 dev.3 的 19,818 个清单条目完整，但服务未运行，旧 worker PID 被 tipsd 复用导致误报。[原审计](docs/evidence/release-dev4/audit.json)。随后按用户“升级本地”指令完成 dev.4 日常升级；current.json 指向 dev.4，保留 dev.3 作为 previous。升级前完整状态及版本指针备份于 `~/.local/share/laofu-browser/backups/pre-dev4-20260925`，安装器另生成数据库备份。
+
+服务、worker 均从固定 dev.4 目录运行，原 Chrome 扩展重载后 ready=true、quarantined=false。18 个扩展实现文件与发行包一致；180 条旧任务及 3 条 unknown 效果记录保留，不重放；所有者凭据和 worker 配置未变。新 dev.4 stdio MCP 列出 28 个工具，Example Domain 读取和新 observation 元信息实测通过，验收页已关闭。[升级证据](docs/evidence/release-dev4/local-upgrade.json)。101 项目的 MCP 启动配置仍固定 dev.3；遵循不自动改动业务消费者规则，未修改该配置。
 
 ## 验证
 

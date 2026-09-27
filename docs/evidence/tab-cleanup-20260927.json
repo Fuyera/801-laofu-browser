@@ -1,0 +1,11 @@
+{
+  "version": "0.1.0-dev.5",
+  "scope": "local fix; public dev.4 unchanged",
+  "cause": "Upstream onRemoved callback referenced undefined childKey; no corresponding definition or storage writer exists",
+  "fix": "Build patch removes stale childKey branch; vendor unchanged",
+  "regressionBefore": "ReferenceError: childKey is not defined",
+  "regressionAfter": "passed: own session/local entries removed, registry pruned, unrelated entries preserved, tab_closed emitted",
+  "realChromium": {"errors": [], "localCleared": true, "sessionCleared": true, "registryPruned": true, "otherPreserved": true},
+  "fullTests": {"passed": 54, "failed": 0},
+  "dailyInstall": "pending"
+}
