@@ -274,6 +274,7 @@ test("failed worker execution cleans only its own temporary job directory", asyn
   });
   t.after(() => w.store.close());
   w.browser = {
+    releaseClient: async () => {},
     control: async () => {},
     call: async () => {
       throw Error("fixture failure");
@@ -298,6 +299,7 @@ test("interrupted act after completed steps remains unknown and cannot report a 
   t.after(() => w.store.close());
   let response: any;
   w.browser = {
+    releaseClient: async () => {},
     control: async () => {},
     call: async () => ({
       content: [],

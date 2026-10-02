@@ -12,6 +12,7 @@ import { Fault } from "./errors.js";
 import { operationalLog } from "./logs.js";
 import { mkdir, privateFile, secret } from "./util.js";
 import type { Job, ToolReply } from "./types.js";
+import { ClientPool } from "./client-pool.js";
 export interface BrowserConfig {
   home: string;
   profileId: string;
@@ -24,7 +25,7 @@ export interface BrowserConfig {
 export class BrowserAdapter {
   private bridge?: ChildProcess;
   private context?: BrowserContext;
-  private clients = new Map<string, Client>();
+  private clients = new ClientPool<Client>((key) => this.createClient(key));
   private rpc: any;
   private current?: Job;
   private stopping = false;
@@ -222,29 +223,38 @@ export class BrowserAdapter {
     }
     throw new Fault("EXTENSION_OFFLINE", "独立扩展未连接");
   }
-  async client(sessionId: string) {
-    let client = this.clients.get(sessionId);
-    if (!client) {
-      client = new Client(
-        { name: "laofu-browser-worker", version: VERSION },
-        { capabilities: {} },
-      );
-      await client.connect(
-        new StdioClientTransport({
-          command: process.execPath,
-          args: [
-            path.join(this.engine, "src/cli.js"),
-            "mcp",
-            "--client",
-            "laofu-browser",
-          ],
-          env: { ...this.env, LAOFU_SESSION_ID: sessionId },
-          stderr: "ignore",
-        }),
-      );
-      this.clients.set(sessionId, client);
+  private async createClient(sessionId: string) {
+    const client = new Client(
+      { name: "laofu-browser-worker", version: VERSION },
+      { capabilities: {} },
+    );
+    const transport = new StdioClientTransport({
+      command: process.execPath,
+      args: [path.join(this.engine, "src/cli.js"), "mcp", "--client", "laofu-browser"],
+      env: { ...this.env, LAOFU_SESSION_ID: sessionId },
+      stderr: "ignore",
+    });
+    try {
+      await client.connect(transport);
+      return client;
+    } catch (error) {
+      await Promise.allSettled([client.close(), transport.close()]);
+      throw error;
     }
-    return client;
+  }
+  async releaseClient(key: string) {
+    try {
+      await this.clients.release(key);
+    } catch (error) {
+      this.diagnostic("client_cleanup_failed", { key, error: String(error) });
+    }
+  }
+  async pruneClients() {
+    try {
+      await this.clients.sweep();
+    } catch (error) {
+      this.diagnostic("client_cleanup_failed", { error: String(error) });
+    }
   }
   async connected(timeout = 35000) {
     const end = Date.now() + timeout;
@@ -292,16 +302,17 @@ export class BrowserAdapter {
     };
   }
   async call(name: string, args: any, job: Job): Promise<ToolReply> {
-    const client = await this.client(job.sessionId || job.id);
     const timeout = Math.max(
       35000,
       Math.min(job.expiresAt - Date.now() + 25000, 925000),
     );
-    const result = (await client.callTool(
-      { name, arguments: this.args(args, job) },
-      undefined,
-      { timeout },
-    )) as ToolReply;
+    const result = await this.clients.use(job.sessionId || job.id, async (client) =>
+      await client.callTool(
+        { name, arguments: this.args(args, job) },
+        undefined,
+        { timeout },
+      ) as ToolReply,
+    );
     if (name === "reload" && !result.isError) {
       await new Promise((r) => setTimeout(r, 500));
       await this.connected(45000);
@@ -347,8 +358,9 @@ export class BrowserAdapter {
   }
   async stop() {
     this.stopping = true;
-    await Promise.allSettled([...this.clients.values()].map((c) => c.close()));
-    this.clients.clear();
+    await this.clients.close().catch((error) =>
+      this.diagnostic("client_cleanup_failed", { error: String(error) }),
+    );
     this.rpc?.close();
     await this.context?.close();
     this.bridge?.kill("SIGTERM");

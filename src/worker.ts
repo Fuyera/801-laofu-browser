@@ -149,6 +149,10 @@ export class Worker {
   }
   private async message(msg: WorkerMessage) {
     const active = this.active;
+    if (msg.type === "session_closed") {
+      await this.browser.releaseClient(msg.sessionId);
+      return;
+    }
     if (msg.type === "execute") {
       if (this.running) {
         if (this.active?.id === msg.job.id) {
@@ -571,6 +575,13 @@ export class Worker {
       return;
     }
     const dir = mkdir(path.join(this.config.home, "jobs", job.id));
+    let clientRetired = false;
+    const retireClient = async () => {
+      if (!job.sessionId && !clientRetired) {
+        await this.browser.releaseClient(job.id);
+        clientRetired = true;
+      }
+    };
     try {
       if (
         job.type === "browser.flow@v1" &&
@@ -822,6 +833,8 @@ export class Worker {
               : "none",
         },
       };
+      // Retire before advertising a reusable worker to the broker.
+      await retireClient();
       const response = {
         type: "result",
         jobId: job.id,
@@ -854,6 +867,8 @@ export class Worker {
         stopped = false;
       });
       const error = problem(e);
+      // Retire before advertising a reusable worker to the broker.
+      await retireClient();
       const response = {
         type: "result",
         jobId: job.id,
@@ -866,6 +881,9 @@ export class Worker {
       this.store.journalUnknown(job.id, response);
       this.send(response);
     } finally {
+      // Task-only clients never outlive the job. Persistent sessions are retired
+      // by session_closed, idle expiry, capacity eviction, or worker shutdown.
+      await retireClient();
       fs.rmSync(dir, { recursive: true, force: true });
       this.running = false;
       this.active = undefined;
@@ -874,6 +892,7 @@ export class Worker {
     }
   }
   private maintainRetention() {
+    void this.browser.pruneClients();
     try {
       this.store.pruneJournalPayloads();
       this.cleanRetainedFiles();

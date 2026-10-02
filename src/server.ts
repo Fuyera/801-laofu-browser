@@ -595,6 +595,14 @@ export async function createServer(options: ServerOptions) {
     store.put("session", s.id, { ...s, closed: true });
     for (const j of store.jobs(p).filter((j) => j.sessionId === s.id))
       broker.cancel(j);
+    const profile = store.profile(p, s.profileId);
+    try {
+      broker.send(profile.workerId, { type: "session_closed", sessionId: s.id });
+    } catch (error) {
+      // An offline worker cannot be synchronously notified. Its bounded idle
+      // cleanup/shutdown still retires the cache; the closed session stays denied.
+      if (!(error instanceof Fault && error.code === "WORKER_OFFLINE")) throw error;
+    }
     return { closed: true };
   });
   app.get("/v1/sessions/:id/commands", async (req: any) => {
